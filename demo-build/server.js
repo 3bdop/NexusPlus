@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const compression = require('compression');
-const fs = require('fs');
 
 const app = express();
 const PORT = 8080; // Set the desired port
@@ -17,7 +16,14 @@ app.use(
 app.use((req, res, next) => {
     if (req.url.endsWith('.br')) {
         res.set('Content-Encoding', 'br');
-        res.set('Content-Type', 'application/javascript');
+
+        // Check if the file being requested is the .wasm.br file
+        if (req.url.endsWith('.wasm.br')) {
+            res.set('Content-Type', 'application/wasm');
+        } else {
+            // For other .br files, you may choose an appropriate content type
+            res.set('Content-Type', 'application/javascript');
+        }
     }
     next();
 });
