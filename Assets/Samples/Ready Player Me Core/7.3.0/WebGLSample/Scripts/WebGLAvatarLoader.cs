@@ -1,6 +1,7 @@
 using ReadyPlayerMe.Core;
 using UnityEngine;
 using BodyType = ReadyPlayerMe.Core.BodyType;
+// using ReadyPlayerMe.Samples.;
 
 namespace ReadyPlayerMe.Samples.WebGLSample
 {
@@ -43,12 +44,12 @@ namespace ReadyPlayerMe.Samples.WebGLSample
 
         public void HandleUserSet(string userId)
         {
-            SDKLogger.Log(TAG,$"User set: {userId}");
+            SDKLogger.Log(TAG, $"User set: {userId}");
         }
 
         public void HandleUserAuthorized(string userId)
         {
-            SDKLogger.Log(TAG,$"User authorized: {userId}");
+            SDKLogger.Log(TAG, $"User authorized: {userId}");
         }
 
         public void LoadAvatarFromUrl(string newAvatarUrl)
