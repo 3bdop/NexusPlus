@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
-  productGUID: 628cbcded75bfea4baa4cc73d04d33a7
+  productGUID: a00ab9cb3294b8848b1f9e7213c9a72a
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -13,16 +13,16 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: oneuni-prototype
+  productName: COMP-prototype
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
-  m_SplashScreenBackgroundColor: {r: 0.16862746, g: 0.16862746, b: 0.16862746, a: 1}
+  m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
   m_ShowUnitySplashScreen: 1
   m_ShowUnitySplashLogo: 1
   m_SplashScreenOverlayOpacity: 1
   m_SplashScreenAnimation: 1
   m_SplashScreenLogoStyle: 1
-  m_SplashScreenDrawMode: 1
+  m_SplashScreenDrawMode: 0
   m_SplashScreenBackgroundAnimationZoom: 1
   m_SplashScreenLogoAnimationZoom: 1
   m_SplashScreenBackgroundLandscapeAspect: 1
@@ -39,10 +39,8 @@ PlayerSettings:
     y: 0
     width: 1
     height: 1
-  m_SplashScreenLogos:
-  - logo: {fileID: 10404, guid: 0000000000000000f000000000000000, type: 0}
-    duration: 2
-  m_VirtualRealitySplashScreen: {fileID: 2800000, guid: ea6b0da8fe8737b419fbbf412bcaa33d, type: 3}
+  m_SplashScreenLogos: []
+  m_VirtualRealitySplashScreen: {fileID: 0}
   m_HolographicTrackingLossScreen: {fileID: 0}
   defaultScreenWidth: 1024
   defaultScreenHeight: 768
@@ -143,8 +141,7 @@ PlayerSettings:
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
   bundleVersion: 0.1.0
-  preloadedAssets:
-  - {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -554,9 +551,6 @@ PlayerSettings:
   - serializedVersion: 3
     m_BuildTarget: Android
     m_Formats: 03000000
-  - serializedVersion: 3
-    m_BuildTarget: WebGL
-    m_Formats: 05000000
   playModeTestRunnerEnabled: 0
   runPlayModeTestAsEditModeTest: 0
   actionOnDotNetUnhandledException: 1
@@ -792,7 +786,7 @@ PlayerSettings:
   monoEnv: 
   splashScreenBackgroundSourceLandscape: {fileID: 0}
   splashScreenBackgroundSourcePortrait: {fileID: 0}
-  blurSplashScreenBackground: 0
+  blurSplashScreenBackground: 1
   spritePackerPolicy: 
   webGLMemorySize: 32
   webGLExceptionSupport: 1
@@ -802,7 +796,7 @@ PlayerSettings:
   webGLDebugSymbols: 0
   webGLEmscriptenArgs: 
   webGLModulesDirectory: 
-  webGLTemplate: PROJECT:RPMTemplate
+  webGLTemplate: APPLICATION:Default
   webGLAnalyzeBuildSize: 0
   webGLUseEmbeddedResources: 0
   webGLCompressionFormat: 0
@@ -822,24 +816,7 @@ PlayerSettings:
   webGLWebAssemblyBigInt: 0
   webGLCloseOnQuit: 0
   webWasm2023: 0
-  scriptingDefineSymbols:
-    Android: READY_PLAYER_ME
-    EmbeddedLinux: READY_PLAYER_ME
-    GameCoreScarlett: READY_PLAYER_ME
-    GameCoreXboxOne: READY_PLAYER_ME
-    LinuxHeadlessSimulation: READY_PLAYER_ME
-    Nintendo Switch: READY_PLAYER_ME
-    PS4: READY_PLAYER_ME
-    PS5: READY_PLAYER_ME
-    QNX: READY_PLAYER_ME
-    ReservedCFE: READY_PLAYER_ME
-    Standalone: READY_PLAYER_ME
-    VisionOS: READY_PLAYER_ME
-    WebGL: READY_PLAYER_ME
-    Windows Store Apps: READY_PLAYER_ME
-    XboxOne: READY_PLAYER_ME
-    iPhone: READY_PLAYER_ME
-    tvOS: READY_PLAYER_ME
+  scriptingDefineSymbols: {}
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
@@ -875,14 +852,14 @@ PlayerSettings:
   editorAssembliesCompatibilityLevel: 1
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: oneuni-prototype
+  metroPackageName: COMP-prototype
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: oneuni-prototype
+  metroApplicationDescription: COMP-prototype
   wsaImages: {}
   metroTileShortName: 
   metroTileShowName: 0
@@ -953,10 +930,10 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 0fa382dc-df7c-4991-8f95-4190ec59fac3
+  cloudProjectId: 3ea12ae0-3b73-461f-bb1d-cc648e4b242f
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: oneuni-prototype
+  projectName: COMP-prototype
   organizationId: abdbinm55
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
