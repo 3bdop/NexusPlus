@@ -1,6 +1,16 @@
 import { useProgress } from "@react-three/drei";
 import { usePlay } from "../contexts/Play";
+import styled from "styled-components";
+import Button from "../styles/Button";
+const handleLoginClick = () => {
+  console.log("Login button clicked");
+  // Add your login logic here
+};
 
+const handleSignupClick = () => {
+  console.log("Signup button clicked");
+  // Add your signup logic here
+};
 export const Overlay = () => {
   const { progress } = useProgress();
   const { play, end, setPlay, hasScroll } = usePlay();
@@ -15,7 +25,7 @@ export const Overlay = () => {
       {progress === 100 && (
         <div className={`intro ${play ? "intro--disappear" : ""}`}>
           <h1 className="logo">
-            WAWATMOS
+            NEXUSPLUS
             <div className="spinner">
               <div className="spinner__image" />
             </div>
@@ -29,10 +39,23 @@ export const Overlay = () => {
           >
             Explore
           </button>
+          {/* <Button onClick={true} >
+
+          </Button> */}
         </div>
       )}
       <div className={`outro ${end ? "outro--appear" : ""}`}>
-        <p className="outro__text">Wish you had a great flight with us...</p>
+        {/* <p className="outro__text">Wish you had a great flight with us...</p> */}
+        {/* <Form /> */}
+        {/* <Button name="Login" onClick={"login"} className="outro__text" />
+       
+        <Button name="Signup" onClick={"signup"} className="outro__text" /> */}
+        <button onClick={() => handleLoginClick()} className="outro_button">
+          Login
+        </button>
+        <button onClick={() => handleSignupClick()} className="outro_button">
+          Signup
+        </button>
       </div>
     </div>
   );
