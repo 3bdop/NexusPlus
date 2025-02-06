@@ -441,18 +441,23 @@ We have a wide range of beverages!`,
 
     tl.current.to(backgroundColors.current, {
       duration: 1,
-      colorA: "#6f35cc",
-      colorB: "#ffad30",
+      colorA: "#ff9913", // Dark space blue
+      colorB: "#ff6f4e", // Deep purple like a nebula
     });
     tl.current.to(backgroundColors.current, {
       duration: 1,
-      colorA: "#424242",
-      colorB: "#ffcc00",
+      colorA: "#f25375", // Cosmic violet
+      colorB: "#cc4c91", // Dark galaxy blue
     });
     tl.current.to(backgroundColors.current, {
       duration: 1,
-      colorA: "#81318b",
-      colorB: "#55ab8f",
+      colorA: "#98509d", // Dark space red
+      colorB: "#5f5195", // Nebula blue
+    });
+    tl.current.to(backgroundColors.current, {
+      duration: 1,
+      colorA: "#2b4b7d", // Dark space red
+      colorB: "#003f5b", // Nebula blue
     });
 
     tl.current.pause();
