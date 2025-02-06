@@ -177,10 +177,12 @@ body {
   justify-content: center;
   opacity: 0;
   transition: opacity 4s ease-in-out;
+  pointer-events: none;
 }
 
 .outro--appear {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .outro__text {
@@ -252,4 +254,116 @@ body {
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* From Uiverse.io by dalbrechtmartin */
+button {
+  position: relative;
+  padding: 20px 35px;
+  background: #ffffff;
+  font-size: 20px;
+  font-weight: 600;
+  color: #000000;
+  box-shadow: 0px 0px 10px 0px rgb(255, 255, 255);
+  border-radius: 100px;
+  border: none;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.star-1,
+.star-2,
+.star-3,
+.star-4,
+.star-5,
+.star-6 {
+  position: absolute;
+  filter: drop-shadow(0 0 0 #fffdef);
+  z-index: -5;
+  transition: all 0.8s cubic-bezier(0.05, 0.83, 0.43, 0.96);
+}
+
+.star-1 {
+  top: 20%;
+  left: 20%;
+  width: 25px;
+}
+.star-2 {
+  top: 45%;
+  left: 45%;
+  width: 15px;
+}
+.star-3 {
+  top: 40%;
+  left: 40%;
+  width: 5px;
+}
+.star-4 {
+  top: 20%;
+  left: 40%;
+  width: 8px;
+}
+.star-5 {
+  top: 25%;
+  left: 45%;
+  width: 15px;
+}
+.star-6 {
+  top: 5%;
+  left: 50%;
+  width: 5px;
+}
+
+.outro_button:hover {
+  background: #000000;
+  color: #ffffff;
+  box-shadow: 0 0 80px #ffffff8c;
+}
+
+.outro_button:hover .star-1 {
+  top: -20%;
+  left: -20%;
+  width: 20px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+.outro_button:hover .star-2 {
+  top: 35%;
+  left: -25%;
+  width: 15px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+.outro_button:hover .star-3 {
+  top: 80%;
+  left: -10%;
+  width: 10px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+.outro_button:hover .star-4 {
+  top: -25%;
+  left: 105%;
+  width: 20px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+.outro_button:hover .star-5 {
+  top: 30%;
+  left: 115%;
+  width: 15px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+.outro_button:hover .star-6 {
+  top: 80%;
+  left: 105%;
+  width: 10px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+
+.fil0 {
+  fill: #fffdef;
 }
