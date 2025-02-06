@@ -7,6 +7,7 @@ import { Euler, Group, Vector3 } from "three";
 import { usePlay } from "../contexts/Play";
 import { fadeOnBeforeCompile } from "../utils/fadeMaterial";
 import { Airplane } from "./Airplane";
+import { Spaceship } from "./Spaceship";
 import { Background } from "./Background";
 import { Cloud } from "./Cloud";
 import { Speed } from "./Speed";
@@ -513,10 +514,10 @@ We have a wide range of beverages!`,
           </group>
           <group ref={airplane}>
             <Float floatIntensity={1} speed={1.5} rotationIntensity={0.5}>
-              <Airplane
-                rotation-y={Math.PI / 2}
-                scale={[0.2, 0.2, 0.2]}
-                position-y={0.1}
+              <Spaceship
+                rotation-y={Math.PI}
+                scale={[0.002, 0.002, 0.002]}
+                position-y={-0.8}
               />
             </Float>
           </group>
