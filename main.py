@@ -8,9 +8,14 @@ import streamlit as st
 # Function to download the file from Google Drive if not present
 def download_precomputed_file():
     local_path = 'data/precomputed_index.pkl'
+    # Ensure the 'data' directory exists
+    if not os.path.exists('data'):
+        os.makedirs('data')
+        st.info("Created 'data' directory.")
+        
     if not os.path.exists(local_path):
         st.info("Downloading precomputed index from Google Drive...")
-        # Replace YOUR_FILE_ID_HERE with your actual file ID from Google Drive
+        # Replace with your actual file ID from Google Drive
         file_id = "1XtQbINEDpuMXT8kWgOyNC52-mUQlyBKe"
         url = f"https://drive.google.com/uc?id={file_id}"
         gdown.download(url, local_path, quiet=False)
