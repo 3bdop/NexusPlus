@@ -1,0 +1,8 @@
+PyMuPDF
+pytesseract
+Pillow
+spacy
+sentence_transformers
+faiss-cpu
+streamlit
+gdown
