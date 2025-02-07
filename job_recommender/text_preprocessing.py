@@ -2,9 +2,16 @@
 
 import re
 import spacy
-
+import spacy
+from spacy.cli import download
 # Load the spaCy English model (run: python -m spacy download en_core_web_sm if not already downloaded)
-nlp = spacy.load("en_core_web_sm")
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    # Model not found, so download it
+    download("en_core_web_sm")
+    nlp = spacy.load("en_core_web_sm")
+
 
 def clean_text(text: str) -> str:
     """
