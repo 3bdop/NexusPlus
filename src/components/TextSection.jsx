@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 
 
 const getRandomColor = () => {
-  const colors = ['lightgreen', '#6F8AFFFF', '#87FFEBFF', 'orange'];
+  const colors = ['lightgreen', '#3956D6FF', '#87FFEBFF', 'orange'];
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
@@ -24,8 +24,8 @@ export const TextSection = ({ title, subtitle, ...props }) => {
     <group {...props}>
       {!!title && (
         <Text
-          color={titleColor}
-          // color="lightgreen"
+          // color={titleColor}
+          color="orange"
           anchorX={"left"}
           anchorY="bottom"
           fontSize={0.52}

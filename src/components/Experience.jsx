@@ -36,7 +36,7 @@ export const Experience = () => {
       new THREE.Vector3(-100, 0, -3 * CURVE_DISTANCE),
       new THREE.Vector3(100, 0, -4 * CURVE_DISTANCE),
       new THREE.Vector3(0, 0, -5 * CURVE_DISTANCE),
-      new THREE.Vector3(-20, 0, -6 * CURVE_DISTANCE),
+      new THREE.Vector3(0, 0, -6 * CURVE_DISTANCE),
       new THREE.Vector3(0, 0, -7 * CURVE_DISTANCE),
       new THREE.Vector3(0, 0, -8 * CURVE_DISTANCE),
     ],
@@ -328,7 +328,7 @@ Have a seat and enjoy the ride!`,
         position: new Vector3(
           curvePoints[8].x - 25,
           curvePoints[8].y + 30,
-          curvePoints[8].z + 50
+          curvePoints[8].z + 110
         ),
         rotation: new Euler(-1, -2, -1),
       },
@@ -336,8 +336,8 @@ Have a seat and enjoy the ride!`,
         scale: new Vector3(1, 1, 1),
         position: new Vector3(
           curvePoints[8].x - 25,
-          curvePoints[8].y + 10,
-          curvePoints[8].z + 200
+          curvePoints[8].y + 12,
+          curvePoints[8].z + 130
         ),
         rotation: new Euler(-1, -2, -1),
       },
@@ -646,7 +646,7 @@ Have a seat and enjoy the ride!`,
           <Astronaut sceneOpacity={sceneOpacity} {...rock} key={index} />
         ))}
         {rocks.map((rock, index) => (
-          <Comet {...rock} key={index} />
+          <Comet {...rock} key={index} sceneOpacity={sceneOpacity} />
         ))}
 
 
