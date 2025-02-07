@@ -376,7 +376,13 @@ button {
     padding: 12px 30px;
   }
 }
+html {
+  --cursor-color: #cc2626;
+}
 
+html.dark-mode {
+  --cursor-color: #fff;
+}
 .outro__content {
   display: flex;
   flex-direction: column;
