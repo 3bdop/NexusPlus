@@ -1,5 +1,5 @@
 {
-  "name": "r3f-loading-animations",
+  "name": "NexusPlus",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -15,8 +15,10 @@
     "gsap": "^3.11.5",
     "lamina": "^1.1.23",
     "react": "^18.2.0",
+    "react-animated-cursor": "^2.11.2",
     "react-dom": "^18.2.0",
     "sharp": "^0.33.5",
+    "styled-components": "^6.1.15",
     "three": "^0.150.1"
   },
   "devDependencies": {
