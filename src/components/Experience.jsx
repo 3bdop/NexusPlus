@@ -8,14 +8,21 @@ import { usePlay } from "../contexts/Play";
 import { fadeOnBeforeCompile } from "../utils/fadeMaterial";
 import { Airplane } from "./Airplane";
 import { Spaceship } from "./Spaceship";
+import { Astronaut } from "./Astronaut";
+import { Asteroid } from "./Asteroid";
+import { Planet } from "./Planet";
+import { Jet } from "./Jet";
+import { Alien } from "./Alien"
+import { Comet } from "./Comet";
 import { Background } from "./Background";
 import { Cloud } from "./Cloud";
 import { Speed } from "./Speed";
 import { TextSection } from "./TextSection";
+import { Star } from "./Star"
 
 const LINE_NB_POINTS = 1000;
 const CURVE_DISTANCE = 250;
-const CURVE_AHEAD_CAMERA = 0.008;
+const CURVE_AHEAD_CAMERA = 0.01;
 const CURVE_AHEAD_AIRPLANE = 0.02;
 const AIRPLANE_MAX_ANGLE = 35;
 const FRICTION_DISTANCE = 42;
@@ -29,8 +36,9 @@ export const Experience = () => {
       new THREE.Vector3(-100, 0, -3 * CURVE_DISTANCE),
       new THREE.Vector3(100, 0, -4 * CURVE_DISTANCE),
       new THREE.Vector3(0, 0, -5 * CURVE_DISTANCE),
-      new THREE.Vector3(0, 0, -6 * CURVE_DISTANCE),
+      new THREE.Vector3(-20, 0, -6 * CURVE_DISTANCE),
       new THREE.Vector3(0, 0, -7 * CURVE_DISTANCE),
+      new THREE.Vector3(0, 0, -8 * CURVE_DISTANCE),
     ],
     []
   );
@@ -51,7 +59,8 @@ export const Experience = () => {
           curvePoints[1].y,
           curvePoints[1].z
         ),
-        subtitle: `Welcome to Wawatmos,
+        title: `Welcome 2 NexusPlus,`,
+        subtitle: `
 Have a seat and enjoy the ride!`,
       },
       {
@@ -61,9 +70,8 @@ Have a seat and enjoy the ride!`,
           curvePoints[2].y,
           curvePoints[2].z
         ),
-        title: "Services",
-        subtitle: `Do you want a drink?
-We have a wide range of beverages!`,
+        title: "What's NexusPlus?",
+        subtitle: `A new experience you never have tried before!`,
       },
       {
         cameraRailDist: -1,
@@ -72,8 +80,8 @@ We have a wide range of beverages!`,
           curvePoints[3].y,
           curvePoints[3].z
         ),
-        title: "Fear of flying?",
-        subtitle: `Our flight attendants will help you have a great journey`,
+        title: "What do we offer?",
+        subtitle: `Our idea is to take communication to the next level.`,
       },
       {
         cameraRailDist: 1.5,
@@ -82,8 +90,18 @@ We have a wide range of beverages!`,
           curvePoints[4].y,
           curvePoints[4].z - 12
         ),
-        title: "Movies",
-        subtitle: `We provide a large selection of medias, we highly recommend you Porco Rosso during the flight`,
+        title: "AI included? no issues🤖",
+        subtitle: `We integrated AI, to make it easier for our guests!`
+      },
+      {
+        cameraRailDist: -1,
+        position: new Vector3(
+          curvePoints[5].x - 3,
+          curvePoints[5].y,
+          curvePoints[5].z
+        ),
+        title: "Security? don't worry",
+        subtitle: `Our security team is on the mission to guarantee security for each user!`,
       },
     ];
   }, []);
@@ -239,28 +257,92 @@ We have a wide range of beverages!`,
         ),
         rotation: new Euler(Math.PI / 3, 0, Math.PI / 3),
       },
-      // FINAL
-      {
-        scale: new Vector3(3, 3, 3),
-        position: new Vector3(
-          curvePoints[7].x + 12,
-          curvePoints[7].y - 5,
-          curvePoints[7].z + 60
-        ),
-        rotation: new Euler(-Math.PI / 4, -Math.PI / 6, 0),
-      },
-      {
-        scale: new Vector3(3, 3, 3),
-        position: new Vector3(
-          curvePoints[7].x - 12,
-          curvePoints[7].y + 5,
-          curvePoints[7].z + 120
-        ),
-        rotation: new Euler(Math.PI / 4, Math.PI / 6, 0),
-      },
+      // // FINAL
+      // {
+      //   scale: new Vector3(3, 3, 3),
+      //   position: new Vector3(
+      //     curvePoints[7].x + 12,
+      //     curvePoints[7].y - 5,
+      //     curvePoints[7].z + 60
+      //   ),
+      //   rotation: new Euler(-Math.PI / 4, -Math.PI / 6, 0),
+      // },
+      // {
+      //   scale: new Vector3(3, 3, 3),
+      //   position: new Vector3(
+      //     curvePoints[7].x - 12,
+      //     curvePoints[7].y + 5,
+      //     curvePoints[7].z + 120
+      //   ),
+      //   rotation: new Euler(Math.PI / 4, Math.PI / 6, 0),
+      // },
     ],
     []
   );
+
+  const people = useMemo(
+    () => [
+      // FINAL
+      {
+        scale: new Vector3(10, 10, 10),
+        position: new Vector3(
+          curvePoints[7].x - 20,
+          curvePoints[7].y - 10,
+          curvePoints[7].z + 60
+        ),
+        rotation: new Euler(1, 1, 6),
+      },
+      {
+        scale: new Vector3(10, 10, 10),
+        position: new Vector3(
+          curvePoints[7].x + 20,
+          curvePoints[7].y + 10,
+          curvePoints[7].z + 90
+        ),
+        rotation: new Euler(2, 0, 3),
+      },
+      {
+        scale: new Vector3(10, 10, 10),
+        position: new Vector3(
+          curvePoints[7].x - 10,
+          curvePoints[7].y + 5,
+          curvePoints[7].z + 100
+        ),
+        rotation: new Euler(0, -2, 0),
+      },
+    ], []
+  )
+  const rocks = useMemo(
+    () => [
+      {
+        scale: new Vector3(2, 2, 2),
+        position: new Vector3(
+          curvePoints[8].x - 20,
+          curvePoints[8].y + 3,
+          curvePoints[8].z + 100
+        ),
+        rotation: new Euler(-1, -2, -1),
+      },
+      {
+        scale: new Vector3(1, 1, 1),
+        position: new Vector3(
+          curvePoints[8].x - 25,
+          curvePoints[8].y + 30,
+          curvePoints[8].z + 50
+        ),
+        rotation: new Euler(-1, -2, -1),
+      },
+      {
+        scale: new Vector3(1, 1, 1),
+        position: new Vector3(
+          curvePoints[8].x - 25,
+          curvePoints[8].y + 10,
+          curvePoints[8].z + 200
+        ),
+        rotation: new Euler(-1, -2, -1),
+      },
+    ], []
+  )
 
   const shape = useMemo(() => {
     const shape = new THREE.Shape();
@@ -429,8 +511,8 @@ We have a wide range of beverages!`,
 
   const tl = useRef();
   const backgroundColors = useRef({
-    colorA: "#3535cc",
-    colorB: "#abaadd",
+    colorA: "#0074D9", // Dark space blue
+    colorB: "#7FDBFF", // Deep purple like a nebula
   });
 
   const planeInTl = useRef();
@@ -441,24 +523,20 @@ We have a wide range of beverages!`,
 
     tl.current.to(backgroundColors.current, {
       duration: 1,
-      colorA: "#ff9913", // Dark space blue
-      colorB: "#ff6f4e", // Deep purple like a nebula
+      colorA: "#3535cc",
+      colorB: "#abaadd",
     });
     tl.current.to(backgroundColors.current, {
       duration: 1,
-      colorA: "#f25375", // Cosmic violet
-      colorB: "#cc4c91", // Dark galaxy blue
+      colorA: "#FF851B", // Cosmic violet
+      colorB: "#B10DC9", // Dark galaxy blue
     });
     tl.current.to(backgroundColors.current, {
       duration: 1,
-      colorA: "#98509d", // Dark space red
-      colorB: "#5f5195", // Nebula blue
+      colorA: "#8027C0FF", // Dark space red
+      colorB: "#000000", // Nebula blue
     });
-    tl.current.to(backgroundColors.current, {
-      duration: 1,
-      colorA: "#2b4b7d", // Dark space red
-      colorB: "#003f5b", // Nebula blue
-    });
+
 
     tl.current.pause();
 
@@ -518,11 +596,16 @@ We have a wide range of beverages!`,
             />
           </group>
           <group ref={airplane}>
-            <Float floatIntensity={1} speed={1.5} rotationIntensity={0.5}>
+            <Float floatIntensity={1.2} speed={1.5} rotationIntensity={0.5}>
+              {/* <Jet
+                rotation-y={Math.PI}
+                scale={[0.01, 0.01, 0.01]}
+                position-y={-0.15}
+              /> */}
               <Spaceship
                 rotation-y={Math.PI}
                 scale={[0.002, 0.002, 0.002]}
-                position-y={-0.8}
+                position-y={-0.2}
               />
             </Float>
           </group>
@@ -559,6 +642,14 @@ We have a wide range of beverages!`,
         {clouds.map((cloud, index) => (
           <Cloud sceneOpacity={sceneOpacity} {...cloud} key={index} />
         ))}
+        {people.map((rock, index) => (
+          <Astronaut sceneOpacity={sceneOpacity} {...rock} key={index} />
+        ))}
+        {rocks.map((rock, index) => (
+          <Comet {...rock} key={index} />
+        ))}
+
+
       </>
     ),
     []
