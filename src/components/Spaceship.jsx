@@ -9,7 +9,7 @@ import React, { useRef } from "react";
 const HELIX_SPEED = 6;
 
 export function Spaceship(props) {
-  const { nodes, materials } = useGLTF("../../public/models/airplane/spaceship.glb")
+  const { nodes, materials } = useGLTF("./models/airplane/spaceship.glb")
 
   // const helix = useRef();
 
@@ -34,4 +34,4 @@ export function Spaceship(props) {
   )
 }
 
-useGLTF.preload("../../public/models/airplane/spaceship.glb")
+useGLTF.preload("./models/airplane/spaceship.glb")
