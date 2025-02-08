@@ -1,32 +1,30 @@
-# main.py (or a utility module)
-import os
-import gdown
-import pickle
-from job_recommender import pdf_extractor, text_preprocessing, recommender
-import streamlit as st
+# main.py
 
-# Function to download the file from Google Drive if not present
+import streamlit as st
+import pickle, os
+from job_recommender import pdf_extractor, text_preprocessing, recommender
+
+# Maximum allowed file size in bytes (3 MB)
+MAX_FILE_SIZE = 3 * 1024 * 1024
+
 def download_precomputed_file():
     local_path = 'data/precomputed_index.pkl'
-    # Ensure the 'data' directory exists
     if not os.path.exists('data'):
         os.makedirs('data')
         st.info("Created 'data' directory.")
         
     if not os.path.exists(local_path):
         st.info("Downloading precomputed index from Google Drive...")
-        # Replace with your actual file ID from Google Drive
-        file_id = "1XtQbINEDpuMXT8kWgOyNC52-mUQlyBKe"
+        file_id = "1XtQbINEDpuMXT8kWgOyNC52-mUQlyBKe"  # Replace with your actual file ID
         url = f"https://drive.google.com/uc?id={file_id}"
+        import gdown
         gdown.download(url, local_path, quiet=False)
     else:
         st.info("Precomputed index already exists locally.")
 
 @st.cache_resource(show_spinner=True)
 def get_recommender_from_precomputed():
-    # Ensure the file is present by downloading it if needed
     download_precomputed_file()
-
     precomputed_path = 'data/precomputed_index.pkl'
     if os.path.exists(precomputed_path):
         with open(precomputed_path, 'rb') as f:
@@ -46,6 +44,11 @@ def main():
     
     uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
     if uploaded_file is not None:
+        # Check if the file size exceeds the maximum allowed (3 MB)
+        if uploaded_file.size > MAX_FILE_SIZE:
+            st.error("The uploaded file is too large. Please upload a CV with a maximum size of 3 MB.")
+            return
+        
         file_bytes = uploaded_file.read()
         
         st.info("Extracting text from PDF...")
