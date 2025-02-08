@@ -1,5 +1,8 @@
 # main.py
 
+import os
+os.environ["STREAMLIT_FILE_WATCHER_TYPE"] = "none"
+
 import streamlit as st
 import pickle, os
 from job_recommender import pdf_extractor, text_preprocessing, recommender
