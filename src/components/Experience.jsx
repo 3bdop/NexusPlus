@@ -28,6 +28,26 @@ const AIRPLANE_MAX_ANGLE = 35;
 const FRICTION_DISTANCE = 42;
 
 export const Experience = () => {
+  // const [skip, setSkip] = useState(false); // Add skip state
+
+  // const handleSkip = () => {
+  //   setSkip(true);
+  //   setEnd(true);
+  //   planeOutTl.current.play();
+  // };
+
+  // useFrame((_state, delta) => {
+  //   if (skip) {
+  //     lastScroll.current = -8;
+  //     tl.current.seek(tl.current.duration());
+  //     const curPoint = curve.getPoint(-8);
+  //     cameraGroup.current.position.copy(curPoint);
+  //     const lookAtPoint = curve.getPoint(-8);
+  //     const targetLookAt = new THREE.Vector3().subVectors(curPoint, lookAtPoint).normalize();
+  //     cameraGroup.current.lookAt(cameraGroup.current.position.clone().add(targetLookAt));
+  //     return;
+  //   }
+  // })
   const curvePoints = useMemo(
     () => [
       new THREE.Vector3(0, 0, 0),
@@ -35,7 +55,7 @@ export const Experience = () => {
       new THREE.Vector3(100, 0, -2 * CURVE_DISTANCE),
       new THREE.Vector3(-100, 0, -3 * CURVE_DISTANCE),
       new THREE.Vector3(100, 0, -4 * CURVE_DISTANCE),
-      new THREE.Vector3(0, 0, -5 * CURVE_DISTANCE),
+      new THREE.Vector3(-50, 0, -5 * CURVE_DISTANCE),
       new THREE.Vector3(0, 0, -6 * CURVE_DISTANCE),
       new THREE.Vector3(0, 0, -7 * CURVE_DISTANCE),
       new THREE.Vector3(0, 0, -8 * CURVE_DISTANCE),
@@ -284,7 +304,43 @@ Have a seat and enjoy the ride!`,
     () => [
       // FINAL
       {
-        scale: new Vector3(10, 10, 10),
+        scale: new Vector3(7, 7, 7),
+        position: new Vector3(
+          curvePoints[6].x - 20,
+          curvePoints[6].y - 15,
+          curvePoints[6].z + 60
+        ),
+        rotation: new Euler(1, 1, 6),
+      },
+      {
+        scale: new Vector3(7, 7, 7),
+        position: new Vector3(
+          curvePoints[6].x - 22,
+          curvePoints[6].y - 1,
+          curvePoints[6].z + 20
+        ),
+        rotation: new Euler(3, 1, 6),
+      },
+      {
+        scale: new Vector3(7, 7, 7),
+        position: new Vector3(
+          curvePoints[6].x + 3,
+          curvePoints[6].y - 1,
+          curvePoints[6].z + 80
+        ),
+        rotation: new Euler(2, 0, 3),
+      },
+      {
+        scale: new Vector3(7, 7, 7),
+        position: new Vector3(
+          curvePoints[6].x - 22,
+          curvePoints[6].y + 5,
+          curvePoints[6].z + 120
+        ),
+        rotation: new Euler(0, -2, 0),
+      },
+      {
+        scale: new Vector3(7, 7, 7),
         position: new Vector3(
           curvePoints[7].x - 20,
           curvePoints[7].y - 10,
@@ -293,11 +349,20 @@ Have a seat and enjoy the ride!`,
         rotation: new Euler(1, 1, 6),
       },
       {
-        scale: new Vector3(10, 10, 10),
+        scale: new Vector3(7, 7, 7),
         position: new Vector3(
           curvePoints[7].x + 20,
           curvePoints[7].y + 10,
-          curvePoints[7].z + 90
+          curvePoints[7].z + 60
+        ),
+        rotation: new Euler(1, 1, 6),
+      },
+      {
+        scale: new Vector3(10, 10, 10),
+        position: new Vector3(
+          curvePoints[7].x + 20,
+          curvePoints[7].y - 10,
+          curvePoints[7].z + 80
         ),
         rotation: new Euler(2, 0, 3),
       },
@@ -306,7 +371,7 @@ Have a seat and enjoy the ride!`,
         position: new Vector3(
           curvePoints[7].x - 10,
           curvePoints[7].y + 5,
-          curvePoints[7].z + 100
+          curvePoints[7].z + 120
         ),
         rotation: new Euler(0, -2, 0),
       },
@@ -318,7 +383,7 @@ Have a seat and enjoy the ride!`,
         scale: new Vector3(2, 2, 2),
         position: new Vector3(
           curvePoints[8].x - 20,
-          curvePoints[8].y + 3,
+          curvePoints[8].y - 10,
           curvePoints[8].z + 100
         ),
         rotation: new Euler(-1, -2, -1),
@@ -327,8 +392,8 @@ Have a seat and enjoy the ride!`,
         scale: new Vector3(1, 1, 1),
         position: new Vector3(
           curvePoints[8].x - 25,
-          curvePoints[8].y + 30,
-          curvePoints[8].z + 110
+          curvePoints[8].y + 7,
+          curvePoints[8].z + 70
         ),
         rotation: new Euler(-1, -2, -1),
       },
@@ -336,7 +401,7 @@ Have a seat and enjoy the ride!`,
         scale: new Vector3(1, 1, 1),
         position: new Vector3(
           curvePoints[8].x - 25,
-          curvePoints[8].y + 12,
+          curvePoints[8].y + 6,
           curvePoints[8].z + 130
         ),
         rotation: new Euler(-1, -2, -1),
@@ -528,12 +593,12 @@ Have a seat and enjoy the ride!`,
     });
     tl.current.to(backgroundColors.current, {
       duration: 1,
-      colorA: "#FF851B", // Cosmic violet
+      colorA: "#FF5C1BFF", // Cosmic violet
       colorB: "#B10DC9", // Dark galaxy blue
     });
     tl.current.to(backgroundColors.current, {
       duration: 1,
-      colorA: "#8027C0FF", // Dark space red
+      colorA: "#6E16ADFF", // Dark space red
       colorB: "#000000", // Nebula blue
     });
 
@@ -588,6 +653,7 @@ Have a seat and enjoy the ride!`,
           <Speed />
           <Background backgroundColors={backgroundColors} />
           <group ref={cameraRail}>
+            <Star />
             <PerspectiveCamera
               ref={camera}
               position={[0, 0, 5]}
@@ -649,7 +715,23 @@ Have a seat and enjoy the ride!`,
           <Comet {...rock} key={index} sceneOpacity={sceneOpacity} />
         ))}
 
-
+        {/* SKIP BUTTON */}
+        {/* <button
+          style={{
+            position: "fixed",
+            top: "10px",
+            right: "10px",
+            padding: "10px 20px",
+            backgroundColor: "#fff",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "16px",
+            borderRadius: "5px",
+          }}
+          onClick={handleSkip}
+        >
+          Skip
+        </button> */}
       </>
     ),
     []

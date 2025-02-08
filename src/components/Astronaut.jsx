@@ -6,11 +6,13 @@ Command: npx gltfjsx@6.5.3 public/models/Astronaut/Astronaut.glb
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from "@react-three/fiber";
 import React, { useRef } from "react";
+import { fadeOnBeforeCompile } from "../utils/fadeMaterial";
 
-const HELIX_SPEED = 0.1;
+
+const HELIX_SPEED = 0.3;
 
 
-export function Astronaut(props) {
+export function Astronaut({ sceneOpacity, ...props }) {
   const { nodes, materials } = useGLTF('./models/Space/Astronaut.glb')
 
   const helix = useRef();
@@ -18,7 +20,37 @@ export function Astronaut(props) {
   useFrame((_state, delta) => {
     helix.current.rotation.z += delta * HELIX_SPEED;
   });
+
+  const materialRef = useRef([]);
+
+  useFrame(() => {
+    // materialRef.current.opacity = sceneOpacity.current;
+    materialRef.current.forEach((material) => {
+      if (material) {
+        material.opacity = sceneOpacity.current;
+      }
+    })
+  });
   return (
+    <group {...props} dispose={null} ref={helix}>
+      {Object.keys(nodes).map((key, index) => {
+        if (nodes[key].isMesh) {
+          return (
+            <mesh key={key} geometry={nodes[key].geometry}>
+              <meshStandardMaterial
+                ref={(el) => (materialRef.current[index] = el)} // Store ref for each material
+                onBeforeCompile={fadeOnBeforeCompile}
+                envMapIntensity={2}
+                transparent
+              // opacity={sceneOpacity.current}
+              />
+            </mesh>
+          );
+        }
+        return null;
+      })}
+    </group>
+    /*
     <group {...props} dispose={null} ref={helix}>
       <mesh geometry={nodes.group1167641645.geometry} material={materials.mat15} />
       <mesh geometry={nodes.group1707873932.geometry} material={materials.mat15} />
@@ -110,6 +142,7 @@ export function Astronaut(props) {
       <mesh geometry={nodes.group1679735649.geometry} material={materials.mat16} />
       <mesh geometry={nodes.group11481041.geometry} material={materials.mat16} />
     </group>
+    */
   )
 }
 

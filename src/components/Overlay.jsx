@@ -1,7 +1,6 @@
 import { useProgress } from "@react-three/drei";
 import { usePlay } from "../contexts/Play";
 import styled from "styled-components";
-import Button from "../styles/Button";
 const handleLoginClick = () => {
   console.log("Login button clicked");
   // Add your login logic here
@@ -10,6 +9,19 @@ const handleLoginClick = () => {
 const handleSignupClick = () => {
   console.log("Signup button clicked");
   // Add your signup logic here
+};
+
+export const NavBar = () => {
+  return (
+    <div className="navbar">
+      <button onClick={handleLoginClick} className="navbar__button">
+        Login
+      </button>
+      <button onClick={handleSignupClick} className="navbar__button">
+        Signup
+      </button>
+    </div>
+  );
 };
 export const Overlay = () => {
   const { progress } = useProgress();
@@ -24,6 +36,7 @@ export const Overlay = () => {
       />
       {progress === 100 && (
         <div className={`intro ${play ? "intro--disappear" : ""}`}>
+          {/* <NavBar /> */}
           <h1 className="logo">
             NEXUSPLUS
             <div className="spinner">
