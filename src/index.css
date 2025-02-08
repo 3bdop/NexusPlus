@@ -165,6 +165,9 @@ body {
 .intro--disappear .explore {
   animation: fadeOut 1s ease-in-out forwards;
 }
+.intro--disappear .cta {
+  animation: fadeOut 1s ease-in-out forwards;
+}
 
 .outro {
   position: absolute;
@@ -257,7 +260,7 @@ body {
 }
 
 /* From Uiverse.io by dalbrechtmartin */
-button {
+.custbutton {
   position: relative;
   padding: 25px 60px;
   background: #ffffff;
@@ -426,4 +429,65 @@ html.dark-mode {
 
 .navbar__button:hover {
   background-color: #424fff;
+}
+
+/* From Uiverse.io by alexmaracinaru */
+.cta {
+  border: none;
+  background: none;
+  cursor: pointer;
+  margin-top: 20px;
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  /* overflow: hidden; */
+  transition: 0.42s ease-in-out;
+  animation: fadeIn 2.4s ease-in-out 3s forwards;
+  opacity: 0;
+}
+
+.cta span {
+  padding-bottom: 7px;
+  letter-spacing: 4px;
+  font-size: 15px;
+  padding-right: 15px;
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+.cta svg {
+  transform: translateX(-8px);
+  transition: all 0.3s ease;
+}
+
+.cta:hover svg {
+  transform: translateX(0);
+}
+
+.cta:active svg {
+  transform: scale(0.9);
+}
+
+.hover-underline-animation {
+  position: relative;
+  color: black;
+  padding-bottom: 20px;
+}
+
+.hover-underline-animation:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #000000;
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.cta:hover .hover-underline-animation:after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
 }

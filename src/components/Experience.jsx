@@ -28,26 +28,6 @@ const AIRPLANE_MAX_ANGLE = 35;
 const FRICTION_DISTANCE = 42;
 
 export const Experience = () => {
-  // const [skip, setSkip] = useState(false); // Add skip state
-
-  // const handleSkip = () => {
-  //   setSkip(true);
-  //   setEnd(true);
-  //   planeOutTl.current.play();
-  // };
-
-  // useFrame((_state, delta) => {
-  //   if (skip) {
-  //     lastScroll.current = -8;
-  //     tl.current.seek(tl.current.duration());
-  //     const curPoint = curve.getPoint(-8);
-  //     cameraGroup.current.position.copy(curPoint);
-  //     const lookAtPoint = curve.getPoint(-8);
-  //     const targetLookAt = new THREE.Vector3().subVectors(curPoint, lookAtPoint).normalize();
-  //     cameraGroup.current.lookAt(cameraGroup.current.position.clone().add(targetLookAt));
-  //     return;
-  //   }
-  // })
   const curvePoints = useMemo(
     () => [
       new THREE.Vector3(0, 0, 0),
@@ -55,10 +35,10 @@ export const Experience = () => {
       new THREE.Vector3(100, 0, -2 * CURVE_DISTANCE),
       new THREE.Vector3(-100, 0, -3 * CURVE_DISTANCE),
       new THREE.Vector3(100, 0, -4 * CURVE_DISTANCE),
-      new THREE.Vector3(-50, 0, -5 * CURVE_DISTANCE),
+      new THREE.Vector3(0, 0, -5 * CURVE_DISTANCE),
       new THREE.Vector3(0, 0, -6 * CURVE_DISTANCE),
       new THREE.Vector3(0, 0, -7 * CURVE_DISTANCE),
-      new THREE.Vector3(0, 0, -8 * CURVE_DISTANCE),
+      // new THREE.Vector3(0, 0, -8 * CURVE_DISTANCE),
     ],
     []
   );
@@ -198,9 +178,17 @@ Have a seat and enjoy the ride!`,
         ),
       },
       {
+        scale: new Vector3(3, 3, 3),
+        position: new Vector3(
+          curvePoints[2].x - 18,
+          curvePoints[2].y + 7,
+          curvePoints[2].z + 55
+        ),
+      },
+      {
         scale: new Vector3(2, 2, 2),
         position: new Vector3(
-          curvePoints[2].x - 2,
+          curvePoints[2].x - 20,
           curvePoints[2].y + 4,
           curvePoints[2].z - 26
         ),
@@ -208,7 +196,7 @@ Have a seat and enjoy the ride!`,
       {
         scale: new Vector3(4, 4, 4),
         position: new Vector3(
-          curvePoints[2].x + 12,
+          curvePoints[2].x + 2,
           curvePoints[2].y + 1,
           curvePoints[2].z - 86
         ),
@@ -306,8 +294,44 @@ Have a seat and enjoy the ride!`,
       {
         scale: new Vector3(7, 7, 7),
         position: new Vector3(
+          curvePoints[5].x + 50,
+          curvePoints[5].y - 7,
+          curvePoints[5].z + 60
+        ),
+        rotation: new Euler(1, 1, 6),
+      },
+      {
+        scale: new Vector3(7, 7, 7),
+        position: new Vector3(
+          curvePoints[5].x - 12,
+          curvePoints[5].y - 1,
+          curvePoints[5].z + 20
+        ),
+        rotation: new Euler(3, 1, 6),
+      },
+      {
+        scale: new Vector3(7, 7, 7),
+        position: new Vector3(
+          curvePoints[5].x + 25,
+          curvePoints[5].y - 1,
+          curvePoints[5].z + 80
+        ),
+        rotation: new Euler(2, 0, 3),
+      },
+      {
+        scale: new Vector3(7, 7, 7),
+        position: new Vector3(
+          curvePoints[5].x + 18,
+          curvePoints[5].y + 5,
+          curvePoints[5].z + 10
+        ),
+        rotation: new Euler(0, -2, 0),
+      },
+      {
+        scale: new Vector3(7, 7, 7),
+        position: new Vector3(
           curvePoints[6].x - 20,
-          curvePoints[6].y - 15,
+          curvePoints[6].y - 10,
           curvePoints[6].z + 60
         ),
         rotation: new Euler(1, 1, 6),
@@ -315,63 +339,27 @@ Have a seat and enjoy the ride!`,
       {
         scale: new Vector3(7, 7, 7),
         position: new Vector3(
-          curvePoints[6].x - 22,
-          curvePoints[6].y - 1,
-          curvePoints[6].z + 20
+          curvePoints[6].x + 7,
+          curvePoints[6].y + 10,
+          curvePoints[6].z + 60
         ),
-        rotation: new Euler(3, 1, 6),
+        rotation: new Euler(1, 1, 6),
       },
       {
-        scale: new Vector3(7, 7, 7),
+        scale: new Vector3(10, 10, 10),
         position: new Vector3(
-          curvePoints[6].x + 3,
-          curvePoints[6].y - 1,
+          curvePoints[6].x + 0,
+          curvePoints[6].y - 10,
           curvePoints[6].z + 80
         ),
         rotation: new Euler(2, 0, 3),
       },
       {
-        scale: new Vector3(7, 7, 7),
+        scale: new Vector3(10, 10, 10),
         position: new Vector3(
-          curvePoints[6].x - 22,
+          curvePoints[6].x - 17,
           curvePoints[6].y + 5,
-          curvePoints[6].z + 120
-        ),
-        rotation: new Euler(0, -2, 0),
-      },
-      {
-        scale: new Vector3(7, 7, 7),
-        position: new Vector3(
-          curvePoints[7].x - 20,
-          curvePoints[7].y - 10,
-          curvePoints[7].z + 60
-        ),
-        rotation: new Euler(1, 1, 6),
-      },
-      {
-        scale: new Vector3(7, 7, 7),
-        position: new Vector3(
-          curvePoints[7].x + 20,
-          curvePoints[7].y + 10,
-          curvePoints[7].z + 60
-        ),
-        rotation: new Euler(1, 1, 6),
-      },
-      {
-        scale: new Vector3(10, 10, 10),
-        position: new Vector3(
-          curvePoints[7].x + 20,
-          curvePoints[7].y - 10,
-          curvePoints[7].z + 80
-        ),
-        rotation: new Euler(2, 0, 3),
-      },
-      {
-        scale: new Vector3(10, 10, 10),
-        position: new Vector3(
-          curvePoints[7].x - 10,
-          curvePoints[7].y + 5,
-          curvePoints[7].z + 120
+          curvePoints[6].z + 90
         ),
         rotation: new Euler(0, -2, 0),
       },
@@ -382,27 +370,27 @@ Have a seat and enjoy the ride!`,
       {
         scale: new Vector3(2, 2, 2),
         position: new Vector3(
-          curvePoints[8].x - 20,
-          curvePoints[8].y - 10,
-          curvePoints[8].z + 100
+          curvePoints[7].x - 20,
+          curvePoints[7].y - 10,
+          curvePoints[7].z + 100
         ),
         rotation: new Euler(-1, -2, -1),
       },
       {
         scale: new Vector3(1, 1, 1),
         position: new Vector3(
-          curvePoints[8].x - 25,
-          curvePoints[8].y + 7,
-          curvePoints[8].z + 70
+          curvePoints[7].x - 25,
+          curvePoints[7].y + 7,
+          curvePoints[7].z + 70
         ),
         rotation: new Euler(-1, -2, -1),
       },
       {
         scale: new Vector3(1, 1, 1),
         position: new Vector3(
-          curvePoints[8].x - 25,
-          curvePoints[8].y + 6,
-          curvePoints[8].z + 130
+          curvePoints[7].x - 25,
+          curvePoints[7].y + 6,
+          curvePoints[7].z + 130
         ),
         rotation: new Euler(-1, -2, -1),
       },
