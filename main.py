@@ -1,4 +1,8 @@
-# main.py (or a utility module)
+# main.py
+
+import os
+os.environ["STREAMLIT_FILE_WATCHER_TYPE"] = "none"
+
 import os
 import gdown
 import pickle
