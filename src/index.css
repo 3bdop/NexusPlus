@@ -42,7 +42,7 @@ body {
   left: 0;
   bottom: 0;
   right: 0;
-  background: white;
+  background: rgb(154, 207, 225);
   transition: opacity 2s ease-in-out;
 }
 
@@ -401,4 +401,29 @@ html.dark-mode {
   height: 100%;
   pointer-events: none; /* Ensure the stars do not interfere with other elements */
   z-index: -1; /* Ensure the stars are behind other content */
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+  /* background-color: rgba(0, 0, 0, 0.5); */
+  z-index: 1000;
+}
+
+.navbar__button {
+  margin-left: 10px;
+  padding: 10px 20px;
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+.navbar__button:hover {
+  background-color: #424fff;
 }

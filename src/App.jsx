@@ -12,7 +12,7 @@ function App() {
   const effects = useMemo(
     () => (
       <EffectComposer>
-        <Noise opacity={0.09} />
+        <Noise opacity={0.12} />
       </EffectComposer>
     ),
     []
