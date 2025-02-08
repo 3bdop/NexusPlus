@@ -2,8 +2,9 @@
 
 import re
 import spacy
+from .advanced_ner import extract_entities  # Import the advanced NER module
 
-# Load the spaCy English model (run: python -m spacy download en_core_web_sm if not already downloaded)
+# Load a lightweight spaCy model for cleaning and lemmatization.
 nlp = spacy.load("en_core_web_sm")
 
 def clean_text(text: str) -> str:
@@ -13,7 +14,7 @@ def clean_text(text: str) -> str:
     lines = text.splitlines()
     cleaned_lines = []
     for line in lines:
-        # Remove lines that look like page numbers or headers
+        # Remove lines that look like page numbers or headers.
         if re.match(r'^\s*(page\s*\d+|\d+)\s*$', line.lower()):
             continue
         line = re.sub(r'[-_]{2,}', '', line)
@@ -24,7 +25,7 @@ def clean_text(text: str) -> str:
 
 def preprocess_text(text: str) -> (str, list):
     """
-    Preprocess text: cleaning, lemmatization, and named entity recognition.
+    Preprocess text: cleaning, lemmatization, and advanced named entity recognition (NER).
     
     Returns:
       - normalized (lemmatized) text
@@ -34,5 +35,8 @@ def preprocess_text(text: str) -> (str, list):
     doc = nlp(cleaned)
     tokens = [token.lemma_ for token in doc if not token.is_stop and not token.is_punct]
     normalized_text = " ".join(tokens)
-    entities = [(ent.text, ent.label_) for ent in doc.ents]
+    
+    # Extract entities using the advanced NER module.
+    entities = extract_entities(cleaned)
+    
     return normalized_text, entities
