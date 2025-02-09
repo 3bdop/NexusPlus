@@ -11,18 +11,6 @@ const handleSignupClick = () => {
   // Add your signup logic here
 };
 
-export const NavBar = () => {
-  return (
-    <div className="navbar">
-      <button onClick={handleLoginClick} className="navbar__button">
-        Login
-      </button>
-      <button onClick={handleSignupClick} className="navbar__button">
-        Signup
-      </button>
-    </div>
-  );
-};
 export const Overlay = () => {
   const { progress } = useProgress();
   const { play, end, setPlay, hasScroll, setEnd } = usePlay();
@@ -35,33 +23,30 @@ export const Overlay = () => {
         className={`loader ${progress === 100 ? "loader--disappear" : ""}`}
       />
       {progress === 100 && (
-        <div className={`intro ${play ? "intro--disappear" : ""}`}>
+        <div className={`intro ${play ? "intro--disappear" : ""} ${end ? "intro--disappear" : ""}`}>
+          <h1 className="logo">
+            NEXUSPLUS
+            <div className="spinner">
+              <div className="spinner__image" />
+            </div>
+          </h1>
           {!end && (
-            <>
-
-              <h1 className="logo">
-                NEXUSPLUS
-                <div className="spinner">
-                  <div className="spinner__image" />
-                </div>
-              </h1>
-              <p className="intro__scroll">Scroll to begin the journey</p>
-              <button
-                className="explore"
-                onClick={() => {
-                  setPlay(true);
-                }}
-              >
-                Explore
-              </button>
-              <button className="cta" onClick={() => { setEnd(true) }}>
-                <span className="hover-underline-animation"> Skip </span>
-                <svg id="arrow-horizontal" xmlns="http://www.w3.org/2000/svg" width={30} height={10} viewBox="0 0 46 16">
-                  <path id="Path_10" data-name="Path 10" d="M8,0,6.545,1.455l5.506,5.506H-30V9.039H12.052L6.545,14.545,8,16l8-8Z" transform="translate(30)" />
-                </svg>
-              </button>
-            </>
+            <p className="intro__scroll">Scroll to begin the journey</p>
           )}
+          <button
+            className="explore"
+            onClick={() => {
+              setPlay(true);
+            }}
+          >
+            Explore
+          </button>
+          <button className="cta" onClick={() => { setEnd(true) }}>
+            <span className="hover-underline-animation"> Skip </span>
+            <svg id="arrow-horizontal" xmlns="http://www.w3.org/2000/svg" width={30} height={10} viewBox="0 0 46 16">
+              <path id="Path_10" data-name="Path 10" d="M8,0,6.545,1.455l5.506,5.506H-30V9.039H12.052L6.545,14.545,8,16l8-8Z" transform="translate(30)" />
+            </svg>
+          </button>
         </div>
       )}
       <div className={`outro ${end ? "outro--appear" : ""}`}>
