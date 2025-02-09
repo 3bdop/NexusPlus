@@ -18,7 +18,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         outerAlpha={0.2}
         innerScale={0.7}
         outerScale={5}
-        showSystemCursor
+      // showSystemCursor
       // outerScale={2}
       // outerAlpha={0}
       // hasBlendMode={true}
