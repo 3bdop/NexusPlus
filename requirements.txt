@@ -1,6 +1,6 @@
 streamlit
 pandas
-faiss-cpu==1.7.3
+faiss-cpu
 torch
 sentence-transformers
 spacy
