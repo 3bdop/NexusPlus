@@ -442,7 +442,7 @@ html.dark-mode {
   z-index: 1;
   /* overflow: hidden; */
   transition: 0.42s ease-in-out;
-  animation: fadeIn 2.4s ease-in-out 3s forwards;
+  animation: fadeIn 2.4s ease-in-out 2.5s forwards;
   opacity: 0;
 }
 
