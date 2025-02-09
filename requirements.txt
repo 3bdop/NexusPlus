@@ -1,12 +1,14 @@
-PyMuPDF
-pytesseract
-Pillow
-spacy
-sentence_transformers
-faiss-cpu
 streamlit
-gdown
-transformers
-en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0.tar.gz
-en_core_web_trf @ https://github.com/explosion/spacy-models/releases/download/en_core_web_trf-3.5.0/en_core_web_trf-3.5.0.tar.gz
 pandas
+faiss-cpu==1.7.3
+torch
+sentence-transformers
+spacy
+spacy-transformers
+transformers
+pytesseract
+PyMuPDF
+Pillow
+gdown
+en-core-web-trf
+en-core-web-sm
