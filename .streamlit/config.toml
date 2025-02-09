@@ -1,3 +1,5 @@
 [server]
 fileWatcherType = "none"
-maxUploadSize = 3  # In megabytes
+
+[server]
+maxUploadSize = 3
