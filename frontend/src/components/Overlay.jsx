@@ -1,15 +1,6 @@
 import { useProgress } from "@react-three/drei";
 import { usePlay } from "../contexts/Play";
 import styled from "styled-components";
-const handleLoginClick = () => {
-  console.log("Login button clicked");
-  // Add your login logic here
-};
-
-const handleSignupClick = () => {
-  console.log("Signup button clicked");
-  // Add your signup logic here
-};
 
 export const Overlay = () => {
   const { progress } = useProgress();
@@ -53,7 +44,7 @@ export const Overlay = () => {
         <div className="outro__content">
           <p className="outro__text">To have the maximum experience, join us !</p>
           <div className="outro__buttons">
-            <button onClick={() => handleLoginClick()} className="outro_button custbutton">
+            {/* <button onClick={() => handleLoginClick()} className="outro_button custbutton">
               Login
               <div className="star-1">
                 <svg xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53" style={{ shapeRendering: 'geometricPrecision', textRendering: 'geometricPrecision', imageRendering: 'optimizeQuality', fillRule: 'evenodd', clipRule: 'evenodd' }} version="1.1" xmlSpace="preserve" xmlns="http://www.w3.org/2000/svg">
@@ -166,7 +157,7 @@ export const Overlay = () => {
                   </g>
                 </svg>
               </div>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
