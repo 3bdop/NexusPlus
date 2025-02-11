@@ -7,6 +7,9 @@ import "./index.css";
 import AnimatedCursor from "react-animated-cursor"
 
 import NotFoundPage from "./pages/NotFoundPage.jsx"
+import Home from "./pages/Home.jsx";
+import Login from "./pages/Login.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 const router = createBrowserRouter([
   {
@@ -18,8 +21,22 @@ const router = createBrowserRouter([
     ),
     errorElement: <NotFoundPage />,
   },
-
+  {
+    path: '/home',
+    element: (
+      <ProtectedRoute>
+        <Home />
+      </ProtectedRoute>
+    ),
+    errorElement: <NotFoundPage />
+  },
+  // {
+  //   path: '/login',
+  //   element: <Login />,
+  //   errorElement: <NotFoundPage />
+  // }
 ]);
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <RouterProvider router={router} />
