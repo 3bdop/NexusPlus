@@ -6,91 +6,146 @@ os.environ["STREAMLIT_FILE_WATCHER_TYPE"] = "none"
 import os
 import gdown
 import pickle
+import random
 from job_recommender import pdf_extractor, text_preprocessing, recommender
 import streamlit as st
 
-# Function to download the file from Google Drive if not present
+# Custom CSS with simplified styling
+st.markdown("""
+    <style>
+    .status-box {
+       transition: opacity 0.5s ease-in-out;
+       font-size: 18px;
+       margin: 15px 0;
+       padding: 10px;
+       border-radius: 5px;
+       background: #f8f9fa;
+    }
+    .job-title {
+       font-size: 24px;
+       font-weight: bold;
+       margin-bottom: 10px;
+    }
+    .job-description {
+       font-size: 16px;
+       line-height: 1.6;
+       color: #555;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# Status message variations for each step
+STATUS_MESSAGES = {
+    'pdf_processing': [
+        "Analyzing document structure...",
+        "Extracting content from PDF...",
+        "Processing document layout...",
+        "Converting PDF to readable format...",
+        "Reading through your CV..."
+    ],
+    'text_preprocessing': [
+        "Understanding your experience...",
+        "Analyzing your skills and qualifications...",
+        "Processing your career history...",
+        "Identifying key professional attributes...",
+        "Examining your expertise..."
+    ],
+    'matching': [
+        "Searching for relevant positions...",
+        "Matching your profile with opportunities...",
+        "Analyzing job market fit...",
+        "Finding your ideal roles...",
+        "Evaluating potential matches..."
+    ]
+}
+
+def update_status(placeholder, stage):
+    """Display a random status message for the current processing stage."""
+    message = random.choice(STATUS_MESSAGES[stage])
+    placeholder.markdown(
+        f'<div class="status-box">🤔 {message}</div>',
+        unsafe_allow_html=True
+    )
+
 def download_precomputed_file():
     local_path = 'data/precomputed_index.pkl'
-    # Ensure the 'data' directory exists
     if not os.path.exists('data'):
         os.makedirs('data')
-        st.info("Created 'data' directory.")
-        
     if not os.path.exists(local_path):
-        st.info("Downloading precomputed index from Google Drive...")
-        # Replace with your actual file ID from Google Drive
+        st.info("Downloading job database...")
         file_id = "1XtQbINEDpuMXT8kWgOyNC52-mUQlyBKe"
         url = f"https://drive.google.com/uc?id={file_id}"
         gdown.download(url, local_path, quiet=False)
-    else:
-        st.info("Precomputed index already exists locally.")
 
-@st.cache_resource(show_spinner=True)
+@st.cache_resource(show_spinner=False)
 def get_recommender_from_precomputed():
-    # Ensure the file is present by downloading it if needed
     download_precomputed_file()
-
-    precomputed_path = 'data/precomputed_index.pkl'
-    if os.path.exists(precomputed_path):
-        with open(precomputed_path, 'rb') as f:
+    try:
+        with open('data/precomputed_index.pkl', 'rb') as f:
             precomputed = pickle.load(f)
         return recommender.JobRecommender(
             precomputed['job_postings'],
             job_embeddings=precomputed['job_embeddings'],
             index=precomputed['index']
         )
-    else:
-        st.error("Precomputed data not found. Please check the download process.")
+    except Exception as e:
+        st.error("Failed to load job database. Please try again.")
         return None
 
 def main():
     st.title("Job Recommendation System")
-    st.write("Upload your CV (in PDF format) to receive personalized job recommendations.")
+    st.write("Upload your CV (PDF format) to get personalized job recommendations")
     
     uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
     if uploaded_file is not None:
-        file_bytes = uploaded_file.read()
+        status_placeholder = st.empty()
         
-        st.info("Extracting text from PDF...")
-        extracted_text = pdf_extractor.extract_text_from_pdf(file_bytes)
-        if not extracted_text or len(extracted_text.strip()) == 0:
-            st.error("No text could be extracted from the PDF. Please try a different file.")
+        # Step 1: Extract text from PDF
+        update_status(status_placeholder, 'pdf_processing')
+        extracted_text = pdf_extractor.extract_text_from_pdf(uploaded_file.read())
+        if not extracted_text.strip():
+            st.error("Could not extract text from PDF. Please try a different file.")
             return
         
-        st.success("Text extraction complete!")
-        st.write("### Extracted Text Preview:")
-        st.text(extracted_text[:1000] + " ...")
+        # Step 2: Preprocess text
+        update_status(status_placeholder, 'text_preprocessing')
+        processed_text, _ = text_preprocessing.preprocess_text(extracted_text)
         
-        st.info("Preprocessing text and extracting entities...")
-        processed_text, entities = text_preprocessing.preprocess_text(extracted_text)
-        st.success("Text preprocessing complete!")
-        
-        if entities:
-            st.write("### Extracted Entities:")
-            st.write(entities)
-        else:
-            st.write("No significant entities detected.")
-        
-        st.info("Loading precomputed recommendation index...")
+        # Step 3: Get recommendations
+        update_status(status_placeholder, 'matching')
         rec = get_recommender_from_precomputed()
         if rec is None:
-            st.error("Failed to load precomputed job postings dataset.")
             return
-        st.success("Precomputed job postings loaded and index ready!")
-        
-        st.info("Computing job recommendations...")
+            
         recommendations = rec.recommend(processed_text)
-        st.success("Recommendations computed!")
+        status_placeholder.empty()
         
+        # === CHANGES START: Normalize adjusted match scores for user-friendly display ===
         if recommendations:
-            st.write("## Recommended Jobs:")
-            for rec_job in recommendations:
-                st.markdown(f"**{rec_job['title']}** (Score: {rec_job['score']:.2f})")
-                st.write(rec_job['description'])
-                st.markdown("---")
+            # Get the adjusted scores (if not present, fallback to the original score)
+            adjusted_scores = [job.get("adjusted_score", job.get("score", 0)) for job in recommendations]
+            min_score, max_score = min(adjusted_scores), max(adjusted_scores)
+            for job in recommendations:
+                # Normalize to a 0-100 scale; add a tiny constant to avoid division by zero.
+                normalized = (job.get("adjusted_score", job.get("score", 0)) - min_score) / (max_score - min_score + 1e-8) * 100
+                job["normalized_score"] = normalized
+        # === CHANGES END ===
+        
+        # Step 4: Display recommendations
+        if recommendations:
+            st.write("## Recommended Jobs")
+            st.info("Note:  Match Score accounts for both the similarity between your CV and job description and an experience adjustment. higher values indicating a better match.")
+            for job in recommendations:
+                with st.expander(job['title'], expanded=False):
+                    st.markdown(f'<div class="job-title">{job["title"]}</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="job-description">{job["description"]}</div>', unsafe_allow_html=True)
+                    # === CHANGES: Display both the raw adjusted score and normalized match quality ===
+                    st.markdown(
+                        f'<div class="job-description"><b>Match Quality:</b> {job["normalized_score"]:.0f} / 100</div>',
+                        unsafe_allow_html=True
+                    )
         else:
-            st.write("No recommendations found. Please try with a different CV.")
+            st.write("No matching jobs found. Please try with a different CV.")
 
 if __name__ == "__main__":
     main()
