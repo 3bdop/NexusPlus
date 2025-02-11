@@ -586,3 +586,12 @@ html.dark-mode {
 .form-group input.error {
   border-color: #ff3333;
 }
+
+.avatar-creator-container {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
