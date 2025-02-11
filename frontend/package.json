@@ -12,6 +12,7 @@
     "@react-three/drei": "^9.56.28",
     "@react-three/fiber": "^8.11.5",
     "@react-three/postprocessing": "^2.7.1",
+    "@readyplayerme/react-avatar-creator": "^0.5.0",
     "axios": "^1.7.9",
     "gsap": "^3.11.5",
     "lamina": "^1.1.23",
