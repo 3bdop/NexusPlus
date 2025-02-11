@@ -1,8 +1,13 @@
 import { useProgress } from "@react-three/drei";
 import { usePlay } from "../contexts/Play";
 import styled from "styled-components";
-
+import { useNavigate } from "react-router-dom";
+import Login from "../pages/Login";
 export const Overlay = () => {
+  const navigate = useNavigate()
+  const handleLoginClick = () => {
+    navigate("/login")
+  }
   const { progress } = useProgress();
   const { play, end, setPlay, hasScroll, setEnd } = usePlay();
   return (
@@ -44,6 +49,7 @@ export const Overlay = () => {
         <div className="outro__content">
           <p className="outro__text">To have the maximum experience, join us !</p>
           <div className="outro__buttons">
+            <Login />
             {/* <button onClick={() => handleLoginClick()} className="outro_button custbutton">
               Login
               <div className="star-1">
@@ -100,8 +106,8 @@ export const Overlay = () => {
                   </g>
                 </svg>
               </div>
-            </button>
-            <button onClick={() => handleSignupClick()} className="outro_button custbutton">
+            </button> */}
+            {/* <button onClick={() => handleSignupClick()} className="outro_button custbutton">
               Signup
               <div className="star-1">
                 <svg xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53" style={{ shapeRendering: 'geometricPrecision', textRendering: 'geometricPrecision', imageRendering: 'optimizeQuality', fillRule: 'evenodd', clipRule: 'evenodd' }} version="1.1" xmlSpace="preserve" xmlns="http://www.w3.org/2000/svg">
