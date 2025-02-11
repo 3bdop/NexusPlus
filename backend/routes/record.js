@@ -80,7 +80,7 @@ router.post("/api/login", async (req, res) => {
         const sessionId = crypto.randomBytes(16).toString('hex');
 
         // Set session expiration time (e.g., 1 hour from now)
-        const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 1 hour
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
         // Store the session in the sessions collection
         const sessionsCollection = db.collection('session');
@@ -95,7 +95,7 @@ router.post("/api/login", async (req, res) => {
         res.cookie('sessionId', sessionId, {
             httpOnly: true,
             // secure: process.env.NODE_ENV !== 'production',
-            maxAge: 60 * 60 * 1000,
+            maxAge: 5 * 60 * 1000,
             sameSite: 'lax', // Add this
             path: '/' // Add this
         });
@@ -156,4 +156,33 @@ router.get("/api/check-auth", validateSession, (req, res) => {
         }
     });
 });
+
+router.patch("/api/add-avatarId", async (req, res) => {
+    try {
+        const { avatarUrl } = req.body;
+
+        if (!avatarUrl) {
+            return res.status(400).json({ message: "Avatar URL is required" });
+        }
+
+        const usersCollection = db.collection("users");
+        const result = await usersCollection.updateOne(
+            { username: req.user.username },
+            { $set: { avatarUrl: avatarUrl } }
+        );
+
+        if (result.modifiedCount === 0) {
+            return res.status(404).json({ message: "User not found or avatar not updated" });
+        }
+
+        res.status(200).json({
+            message: "Avatar updated successfully",
+            avatarUrl: avatarUrl
+        });
+
+    } catch (error) {
+        console.error("Error updating avatar:", error);
+        res.status(500).json({ message: "Error updating avatar" });
+    }
+})
 export default router;
