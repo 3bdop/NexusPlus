@@ -1,11 +1,13 @@
 import { AvatarCreator } from '@readyplayerme/react-avatar-creator';
-import { useNavigate } from 'react-router-dom';
+import { data, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const config = {
     clearCache: true,
     bodyType: 'fullbody',
     quickStart: false,
     language: 'en',
+    showSettings: false,
 };
 
 const style = { width: '100%', height: '100vh', border: 'none' };
@@ -18,12 +20,13 @@ export default function AvatarCreation() {
     };
 
     const handleOnAvatarExported = async (event) => {
+        console.log(event.data)
         try {
             const avatarUrl = event.data.url;
             console.log(`Avatar URL is: ${avatarUrl}`);
 
             const response = await axios.patch('http://localhost:5050/api/add-avatarId',
-                { avatarUrl },
+                data,
                 {
                     withCredentials: true,
                     headers: {
@@ -33,7 +36,6 @@ export default function AvatarCreation() {
             );
 
             if (response.status === 200) {
-                localStorage.setItem('avatarUrl', avatarUrl);
                 navigate('/home');
             }
         } catch (error) {
