@@ -495,7 +495,7 @@ html.dark-mode {
 /* Transparent and blurred form wrapper */
 .login-form-wrapper {
   background: rgba(255, 255, 255, 0.2); /* Semi-transparent white background */
-  backdrop-filter: blur(10px); /* Blur effect */
+  backdrop-filter: blur(1px); /* Blur effect */
   padding: 30px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.3); /* Light border for contrast */
@@ -594,4 +594,18 @@ html.dark-mode {
   top: 0;
   left: 0;
   overflow: hidden;
+}
+
+/*For Home page*/
+.avatar-preview {
+  width: 40%;
+  height: 70%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #007bff;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
