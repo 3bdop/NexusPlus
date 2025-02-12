@@ -13,9 +13,11 @@
     "@react-three/fiber": "^8.11.5",
     "@react-three/postprocessing": "^2.7.1",
     "@readyplayerme/react-avatar-creator": "^0.5.0",
+    "@readyplayerme/visage": "^5.1.0",
     "axios": "^1.7.9",
     "gsap": "^3.11.5",
     "lamina": "^1.1.23",
+    "postprocessing": "^6.35.6",
     "react": "^18.2.0",
     "react-animated-cursor": "^2.11.2",
     "react-dom": "^18.2.0",
@@ -23,7 +25,7 @@
     "react-router-dom": "^7.1.5",
     "sharp": "^0.33.5",
     "styled-components": "^6.1.15",
-    "three": "^0.150.1"
+    "three": "^0.166.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.27",
