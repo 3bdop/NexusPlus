@@ -59,7 +59,7 @@ export const Experience = () => {
           curvePoints[1].y,
           curvePoints[1].z
         ),
-        title: `Welcome 2 NexusPlus,`,
+        title: `Welcome 2 NexusPlus✈️`,
         subtitle: `
 Have a seat and enjoy the ride!`,
       },
@@ -90,7 +90,7 @@ Have a seat and enjoy the ride!`,
           curvePoints[4].y,
           curvePoints[4].z - 12
         ),
-        title: "AI included? no issues🤖",
+        title: "First to included AI🤖",
         subtitle: `We integrated AI, to make it easier for our guests!`
       },
       {
@@ -100,7 +100,7 @@ Have a seat and enjoy the ride!`,
           curvePoints[5].y,
           curvePoints[5].z
         ),
-        title: "Security? don't worry",
+        title: "Security? don't worry🔐",
         subtitle: `Our security team is on the mission to guarantee security for each user!`,
       },
     ];
@@ -636,7 +636,7 @@ Have a seat and enjoy the ride!`,
   return useMemo(
     () => (
       <>
-        <directionalLight position={[0, 3, 1]} intensity={0.1} />
+        <directionalLight position={[0, 3, 1]} intensity={1} />
         <group ref={cameraGroup}>
           <Speed />
           <Background backgroundColors={backgroundColors} />
@@ -703,23 +703,6 @@ Have a seat and enjoy the ride!`,
           <Comet {...rock} key={index} sceneOpacity={sceneOpacity} />
         ))}
 
-        {/* SKIP BUTTON */}
-        {/* <button
-          style={{
-            position: "fixed",
-            top: "10px",
-            right: "10px",
-            padding: "10px 20px",
-            backgroundColor: "#fff",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "16px",
-            borderRadius: "5px",
-          }}
-          onClick={handleSkip}
-        >
-          Skip
-        </button> */}
       </>
     ),
     []

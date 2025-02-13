@@ -23,7 +23,8 @@ const ProtectedRoute = ({ children }) => {
     }, []);
 
     if (isLoading) {
-        return <div>Loading...</div>; // Or your loading component
+        // return <div>Loading...</div>; // Or your loading component
+        return <></>; // Or your loading component
     }
 
     if (!isAuthenticated) {

@@ -9,6 +9,7 @@ import { ObjectId } from "mongodb";
 import crypto from 'crypto'; // For generating session IDs
 import bcrypt from 'bcrypt';
 import validateSession from "../middleware/validateSession.js"
+import session from "express-session";
 
 // router is an instance of the express router.
 // We use it to define our routes.
@@ -23,32 +24,47 @@ router.get("/", async (req, res) => {
 });
 
 //* This section will help you get a single record by id
-router.get("/:id", async (req, res) => {
-    let collection = await db.collection("users");
-    let query = { _id: new ObjectId(req.params.id) };
-    let result = await collection.findOne(query);
-    console.log(query)
-    if (!result) res.send("Not found").status(404);
-    else res.send(result).status(200);
+router.get("/api/get-avatarUrl/:id", async (req, res) => {
+    try {
+        const userId = req.params.id;
+        if (!userId) {
+            return res.status(400).send("User ID is required.");
+        }
+
+        const collection = db.collection("users");
+        const result = await collection.findOne({ _id: new ObjectId(userId) });
+
+        if (!result) {
+            return res.status(404).send("User not found.");
+        }
+
+        res.status(200).send({ avatarUrl: result.avatarUrl });
+    } catch (err) {
+        console.error("Error fetching avatar URL:", err);
+        res.status(500).send("An error occurred while fetching the avatar URL.");
+    }
 });
 
-//* This section will help you create a new record.
-// router.post("/", async (req, res) => {
-//     try {
-//         let newDocument = {
-//             name: req.body.name,
-//             position: req.body.position,
-//             level: req.body.level,
-//         };
-//         let collection = await db.collection("users");
-//         let result = await collection.insertOne(newDocument);
-//         res.send(result).status(204);
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).send("Error adding record");
-//     }
-// });
+router.get("/api/get-session", async (req, res) => {
+    try {
+        const sessionId = req.cookies.sessionId; // Assuming the session ID is stored in a cookie
+        if (!sessionId) {
+            return res.status(400).send("Session ID is required.");
+        }
 
+        const collection = db.collection("session");
+        const result = await collection.findOne({ sessionId });
+
+        if (!result) {
+            return res.status(404).send("Session not found.");
+        }
+
+        res.status(200).send({ userId: result.userId, username: result.username });
+    } catch (err) {
+        console.error("Error fetching session data:", err);
+        res.status(500).send("An error occurred while fetching session data.");
+    }
+});
 //*This will check login.
 router.post("/api/login", async (req, res) => {
     try {
@@ -80,7 +96,7 @@ router.post("/api/login", async (req, res) => {
         const sessionId = crypto.randomBytes(16).toString('hex');
 
         // Set session expiration time (e.g., 1 hour from now)
-        const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+        const expiresAt = new Date(Date.now() + 50 * 60 * 1000); //!Change the session duration latter
 
         // Store the session in the sessions collection
         const sessionsCollection = db.collection('session');
@@ -95,7 +111,7 @@ router.post("/api/login", async (req, res) => {
         res.cookie('sessionId', sessionId, {
             httpOnly: true,
             // secure: process.env.NODE_ENV !== 'production',
-            maxAge: 5 * 60 * 1000,
+            maxAge: 50 * 60 * 1000,  //!Change the session duration latter
             sameSite: 'lax', // Add this
             path: '/' // Add this
         });
@@ -159,30 +175,29 @@ router.get("/api/check-auth", validateSession, (req, res) => {
 
 router.patch("/api/add-avatarId", async (req, res) => {
     try {
-        const { avatarUrl } = req.body;
+        const { userId, avatarUrl } = req.body;
 
-        if (!avatarUrl) {
-            return res.status(400).json({ message: "Avatar URL is required" });
+        if (!userId || !avatarUrl) {
+            return res.status(400).json({ message: "User ID and avatar URL are required." });
         }
 
         const usersCollection = db.collection("users");
         const result = await usersCollection.updateOne(
-            { username: req.user.username },
+            { _id: new ObjectId(userId) },
             { $set: { avatarUrl: avatarUrl } }
         );
 
         if (result.modifiedCount === 0) {
-            return res.status(404).json({ message: "User not found or avatar not updated" });
+            return res.status(404).json({ message: "User not found or avatar not updated." });
         }
 
         res.status(200).json({
             message: "Avatar updated successfully",
-            avatarUrl: avatarUrl
+            avatarUrl: avatarUrl,
         });
-
     } catch (error) {
         console.error("Error updating avatar:", error);
-        res.status(500).json({ message: "Error updating avatar" });
+        res.status(500).json({ message: "Error updating avatar." });
     }
-})
+});
 export default router;

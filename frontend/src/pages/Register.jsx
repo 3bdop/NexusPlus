@@ -4,42 +4,43 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
-export default function Login() {
+export default function Register() { // Changed function name to Register
     const {
         register,
         handleSubmit,
         formState: { errors },
+        watch // Add this to watch password field
     } = useForm();
 
     const navigate = useNavigate();
+    const password = watch("password"); // Watch password field for comparison
 
     const onSubmit = async (data) => {
         try {
-            const response = await axios.post('http://localhost:5050/api/login', data, {
-                withCredentials: true, // Important!
+            const response = await axios.post('http://localhost:5050/api/register', data, {
+                withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
 
             if (response.status === 200) {
-                navigate('/home');
+                navigate('/avatar-creation');
             }
         } catch (error) {
-            console.error('Login error:', error);
+            console.error('Register error:', error);
         }
     };
+
     return (
         <div className="login-form-wrapper">
-            <h2 style={{ color: 'whitesmoke' }}>Login</h2>
+            <h2>Register</h2> {/* Changed title to Register */}
             <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group">
-                    <label htmlFor="username" style={{ color: 'whitesmoke' }}>Username</label>
+                    <label htmlFor="username">Username</label>
                     <input
                         type="text"
                         id="username"
-                        name="username"
-                        required
                         {...register('username', {
                             required: 'Username is required',
                             minLength: {
@@ -52,13 +53,12 @@ export default function Login() {
                         <span className="error-message">{errors.username.message}</span>
                     )}
                 </div>
+
                 <div className="form-group">
-                    <label htmlFor="password" style={{ color: 'whitesmoke' }}>Password</label>
+                    <label htmlFor="password">Password</label>
                     <input
                         type="password"
                         id="password"
-                        name="password"
-                        required
                         {...register('password', {
                             required: 'Password is required',
                             minLength: {
@@ -71,10 +71,26 @@ export default function Login() {
                         <span className="error-message">{errors.password.message}</span>
                     )}
                 </div>
-                <button type="submit" className="login-button">Login</button>
+
+                <div className="form-group">
+                    <label htmlFor="confirmPassword">Confirm Password</label>
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        {...register('confirmPassword', {
+                            required: 'Please confirm your password',
+                            validate: value =>
+                                value === password || 'Passwords do not match'
+                        })}
+                    />
+                    {errors.confirmPassword && (
+                        <span className="error-message">{errors.confirmPassword.message}</span>
+                    )}
+                </div>
+
+                <button type="submit" className="login-button">Register</button>
                 <div className="form-links">
-                    {/* <a href="/forgot-password">Forgot password?</a> */}
-                    <Link to="/register">Don't have an account? Register</Link>
+                    <Link to="/" >Already have an account? Login</Link>
                 </div>
             </form>
         </div>
