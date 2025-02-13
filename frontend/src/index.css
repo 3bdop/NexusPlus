@@ -597,15 +597,15 @@ html.dark-mode {
 }
 
 /*For Home page*/
-.avatar-preview {
-  width: 40%;
-  height: 70%;
+/* .avatar-preview {
+  width: 35%;
+  height: 87%;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   background-color: #007bff;
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 55%;
   transform: translate(-50%, -50%);
-}
+} */

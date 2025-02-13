@@ -1,5 +1,6 @@
+import React from 'react';
 import { AvatarCreator } from '@readyplayerme/react-avatar-creator';
-import { data, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const config = {
@@ -15,32 +16,41 @@ const style = { width: '100%', height: '100vh', border: 'none' };
 export default function AvatarCreation() {
     const navigate = useNavigate();
 
-    const handleOnUserSet = (event) => {
-        console.log(`User ID is: ${event.data.id}`);
-    };
-
     const handleOnAvatarExported = async (event) => {
-        console.log(event.data)
         try {
             const avatarUrl = event.data.url;
             console.log(`Avatar URL is: ${avatarUrl}`);
 
-            const response = await axios.patch('http://localhost:5050/api/add-avatarId',
-                data,
+            // Step 1: Fetch the user's session data to get the userId
+            const sessionResponse = await axios.get(
+                'http://localhost:5050/api/get-session',
+                { withCredentials: true } // Include cookies for session authentication
+            );
+
+            const userId = sessionResponse.data.userId;
+            if (!userId) {
+                throw new Error('User ID not found in session data.');
+            }
+
+            // Step 2: Update the avatar URL for the user
+            const updateResponse = await axios.patch(
+                'http://localhost:5050/api/add-avatarId',
+                { userId, avatarUrl }, // Send userId and avatarUrl in the request body
                 {
                     withCredentials: true,
                     headers: {
-                        'Content-Type': 'application/json'
-                    }
+                        'Content-Type': 'application/json',
+                    },
                 }
             );
 
-            if (response.status === 200) {
-                navigate('/home');
+            if (updateResponse.status === 200) {
+                console.log('Avatar updated successfully:', updateResponse.data);
+                navigate('/home'); // Redirect to the home page
             }
         } catch (error) {
             console.error('Error saving avatar:', error);
-            // Handle error (show message to user, etc.)
+            alert('Failed to save avatar. Please try again.'); // Show error message to the user
         }
     };
 
@@ -50,7 +60,6 @@ export default function AvatarCreation() {
                 subdomain="oneuni"
                 config={config}
                 style={style}
-                onUserSet={handleOnUserSet}
                 onAvatarExported={handleOnAvatarExported}
             />
         </div>
