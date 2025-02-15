@@ -82,15 +82,15 @@ body {
   position: absolute;
   right: 0px;
   top: 0px;
-  margin-right: -120px;
-  margin-top: -120px;
+  margin-right: -42px;
+  margin-top: -42px;
   animation: fadeIn 2.4s ease-in-out 1.2s forwards;
   opacity: 0;
 }
 
 .spinner__image {
-  width: 300px;
-  height: 300px;
+  width: 164px;
+  height: 164px;
   background-size: contain;
   background-image: url("/images/airlines.svg");
   animation: rotate 10s linear infinite;
@@ -160,6 +160,12 @@ body {
   transition: 0.42s ease-in-out;
   z-index: -1;
   transform: translateX(-50%) translateY(50%);
+}
+.explore:disabled {
+  z-index: -10;
+}
+.cta:disabled {
+  z-index: -10;
 }
 
 .intro--disappear .explore {
@@ -508,6 +514,8 @@ html.dark-mode {
 .login-form {
   display: flex;
   flex-direction: column;
+  font-family: system-ui;
+  font-weight: 500;
 }
 
 .form-group {
@@ -534,15 +542,6 @@ html.dark-mode {
   box-sizing: border-box;
 }
 
-.remember-me {
-  display: flex;
-  align-items: center;
-}
-
-.remember-me input {
-  margin-right: 10px;
-}
-
 .login-button {
   padding: 10px;
   background-color: #007bff; /* Blue button */
@@ -554,7 +553,7 @@ html.dark-mode {
 }
 
 .login-button:hover {
-  background-color: #0056b3; /* Darker blue on hover */
+  background-color: #0c00b3; /* Darker blue on hover */
 }
 
 .form-links {
@@ -571,7 +570,7 @@ html.dark-mode {
 
 .form-links a:hover {
   text-decoration: underline;
-  color: #0056b3; /* Darker blue on hover */
+  color: #0c00b3;
 }
 .error-message {
   color: #ff3333;
@@ -595,17 +594,3 @@ html.dark-mode {
   left: 0;
   overflow: hidden;
 }
-
-/*For Home page*/
-/* .avatar-preview {
-  width: 35%;
-  height: 87%;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: #007bff;
-  position: absolute;
-  left: 50%;
-  top: 55%;
-  transform: translate(-50%, -50%);
-} */
