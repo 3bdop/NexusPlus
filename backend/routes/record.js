@@ -1,5 +1,4 @@
 import express from "express"
-
 //? This will help us connect to the db
 
 import db from "../db/connection.js"
@@ -11,17 +10,10 @@ import bcrypt from 'bcrypt';
 import validateSession from "../middleware/validateSession.js"
 import session from "express-session";
 
-// router is an instance of the express router.
-// We use it to define our routes.
+
 // The router will be added as a middleware and will take control of requests starting with path /record.
 const router = express.Router();
 
-//* This section will help you get a list of all the records.
-router.get("/", async (req, res) => {
-    let collection = await db.collection("users");
-    let results = await collection.find({}).toArray();
-    res.send(results).status(200);
-});
 
 //* This section will help you get a single record by id
 router.get("/api/get-avatarUrl/:id", async (req, res) => {
@@ -150,7 +142,7 @@ router.patch("/:id", async (req, res) => {
 });
 
 //* This section will help you delete a record
-router.delete("/:id", async (req, res) => {
+router.delete("/logout", async (req, res) => {
     try {
         const query = { _id: new ObjectId(req.params.id) };
 
@@ -198,6 +190,34 @@ router.patch("/api/add-avatarId", async (req, res) => {
     } catch (error) {
         console.error("Error updating avatar:", error);
         res.status(500).json({ message: "Error updating avatar." });
+    }
+});
+
+router.post("/api/logout", async (req, res) => {
+    try {
+        const sessionId = req.cookies.sessionId; // Assuming the session ID is stored in a cookie
+        if (!sessionId) {
+            return res.status(400).send("Session ID is required.");
+        }
+
+        const collection = db.collection("session");
+        const result = await collection.deleteOne({ sessionId });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).send("Session not found.");
+        }
+
+        // Clear the session cookie
+        res.clearCookie('sessionId', {
+            httpOnly: true,
+            sameSite: 'lax',
+            path: '/'
+        });
+
+        res.status(200).send("Logout successful.");
+    } catch (err) {
+        console.error("Error during logout:", err);
+        res.status(500).send("An error occurred during logout.");
     }
 });
 export default router;
