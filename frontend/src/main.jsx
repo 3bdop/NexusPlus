@@ -11,6 +11,7 @@ import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import AvatarCreation from "./pages/AvatarCreation.jsx";
+import CareerFair from "./pages/CareerFair.jsx";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,15 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <AvatarCreation />
+      </ProtectedRoute>
+    ),
+    errorElement: <NotFoundPage />
+  },
+  {
+    path: '/career-fair',
+    element: (
+      <ProtectedRoute>
+        <CareerFair />
       </ProtectedRoute>
     ),
     errorElement: <NotFoundPage />
