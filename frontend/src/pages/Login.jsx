@@ -31,7 +31,7 @@ export default function Login() {
     };
     return (
         <div className="login-form-wrapper">
-            <h2 style={{ color: 'whitesmoke' }}>Login</h2>
+            <h2 style={{ color: 'whitesmoke', fontFamily: 'system-ui' }}>Login</h2>
             <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group">
                     <label htmlFor="username" style={{ color: 'whitesmoke' }}>Username</label>
