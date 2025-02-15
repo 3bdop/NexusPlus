@@ -7,8 +7,6 @@ import styled from 'styled-components';
 
 export default function Home() {
     const [avatarUrl, setAvatarUrl] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [username, setUsername] = useState(null)
     const navigate = useNavigate();
 
@@ -41,21 +39,20 @@ export default function Home() {
                 if (err.response?.status === 401) {
                     navigate('/');
                 }
-            } finally {
-                setLoading(false);
             }
         };
 
         fetchUserData();
     }, [navigate]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
+    const logout = async () => {
+        try {
+            await axios.post('http://localhost:5050/api/logout', {}, { withCredentials: true });
+            navigate('/'); // Redirect to the login page or home page after logout
+        } catch (err) {
+            console.error('Error during logout:', err);
+        }
+    };
 
     const StyledNavLink = styled(NavLink)`
     position: relative;
@@ -64,6 +61,7 @@ export default function Home() {
     text-decoration: none;
     font-size: 1.2rem;
     font-weight: 600;
+    font-family: system-ui;
     transition: all 0.3s ease;
     
     &::before {
@@ -79,8 +77,18 @@ export default function Home() {
       transition: opacity 0.3s ease;
       z-index: -1;
     }
-  
     &:hover {
+            transform: translateY(-2px);
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            
+            &::before {
+                opacity: 0.8;
+                box-shadow: 0 0 20px rgba(0, 163, 255, 0.5),
+                            0 0 30px rgba(255, 105, 180, 0.3);
+            }
+        }
+    ${'' /* &:hover {
       transform: translateY(-2px);
     }
   
@@ -93,7 +101,7 @@ export default function Home() {
         box-shadow: 0 0 20px rgba(0, 163, 255, 0.5),
                     0 0 30px rgba(255, 105, 180, 0.3);
       }
-    }
+    } */}
   `;
     return (
         <>
@@ -104,19 +112,18 @@ export default function Home() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: 'linear-gradient(5deg, #1D1C1CFF 0%, #6E16ADFF 100%)',
+                background: 'linear-gradient(0deg, #080808FF , #5016ADFF 100%)',
                 position: 'relative'
             }}>
                 <div style={{
                     zIndex: 1, textAlign: 'center'
                 }}>
                     <h2 style={{
-                        // marginBottom: '20px',
-                        color: 'white', zIndex: 1, fontFamily: "DM Serif Display"
+                        color: 'white', zIndex: 1, fontFamily: "cursive"
                     }}>
                         Welcome {username} !
                     </h2>
-                    <p style={{ color: 'whitesmoke', fontFamily: 'serif' }}>This is your Customized digital-twin🌟</p>
+                    <p style={{ color: 'whitesmoke', fontFamily: 'cursive' }}>This is your main digital-twin🤩</p>
                 </div>
                 <div style={{
                     position: 'absolute',
@@ -128,13 +135,19 @@ export default function Home() {
                     gap: '10px', // Space between links
                     zIndex: 1
                 }}>
+                    <StyledNavLink to={""}>
+                        Dashboard🌟
+                    </StyledNavLink>
+                    <StyledNavLink to={"/career-fair"}>
+                        Join Event🚀
+                    </StyledNavLink>
                     <StyledNavLink to={"/avatar-creation"}>
                         Customize your digital twin🦹
                     </StyledNavLink>
-                    <StyledNavLink to={""}>
-                        Join Event🚀
+                    <StyledNavLink to={"/recommended-jobs"}>
+                        View your recommended jobs📝
                     </StyledNavLink>
-                    <StyledNavLink to={"/logout"}>
+                    <StyledNavLink onClick={logout}>
                         Logout 👋
                     </StyledNavLink>
                 </div>
@@ -151,19 +164,18 @@ export default function Home() {
                         animationSrc={"/animations/M_Standing_Idle_001.fbx"}
                         environment={"soft"}
                         shadows={true}
-                        emotion={"idle"}
+                        emotion={"happy"}
                         cameraInitialDistance={0.7}
-                        idleRotation
                         cameraZoomTarget={[-0.11, 0, 3.2]}
-                        poseSrc={"/animations/M_Standing_Idle_Variations_003.fbx"}
+                        idleRotation
                     >
                         <Sparkles
                             color={"white"}
                             count={80}
                             opacity={0.5}
-                            position={[0, 0.7, 0]}
+                            position={[0, 0.61, 0]}
                             scale={2}
-                            size={4}
+                            size={3.5}
                             speed={0.25}
                         />
                     </Avatar>
