@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 export default function NotFoundpage() {
     return (
@@ -14,6 +15,7 @@ export default function NotFoundpage() {
         }}>
             <h1 style={{ color: 'snow' }}>It worked on my machine</h1>
             <p style={{ color: 'snow' }}>But apparently not on the world wide web. Sorry about that! 🌍</p>
+            <Link to={"/home"}>Back to home</Link>
         </div>
     )
 }
