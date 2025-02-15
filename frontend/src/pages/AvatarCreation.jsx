@@ -8,7 +8,6 @@ const config = {
     bodyType: 'fullbody',
     quickStart: false,
     language: 'en',
-    showSettings: false,
 };
 
 const style = { width: '100%', height: '100vh', border: 'none' };
@@ -55,13 +54,38 @@ export default function AvatarCreation() {
     };
 
     return (
-        <div className="avatar-creator-container">
+        <div className="avatar-creator-container" style={{ position: 'relative' }}>
             <AvatarCreator
                 subdomain="oneuni"
                 config={config}
                 style={style}
                 onAvatarExported={handleOnAvatarExported}
             />
+            <div style={{
+                background: '#15161F',
+                zIndex: 2,
+                width: '6%',
+                height: '1vh',
+                position: 'absolute',
+                top: 8,
+                left: 25,
+                borderRadius: '15px',
+                animationDelay: 'inherit'
+            }} >
+                <button style={{
+                    background: '#00E8DA',
+                    paddingBottom: '11px',
+                    paddingTop: '11px',
+                    borderRadius: '15px', width: '111.43px', height: '70px'
+                }}
+                    onClick={() => navigate('/home')}>
+                    <span style={{
+                        fontFamily: 'Poppins, sans-serif',
+                        fontSize: '13.7px',
+                        color: '#1d221c', fontWeight: 'bold'
+                    }}>BACK</span>
+                </button>
+            </div>
         </div>
     );
 }
