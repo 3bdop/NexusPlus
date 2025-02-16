@@ -103,6 +103,9 @@ export default function Home() {
       }
     } */}
   `;
+    function capitalizeFirstLetter(val) {
+        return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+    }
     return (
         <>
             <div style={{
@@ -121,7 +124,7 @@ export default function Home() {
                     <h2 style={{
                         color: 'white', zIndex: 1, fontFamily: "cursive"
                     }}>
-                        Welcome {username} !
+                        Welcome {capitalizeFirstLetter(username)} !
                     </h2>
                     <p style={{ color: 'whitesmoke', fontFamily: 'cursive' }}>This is your main digital-twin🤩</p>
                 </div>
