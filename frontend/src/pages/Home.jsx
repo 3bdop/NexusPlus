@@ -9,6 +9,7 @@ export default function Home() {
     const [avatarUrl, setAvatarUrl] = useState(null);
     const [username, setUsername] = useState(null)
     const [isLoading, setLoading] = useState(true)
+    const [isAvatarLoaded, setIsAvatarLoaded] = useState(false)
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -90,21 +91,7 @@ export default function Home() {
                             0 0 30px rgba(255, 105, 180, 0.3);
             }
         }
-    ${'' /* &:hover {
-      transform: translateY(-2px);
-    }
-  
-    &.active {
-      color: white;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-      
-      &::before {
-        opacity: 0.8;
-        box-shadow: 0 0 20px rgba(0, 163, 255, 0.5),
-                    0 0 30px rgba(255, 105, 180, 0.3);
-      }
-    } */}
-  `;
+     `;
 
     // Keyframes for the loading animation
     const spin = keyframes`
@@ -124,6 +111,23 @@ export default function Home() {
         left: 50%;
         transform: translate(-50%, -50%);
     `;
+
+    // Keyframes for the fade-in animation
+    const fadeIn = keyframes`
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+    `;
+
+    const AvatarContainer = styled.div`
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: ${({ isAvatarLoaded }) => (isAvatarLoaded ? 1 : 0)};
+        animation: ${fadeIn} 10s ease-in-out;
+    `;
+
     function capitalizeFirstLetter(val) {
         return String(val).charAt(0).toUpperCase() + String(val).slice(1);
     }
@@ -151,12 +155,12 @@ export default function Home() {
                 </div>
                 <div style={{
                     position: 'absolute',
-                    left: '30px', // Adjust the left position as needed
-                    top: '50%', // Center vertically
-                    transform: 'translateY(-50%)', // Adjust for exact centering
+                    left: '30px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '10px', // Space between links
+                    gap: '10px',
                     zIndex: 1
                 }}>
                     <StyledNavLink to={""}>
@@ -185,28 +189,30 @@ export default function Home() {
                     {isLoading ? (
                         <LoadingSpinner />
                     ) : (
-
-                        <Avatar
-                            modelSrc={avatarUrl + "?morphTargets=ARKit,Eyes Extra"}
-                            headMovement={true}
-                            animationSrc={"/animations/M_Standing_Idle_001.fbx"}
-                            environment={"soft"}
-                            shadows={true}
-                            emotion={"happy"}
-                            cameraInitialDistance={0.7}
-                            cameraZoomTarget={[-0.11, 0, 3.2]}
-                            idleRotation
-                        >
-                            <Sparkles
-                                color={"white"}
-                                count={80}
-                                opacity={0.5}
-                                position={[0, 0.61, 0]}
-                                scale={2}
-                                size={3.5}
-                                speed={0.25}
-                            />
-                        </Avatar>
+                        <AvatarContainer isAvatarLoaded={isAvatarLoaded}>
+                            <Avatar
+                                modelSrc={avatarUrl + "?morphTargets=ARKit,Eyes Extra"}
+                                headMovement={true}
+                                animationSrc={"/animations/M_Standing_Idle_001.fbx"}
+                                environment={"soft"}
+                                shadows={true}
+                                emotion={"happy"}
+                                cameraInitialDistance={0.7}
+                                cameraZoomTarget={[-0.11, 0, 3.2]}
+                                idleRotation
+                                onLoaded={() => setIsAvatarLoaded(true)}
+                            >
+                                <Sparkles
+                                    color={"white"}
+                                    count={80}
+                                    opacity={0.5}
+                                    position={[0, 0.61, 0]}
+                                    scale={2}
+                                    size={3.5}
+                                    speed={0.25}
+                                />
+                            </Avatar>
+                        </AvatarContainer>
                     )}
                 </div>
             </div>
