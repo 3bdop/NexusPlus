@@ -3,11 +3,12 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Avatar } from "@readyplayerme/visage";
 import { Sparkles } from '@react-three/drei';
 import axios from 'axios';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 export default function Home() {
     const [avatarUrl, setAvatarUrl] = useState(null);
     const [username, setUsername] = useState(null)
+    const [isLoading, setLoading] = useState(true)
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -31,6 +32,7 @@ export default function Home() {
                 );
 
                 setAvatarUrl(avatarResponse.data.avatarUrl);
+                setLoading(false)
             } catch (err) {
                 console.error('Error fetching user data:', err);
                 setError(err.message);
@@ -103,6 +105,25 @@ export default function Home() {
       }
     } */}
   `;
+
+    // Keyframes for the loading animation
+    const spin = keyframes`
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    `;
+
+    const LoadingSpinner = styled.div`
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid #00a3ff;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: ${spin} 1s linear infinite;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    `;
     function capitalizeFirstLetter(val) {
         return String(val).charAt(0).toUpperCase() + String(val).slice(1);
     }
@@ -161,27 +182,32 @@ export default function Home() {
                     justifyContent: 'center',
                     alignItems: 'center',
                 }}>
-                    <Avatar
-                        modelSrc={avatarUrl + "?morphTargets=ARKit,Eyes Extra"}
-                        headMovement={true}
-                        animationSrc={"/animations/M_Standing_Idle_001.fbx"}
-                        environment={"soft"}
-                        shadows={true}
-                        emotion={"happy"}
-                        cameraInitialDistance={0.7}
-                        cameraZoomTarget={[-0.11, 0, 3.2]}
-                        idleRotation
-                    >
-                        <Sparkles
-                            color={"white"}
-                            count={80}
-                            opacity={0.5}
-                            position={[0, 0.61, 0]}
-                            scale={2}
-                            size={3.5}
-                            speed={0.25}
-                        />
-                    </Avatar>
+                    {isLoading ? (
+                        <LoadingSpinner />
+                    ) : (
+
+                        <Avatar
+                            modelSrc={avatarUrl + "?morphTargets=ARKit,Eyes Extra"}
+                            headMovement={true}
+                            animationSrc={"/animations/M_Standing_Idle_001.fbx"}
+                            environment={"soft"}
+                            shadows={true}
+                            emotion={"happy"}
+                            cameraInitialDistance={0.7}
+                            cameraZoomTarget={[-0.11, 0, 3.2]}
+                            idleRotation
+                        >
+                            <Sparkles
+                                color={"white"}
+                                count={80}
+                                opacity={0.5}
+                                position={[0, 0.61, 0]}
+                                scale={2}
+                                size={3.5}
+                                speed={0.25}
+                            />
+                        </Avatar>
+                    )}
                 </div>
             </div>
 
