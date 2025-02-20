@@ -96,6 +96,7 @@ router.post("/api/login", async (req, res) => {
             sessionId,
             userId: user._id,
             username: user.username,
+            avatarUrl: user.avatarUrl,
             expiresAt,
         });
 
@@ -138,21 +139,6 @@ router.patch("/:id", async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send("Error updating record");
-    }
-});
-
-//* This section will help you delete a record
-router.delete("/logout", async (req, res) => {
-    try {
-        const query = { _id: new ObjectId(req.params.id) };
-
-        const collection = db.collection("users");
-        let result = await collection.deleteOne(query);
-
-        res.send(result).status(200);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error deleting record");
     }
 });
 
