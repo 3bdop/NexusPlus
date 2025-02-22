@@ -51,7 +51,7 @@ router.get("/api/get-session", async (req, res) => {
             return res.status(404).send("Session not found.");
         }
 
-        res.status(200).send({ userId: result.userId, username: result.username });
+        res.status(200).send({ userId: result.userId, username: result.username, avatarUrl: result.avatarUrl });
     } catch (err) {
         console.error("Error fetching session data:", err);
         res.status(500).send("An error occurred while fetching session data.");
