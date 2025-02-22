@@ -28,3 +28,4 @@ dist-ssr
 
 #Ignore WebGL build
 backend/b
+frontend/public/build
