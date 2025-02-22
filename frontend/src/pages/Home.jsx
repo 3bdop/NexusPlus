@@ -189,7 +189,9 @@ export default function Home() {
                     {isLoading ? (
                         <LoadingSpinner />
                     ) : (
-                        <AvatarContainer isAvatarLoaded={isAvatarLoaded}>
+                        <>
+
+                            {/* <AvatarContainer isAvatarLoaded={isAvatarLoaded}> */}
                             <Avatar
                                 modelSrc={avatarUrl + "?morphTargets=ARKit,Eyes Extra"}
                                 headMovement={true}
@@ -200,7 +202,6 @@ export default function Home() {
                                 cameraInitialDistance={0.7}
                                 cameraZoomTarget={[-0.11, 0, 3.2]}
                                 idleRotation
-                                onLoaded={() => setIsAvatarLoaded(true)}
                             >
                                 <Sparkles
                                     color={"white"}
@@ -212,7 +213,8 @@ export default function Home() {
                                     speed={0.25}
                                 />
                             </Avatar>
-                        </AvatarContainer>
+                            {/* </AvatarContainer> */}
+                        </>
                     )}
                 </div>
             </div>

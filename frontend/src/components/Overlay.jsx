@@ -6,7 +6,6 @@ import Login from "../pages/Login";
 export const Overlay = () => {
   const { progress } = useProgress();
   const { play, end, setPlay, hasScroll, setEnd } = usePlay();
-  console.log(end)
   return (
     <div
       className={`overlay ${play ? "overlay--disable" : ""}

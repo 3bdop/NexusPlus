@@ -1,36 +1,42 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import React, { useEffect, useState } from "react";
+import { Unity, useUnityContext } from "react-unity-webgl";
+import axios from 'axios';
 
-const FullScreenContainer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-export default function CareerFair() {
-    const navigate = useNavigate();
+function App() {
+    // Initialize the Unity context using the hook
+    const { unityProvider, sendMessage } = useUnityContext({
+        loaderUrl: "build/webGL.loader.js",
+        dataUrl: "build/webGL.data",
+        frameworkUrl: "build/webGL.framework.js",
+        codeUrl: "build/webGL.wasm",
+    });
+
+    // const [avatarUrl, setAvatarUrl] = useState("")
+    useEffect(() => {
+        async function fetchSession() {
+            try {
+                const sessionResponse = await axios.get(
+                    'http://localhost:5050/api/get-session',
+                    { withCredentials: true } // Include cookies in the request
+                );
+                const fetchedAvatarUrl = sessionResponse.data.avatarUrl;
+                console.log("Avatar URL fetched from API:", fetchedAvatarUrl);
+                if (fetchedAvatarUrl) {
+                    sendMessage("Photon Setup", "SetAvatarUrl", fetchedAvatarUrl);
+                }
+            } catch (error) {
+                console.error("Error fetching session data:", error);
+            }
+        }
+        fetchSession();
+    }, [sendMessage]);
+
     return (
-        <>
-            <FullScreenContainer>
+        // <div className="unity-container">
 
-                <iframe
-                    src="http://localhost:5050/webgl"
-                    style={{
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        width: '100%',
-                        height: '100%',
-                        border: 'none',
-                    }}
-                    title="Career Fair"
-                />
-                {/* <button style={{ zIndex: 1 }} onClick={() => navigate('/home')}>disconnect</button> */}
-            </FullScreenContainer>
-        </>
-    )
+        <Unity unityProvider={unityProvider} style={{ width: "100%", height: "100%" }} />
+        // </div>
+    );
 }
+
+export default App;
