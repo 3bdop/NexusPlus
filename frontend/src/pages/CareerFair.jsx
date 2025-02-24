@@ -41,10 +41,10 @@ const BackButton = styled.button`
 function CareerFair() {
     // Initialize the Unity context using the hook
     const { unityProvider, sendMessage, loadingProgression, isLoaded, } = useUnityContext({
-        loaderUrl: "build/webGL.loader.js",
-        dataUrl: "build/webGL.data",
-        frameworkUrl: "build/webGL.framework.js",
-        codeUrl: "build/webGL.wasm",
+        loaderUrl: "build2/webGL.loader.js",
+        dataUrl: "build2/webGL.data",
+        frameworkUrl: "build2/webGL.framework.js",
+        codeUrl: "build2/webGL.wasm",
     });
     const navigate = useNavigate();    // const [avatarUrl, setAvatarUrl] = useState("")
     useEffect(() => {
@@ -68,7 +68,7 @@ function CareerFair() {
 
     return (
         <FullScreenContainer>
-            <BackButton onClick={() => navigate('/home')}>Back to Home</BackButton>
+            {/* <BackButton onClick={() => navigate('/home')}>Back to Home</BackButton> */}
 
             <Unity
                 unityProvider={unityProvider}
