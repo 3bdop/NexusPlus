@@ -1,224 +1,448 @@
-import React, { useEffect, useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+// import React, { useEffect, useState } from 'react'
+// import { Link, NavLink, useNavigate } from 'react-router-dom'
+// import { Avatar } from "@readyplayerme/visage";
+// import { Sparkles } from '@react-three/drei';
+// import axios from 'axios';
+// import styled, { keyframes } from 'styled-components';
+
+// export default function Home() {
+//     const [avatarUrl, setAvatarUrl] = useState(null);
+//     const [username, setUsername] = useState(null)
+//     const [isLoading, setLoading] = useState(true)
+//     const [isAvatarLoaded, setIsAvatarLoaded] = useState(false)
+//     const navigate = useNavigate();
+
+//     useEffect(() => {
+//         const fetchUserData = async () => {
+//             try {
+//                 // Step 1: Fetch session data to get userId
+//                 const sessionResponse = await axios.get(
+//                     'http://localhost:5050/api/get-session',
+//                     { withCredentials: true } // Include cookies in the request
+//                 );
+//                 setUsername(sessionResponse.data.username)
+//                 const userId = sessionResponse.data.userId;
+//                 if (!userId) {
+//                     throw new Error('No user ID found in session data.');
+//                 }
+
+//                 // Step 2: Fetch avatar URL using userId
+//                 const avatarResponse = await axios.get(
+//                     `http://localhost:5050/api/get-avatarUrl/${userId}`,
+//                     { withCredentials: true }
+//                 );
+
+//                 setAvatarUrl(avatarResponse.data.avatarUrl);
+//                 setLoading(false)
+//             } catch (err) {
+//                 console.error('Error fetching user data:', err);
+//                 setError(err.message);
+
+//                 // Redirect to login if unauthorized
+//                 if (err.response?.status === 401) {
+//                     navigate('/');
+//                 }
+//             }
+//         };
+
+//         fetchUserData();
+//     }, [navigate]);
+
+//     const logout = async () => {
+//         try {
+//             await axios.post('http://localhost:5050/api/logout', {}, { withCredentials: true });
+//             navigate('/'); // Redirect to the login page or home page after logout
+//         } catch (err) {
+//             console.error('Error during logout:', err);
+//         }
+//     };
+
+//     const StyledNavLink = styled(NavLink)`
+//     position: relative;
+//     padding: 10px 20px;
+//     color: white;
+//     text-decoration: none;
+//     font-size: 1.2rem;
+//     font-weight: 600;
+//     font-family: system-ui;
+//     transition: all 0.3s ease;
+
+//     &::before {
+//       content: '';
+//       position: absolute;
+//       top: 0;
+//       left: 0;
+//       width: 100%;
+//       height: 100%;
+//       background: linear-gradient(45deg, #00a3ff, #ff69b4);
+//       opacity: 0;
+//       border-radius: 5px;
+//       transition: opacity 0.3s ease;
+//       z-index: -1;
+//     }
+//     &:hover {
+//             transform: translateY(-2px);
+//             color: white;
+//             text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+
+//             &::before {
+//                 opacity: 0.8;
+//                 box-shadow: 0 0 20px rgba(0, 163, 255, 0.5),
+//                             0 0 30px rgba(255, 105, 180, 0.3);
+//             }
+//         }
+//      `;
+
+//     // Keyframes for the loading animation
+//     const spin = keyframes`
+//         0% { transform: rotate(0deg); }
+//         100% { transform: rotate(360deg); }
+//     `;
+
+//     const LoadingSpinner = styled.div`
+//         border: 4px solid rgba(255, 255, 255, 0.3);
+//         border-top: 4px solid #00a3ff;
+//         border-radius: 50%;
+//         width: 40px;
+//         height: 40px;
+//         animation: ${spin} 1s linear infinite;
+//         position: absolute;
+//         top: 50%;
+//         left: 50%;
+//         transform: translate(-50%, -50%);
+//     `;
+
+//     // Keyframes for the fade-in animation
+//     const fadeIn = keyframes`
+//         0% { opacity: 0; }
+//         100% { opacity: 1; }
+//     `;
+
+//     const AvatarContainer = styled.div`
+//         width: 100%;
+//         height: 100%;
+//         display: flex;
+//         justify-content: center;
+//         align-items: center;
+//         opacity: ${({ isAvatarLoaded }) => (isAvatarLoaded ? 1 : 0)};
+//         animation: ${fadeIn} 10s ease-in-out;
+//     `;
+
+//     function capitalizeFirstLetter(val) {
+//         return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+//     }
+//     return (
+//         <>
+//             <div style={{
+//                 height: '100vh',
+//                 width: '100vw',
+//                 display: 'flex',
+//                 flexDirection: 'column',
+//                 alignItems: 'center',
+//                 justifyContent: 'center',
+//                 background: 'linear-gradient(0deg, #080808FF , #5016ADFF 100%)',
+//                 position: 'relative'
+//             }}>
+//                 <div style={{
+//                     zIndex: 1, textAlign: 'center'
+//                 }}>
+//                     <h2 style={{
+//                         color: 'white', zIndex: 1, fontFamily: "cursive"
+//                     }}>
+//                         Welcome {capitalizeFirstLetter(username)} !
+//                     </h2>
+//                     <p style={{ color: 'whitesmoke', fontFamily: 'cursive' }}>This is your main digital-twin🤩</p>
+//                 </div>
+//                 <div style={{
+//                     position: 'absolute',
+//                     left: '30px',
+//                     top: '50%',
+//                     transform: 'translateY(-50%)',
+//                     display: 'flex',
+//                     flexDirection: 'column',
+//                     gap: '10px',
+//                     zIndex: 1
+//                 }}>
+//                     <StyledNavLink to={""}>
+//                         Dashboard🌟
+//                     </StyledNavLink>
+//                     <StyledNavLink to={"/career-fair"}>
+//                         Join Event🚀
+//                     </StyledNavLink>
+//                     <StyledNavLink to={"/avatar-creation"}>
+//                         Customize your digital twin🦹
+//                     </StyledNavLink>
+//                     <StyledNavLink to={"/recommended-jobs"}>
+//                         View your recommended jobs📝
+//                     </StyledNavLink>
+//                     <StyledNavLink onClick={logout}>
+//                         Logout 👋
+//                     </StyledNavLink>
+//                 </div>
+//                 <div style={{
+//                     width: '100%',
+//                     height: '100%',
+//                     display: 'flex',
+//                     justifyContent: 'center',
+//                     alignItems: 'center',
+//                 }}>
+//                     {isLoading ? (
+//                         <LoadingSpinner />
+//                     ) : (
+//                         <>
+
+//                             {/* <AvatarContainer isAvatarLoaded={isAvatarLoaded}> */}
+//                             <Avatar
+//                                 modelSrc={avatarUrl + "?morphTargets=ARKit,Eyes Extra"}
+//                                 headMovement={true}
+//                                 animationSrc={"/animations/M_Standing_Idle_001.fbx"}
+//                                 environment={"soft"}
+//                                 shadows={true}
+//                                 emotion={"happy"}
+//                                 cameraInitialDistance={0.7}
+//                                 cameraZoomTarget={[-0.11, 0, 3.2]}
+//                                 idleRotation
+//                             >
+//                                 <Sparkles
+//                                     color={"white"}
+//                                     count={80}
+//                                     opacity={0.5}
+//                                     position={[0, 0.61, 0]}
+//                                     scale={2}
+//                                     size={3.5}
+//                                     speed={0.25}
+//                                 />
+//                             </Avatar>
+//                             {/* </AvatarContainer> */}
+//                         </>
+//                     )}
+//                 </div>
+//             </div>
+
+//         </>
+//     )
+// }
+
+import * as React from 'react';
+import { extendTheme, styled } from '@mui/material/styles';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import DescriptionIcon from '@mui/icons-material/Description';
+import LayersIcon from '@mui/icons-material/Layers';
+import { AppProvider } from '@toolpad/core/AppProvider';
+import { DashboardLayout } from '@toolpad/core/DashboardLayout';
+import { PageContainer } from '@toolpad/core/PageContainer';
+import Grid from '@mui/material/Grid2';
 import { Avatar } from "@readyplayerme/visage";
 import { Sparkles } from '@react-three/drei';
 import axios from 'axios';
-import styled, { keyframes } from 'styled-components';
+import { keyframes } from '@emotion/react';
 
-export default function Home() {
-    const [avatarUrl, setAvatarUrl] = useState(null);
-    const [username, setUsername] = useState(null)
-    const [isLoading, setLoading] = useState(true)
-    const [isAvatarLoaded, setIsAvatarLoaded] = useState(false)
-    const navigate = useNavigate();
+const NAVIGATION = [
+    {
+        kind: 'header',
+        title: 'Main items',
+    },
+    {
+        segment: 'dashboard',
+        title: 'Dashboard',
+        icon: <DashboardIcon />,
+    },
+    {
+        segment: 'career-fair',
+        title: 'Join Event',
+        icon: <ShoppingCartIcon />,
+    },
+    {
+        segment: 'avatar-creation',
+        title: 'Customize your digital twin',
+        icon: <BarChartIcon />,
+    },
+    {
+        segment: 'recommended-jobs',
+        title: 'View your recommended jobs',
+        icon: <DescriptionIcon />,
+    },
+    {
+        kind: 'divider',
+    },
+    {
+        kind: 'header',
+        title: 'Account',
+    },
+    {
+        segment: 'logout',
+        title: 'Logout',
+        icon: <LayersIcon />,
+    },
+];
 
-    useEffect(() => {
+const demoTheme = extendTheme({
+    colorSchemes: { light: true, dark: true },
+    colorSchemeSelector: 'class',
+    breakpoints: {
+        values: {
+            xs: 0,
+            sm: 600,
+            md: 600,
+            lg: 1200,
+            xl: 1536,
+        },
+    },
+});
+
+function useDemoRouter(initialPath) {
+    const [pathname, setPathname] = React.useState(initialPath);
+
+    const router = React.useMemo(() => {
+        return {
+            pathname,
+            searchParams: new URLSearchParams(),
+            navigate: (path) => setPathname(String(path)),
+        };
+    }, [pathname]);
+
+    return router;
+}
+
+const Skeleton = styled('div')(({ theme, height }) => ({
+    backgroundColor: theme.palette.action.hover,
+    borderRadius: theme.shape.borderRadius,
+    height,
+    content: '" "',
+}));
+
+const spin = keyframes`
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+`;
+
+const LoadingSpinner = styled('div')(({ theme }) => ({
+    border: '4px solid rgba(255, 255, 255, 0.3)',
+    borderTop: '4px solid #00a3ff',
+    borderRadius: '50%',
+    width: '40px',
+    height: '40px',
+    animation: `${spin} 1s linear infinite`,
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+}));
+
+const fadeIn = keyframes`
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+`;
+
+const AvatarContainer = styled('div')(({ theme, isAvatarLoaded }) => ({
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    opacity: isAvatarLoaded ? 1 : 0,
+    animation: `${fadeIn} 10s ease-in-out`,
+}));
+
+export default function DashboardLayoutBasic(props) {
+    const { window } = props;
+
+    const router = useDemoRouter('/dashboard');
+
+    const [avatarUrl, setAvatarUrl] = React.useState(null);
+    const [username, setUsername] = React.useState(null);
+    const [isLoading, setLoading] = React.useState(true);
+    const [isAvatarLoaded, setIsAvatarLoaded] = React.useState(false);
+
+    React.useEffect(() => {
         const fetchUserData = async () => {
             try {
-                // Step 1: Fetch session data to get userId
                 const sessionResponse = await axios.get(
                     'http://localhost:5050/api/get-session',
-                    { withCredentials: true } // Include cookies in the request
+                    { withCredentials: true }
                 );
-                setUsername(sessionResponse.data.username)
+                setUsername(sessionResponse.data.username);
                 const userId = sessionResponse.data.userId;
                 if (!userId) {
                     throw new Error('No user ID found in session data.');
                 }
 
-                // Step 2: Fetch avatar URL using userId
                 const avatarResponse = await axios.get(
                     `http://localhost:5050/api/get-avatarUrl/${userId}`,
                     { withCredentials: true }
                 );
 
                 setAvatarUrl(avatarResponse.data.avatarUrl);
-                setLoading(false)
+                setLoading(false);
             } catch (err) {
                 console.error('Error fetching user data:', err);
-                setError(err.message);
-
-                // Redirect to login if unauthorized
                 if (err.response?.status === 401) {
-                    navigate('/');
+                    router.navigate('/');
                 }
             }
         };
 
         fetchUserData();
-    }, [navigate]);
+    }, [router]);
 
     const logout = async () => {
         try {
             await axios.post('http://localhost:5050/api/logout', {}, { withCredentials: true });
-            navigate('/'); // Redirect to the login page or home page after logout
+            router.navigate('/');
         } catch (err) {
             console.error('Error during logout:', err);
         }
     };
 
-    const StyledNavLink = styled(NavLink)`
-    position: relative;
-    padding: 10px 20px;
-    color: white;
-    text-decoration: none;
-    font-size: 1.2rem;
-    font-weight: 600;
-    font-family: system-ui;
-    transition: all 0.3s ease;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(45deg, #00a3ff, #ff69b4);
-      opacity: 0;
-      border-radius: 5px;
-      transition: opacity 0.3s ease;
-      z-index: -1;
-    }
-    &:hover {
-            transform: translateY(-2px);
-            color: white;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-            
-            &::before {
-                opacity: 0.8;
-                box-shadow: 0 0 20px rgba(0, 163, 255, 0.5),
-                            0 0 30px rgba(255, 105, 180, 0.3);
-            }
-        }
-     `;
-
-    // Keyframes for the loading animation
-    const spin = keyframes`
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    `;
-
-    const LoadingSpinner = styled.div`
-        border: 4px solid rgba(255, 255, 255, 0.3);
-        border-top: 4px solid #00a3ff;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: ${spin} 1s linear infinite;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    `;
-
-    // Keyframes for the fade-in animation
-    const fadeIn = keyframes`
-        0% { opacity: 0; }
-        100% { opacity: 1; }
-    `;
-
-    const AvatarContainer = styled.div`
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        opacity: ${({ isAvatarLoaded }) => (isAvatarLoaded ? 1 : 0)};
-        animation: ${fadeIn} 10s ease-in-out;
-    `;
-
-    function capitalizeFirstLetter(val) {
+    const capitalizeFirstLetter = (val) => {
         return String(val).charAt(0).toUpperCase() + String(val).slice(1);
-    }
+    };
+
     return (
-        <>
-            <div style={{
-                height: '100vh',
-                width: '100vw',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'linear-gradient(0deg, #080808FF , #5016ADFF 100%)',
-                position: 'relative'
-            }}>
-                <div style={{
-                    zIndex: 1, textAlign: 'center'
-                }}>
-                    <h2 style={{
-                        color: 'white', zIndex: 1, fontFamily: "cursive"
-                    }}>
-                        Welcome {capitalizeFirstLetter(username)} !
-                    </h2>
-                    <p style={{ color: 'whitesmoke', fontFamily: 'cursive' }}>This is your main digital-twin🤩</p>
-                </div>
-                <div style={{
-                    position: 'absolute',
-                    left: '30px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '10px',
-                    zIndex: 1
-                }}>
-                    <StyledNavLink to={""}>
-                        Dashboard🌟
-                    </StyledNavLink>
-                    <StyledNavLink to={"/career-fair"}>
-                        Join Event🚀
-                    </StyledNavLink>
-                    <StyledNavLink to={"/avatar-creation"}>
-                        Customize your digital twin🦹
-                    </StyledNavLink>
-                    <StyledNavLink to={"/recommended-jobs"}>
-                        View your recommended jobs📝
-                    </StyledNavLink>
-                    <StyledNavLink onClick={logout}>
-                        Logout 👋
-                    </StyledNavLink>
-                </div>
-                <div style={{
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}>
-                    {isLoading ? (
-                        <LoadingSpinner />
-                    ) : (
-                        <>
-
-                            {/* <AvatarContainer isAvatarLoaded={isAvatarLoaded}> */}
-                            <Avatar
-                                modelSrc={avatarUrl + "?morphTargets=ARKit,Eyes Extra"}
-                                headMovement={true}
-                                animationSrc={"/animations/M_Standing_Idle_001.fbx"}
-                                environment={"soft"}
-                                shadows={true}
-                                emotion={"happy"}
-                                cameraInitialDistance={0.7}
-                                cameraZoomTarget={[-0.11, 0, 3.2]}
-                                idleRotation
-                            >
-                                <Sparkles
-                                    color={"white"}
-                                    count={80}
-                                    opacity={0.5}
-                                    position={[0, 0.61, 0]}
-                                    scale={2}
-                                    size={3.5}
-                                    speed={0.25}
-                                />
-                            </Avatar>
-                            {/* </AvatarContainer> */}
-                        </>
-                    )}
-                </div>
-            </div>
-
-        </>
-    )
+        <AppProvider
+            navigation={NAVIGATION}
+            router={router}
+            theme={demoTheme}
+        >
+            <DashboardLayout>
+                <PageContainer>
+                    <Grid container spacing={1}>
+                        <Grid item xs={12} style={{ textAlign: 'center', marginTop: '20px' }}>
+                            <h2 style={{ color: 'white', fontFamily: 'cursive' }}>
+                                Welcome {capitalizeFirstLetter(username)} !
+                            </h2>
+                            <p style={{ color: 'whitesmoke', fontFamily: 'cursive' }}>This is your main digital-twin🤩</p>
+                        </Grid>
+                        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <AvatarContainer isAvatarLoaded={isAvatarLoaded}>
+                                <Avatar
+                                    modelSrc={avatarUrl + "?morphTargets=ARKit,Eyes Extra"}
+                                    headMovement={true}
+                                    animationSrc={"/animations/M_Standing_Idle_001.fbx"}
+                                    environment={"soft"}
+                                    shadows={true}
+                                    emotion={"happy"}
+                                    cameraInitialDistance={0.7}
+                                    cameraZoomTarget={[-0.11, 0, 3.2]}
+                                    idleRotation
+                                >
+                                    <Sparkles
+                                        color={"white"}
+                                        count={80}
+                                        opacity={0.5}
+                                        position={[0, 0.61, 0]}
+                                        scale={2}
+                                        size={3.5}
+                                        speed={0.25}
+                                    />
+                                </Avatar>
+                            </AvatarContainer>
+                        </Grid>
+                    </Grid>
+                </PageContainer>
+            </DashboardLayout>
+        </AppProvider>
+    );
 }
