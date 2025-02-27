@@ -12,6 +12,7 @@ import Login from "./pages/Login.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import AvatarCreation from "./pages/AvatarCreation.jsx";
 import CareerFair from "./pages/CareerFair.jsx";
+import DashboardLayoutBasic from "./pages/DashboardLayoutBasic.jsx"
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     errorElement: <NotFoundPage />
+  },
+  {
+    path: '/test',
+    element: <DashboardLayoutBasic />
   }
 ]);
 
