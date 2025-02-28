@@ -265,25 +265,6 @@ Have a seat and enjoy the ride!`,
         ),
         rotation: new Euler(Math.PI / 3, 0, Math.PI / 3),
       },
-      // // FINAL
-      // {
-      //   scale: new Vector3(3, 3, 3),
-      //   position: new Vector3(
-      //     curvePoints[7].x + 12,
-      //     curvePoints[7].y - 5,
-      //     curvePoints[7].z + 60
-      //   ),
-      //   rotation: new Euler(-Math.PI / 4, -Math.PI / 6, 0),
-      // },
-      // {
-      //   scale: new Vector3(3, 3, 3),
-      //   position: new Vector3(
-      //     curvePoints[7].x - 12,
-      //     curvePoints[7].y + 5,
-      //     curvePoints[7].z + 120
-      //   ),
-      //   rotation: new Euler(Math.PI / 4, Math.PI / 6, 0),
-      // },
     ],
     []
   );
