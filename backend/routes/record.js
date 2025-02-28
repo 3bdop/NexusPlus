@@ -94,6 +94,7 @@ router.post("/api/login", async (req, res) => {
             userId: user._id,
             username: user.username,
             avatarUrl: user.avatarUrl,
+            role: user.role,
             expiresAt,
         });
 
