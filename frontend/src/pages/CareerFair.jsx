@@ -5,7 +5,8 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-
+import { Box } from "@mui/system";
+import Typography from '@mui/material/Typography';
 
 const FullScreenContainer = styled.div`
   position: absolute;
@@ -67,6 +68,9 @@ function CareerFair() {
     }, [sendMessage]);
 
     return (
+        // <Box sx={{ p: 3 }}>
+        // <Typography>
+
         <FullScreenContainer>
             {/* <BackButton onClick={() => navigate('/home')}>Back to Home</BackButton> */}
 
@@ -75,6 +79,8 @@ function CareerFair() {
                 style={{ width: "100%", height: "100%" }}
             />
         </FullScreenContainer>
+        //</Typography>
+        //</Box> 
     );
 }
 

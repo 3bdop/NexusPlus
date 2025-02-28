@@ -223,21 +223,99 @@
 //     )
 // }
 
+// import React, { useEffect, useState } from 'react';
+// import { useOutletContext } from 'react-router-dom';
+// import { Avatar } from "@readyplayerme/visage";
+// import { Sparkles } from '@react-three/drei';
+// import { Box, CircularProgress, useTheme } from '@mui/material';
+
+// export default function Home() {
+//     const [avatarUrl, setAvatarUrl] = useState(null);
+//     const [username, setUsername] = useState(null);
+//     const [isLoading, setLoading] = useState(true);
+//     const theme = useTheme();
+
+//     // Get the outlet context if needed
+//     const context = useOutletContext();
+
+//     useEffect(() => {
+//         const fetchUserData = async () => {
+//             try {
+//                 const sessionResponse = await axios.get(
+//                     'http://localhost:5050/api/get-session',
+//                     { withCredentials: true }
+//                 );
+//                 setUsername(sessionResponse.data.username);
+//                 const userId = sessionResponse.data.userId;
+
+//                 const avatarResponse = await axios.get(
+//                     `http://localhost:5050/api/get-avatarUrl/${userId}`,
+//                     { withCredentials: true }
+//                 );
+//                 setAvatarUrl(avatarResponse.data.avatarUrl);
+//                 setLoading(false);
+//             } catch (err) {
+//                 console.error('Error fetching user data:', err);
+//             }
+//         };
+
+//         fetchUserData();
+//     }, []);
+
+//     if (isLoading) {
+//         return (
+//             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+//                 <CircularProgress size={60} />
+//             </Box>
+//         );
+//     }
+
+//     return (
+//         <Box sx={{
+//             position: 'absolute',
+//             top: 0,
+//             left: 0,
+//             right: 0,
+//             bottom: 0,
+//             display: 'flex',
+//             justifyContent: 'center',
+//             alignItems: 'center',
+//             backgroundColor: 'rgba(0, 0, 0, 0.8)'
+//         }}>
+//             <Avatar
+//                 modelSrc={`${avatarUrl}?morphTargets=ARKit,Eyes Extra`}
+//                 headMovement={true}
+//                 animationSrc="/animations/M_Standing_Idle_001.fbx"
+//                 environment="soft"
+//                 shadows={true}
+//                 emotion="happy"
+//                 cameraInitialDistance={0.7}
+//                 cameraZoomTarget={[-0.11, 0, 3.2]}
+//                 idleRotation
+//                 style={{ width: '100%', height: '100%' }}
+//             >
+//                 <Sparkles
+//                     color="white"
+//                     count={80}
+//                     opacity={0.5}
+//                     position={[0, 0.61, 0]}
+//                     scale={2}
+//                     size={3.5}
+//                     speed={0.25}
+//                 />
+//             </Avatar>
+//         </Box>
+//     );
+// }
+
 import * as React from 'react';
-import { extendTheme, styled } from '@mui/material/styles';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import DescriptionIcon from '@mui/icons-material/Description';
-import LayersIcon from '@mui/icons-material/Layers';
-import { AppProvider } from '@toolpad/core/AppProvider';
-import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { PageContainer } from '@toolpad/core/PageContainer';
-import Grid from '@mui/material/Grid2';
-import { Avatar } from "@readyplayerme/visage";
-import { Sparkles } from '@react-three/drei';
-import axios from 'axios';
-import { keyframes } from '@emotion/react';
+import WorkTwoToneIcon from '@mui/icons-material/WorkTwoTone';
+import StadiumTwoToneIcon from '@mui/icons-material/StadiumTwoTone';
+import { ReactRouterAppProvider } from '@toolpad/core/react-router';
+import AutoAwesomeTwoToneIcon from '@mui/icons-material/AutoAwesomeTwoTone';
+import { Outlet } from 'react-router';
+// import { Navigation } from '@toolpad/core';
 
 const NAVIGATION = [
     {
@@ -245,204 +323,39 @@ const NAVIGATION = [
         title: 'Main items',
     },
     {
-        segment: 'dashboard',
+        segment: 'home',
         title: 'Dashboard',
         icon: <DashboardIcon />,
     },
     {
-        segment: 'career-fair',
+        segment: '/career-fair',
         title: 'Join Event',
-        icon: <ShoppingCartIcon />,
+        icon: <StadiumTwoToneIcon />,
     },
     {
-        segment: 'avatar-creation',
-        title: 'Customize your digital twin',
-        icon: <BarChartIcon />,
+        segment: 'home/avatar-creation',
+        title: 'Avatar Creation',
+        icon: <AutoAwesomeTwoToneIcon />,
     },
     {
         segment: 'recommended-jobs',
-        title: 'View your recommended jobs',
-        icon: <DescriptionIcon />,
-    },
-    {
-        kind: 'divider',
-    },
-    {
-        kind: 'header',
-        title: 'Account',
-    },
-    {
-        segment: 'logout',
-        title: 'Logout',
-        icon: <LayersIcon />,
+        title: 'Recommended Jobs',
+        icon: <WorkTwoToneIcon />,
     },
 ];
 
-const demoTheme = extendTheme({
-    colorSchemes: { light: true, dark: true },
-    colorSchemeSelector: 'class',
-    breakpoints: {
-        values: {
-            xs: 0,
-            sm: 600,
-            md: 600,
-            lg: 1200,
-            xl: 1536,
-        },
-    },
-});
+const BRANDING = {
+    title: 'PLUS',
+    color: 'red',
+    logo: <img src='../../public/images/lN.png' />,
+    homeUrl: '/home'
 
-function useDemoRouter(initialPath) {
-    const [pathname, setPathname] = React.useState(initialPath);
+};
 
-    const router = React.useMemo(() => {
-        return {
-            pathname,
-            searchParams: new URLSearchParams(),
-            navigate: (path) => setPathname(String(path)),
-        };
-    }, [pathname]);
-
-    return router;
-}
-
-const Skeleton = styled('div')(({ theme, height }) => ({
-    backgroundColor: theme.palette.action.hover,
-    borderRadius: theme.shape.borderRadius,
-    height,
-    content: '" "',
-}));
-
-const spin = keyframes`
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-`;
-
-const LoadingSpinner = styled('div')(({ theme }) => ({
-    border: '4px solid rgba(255, 255, 255, 0.3)',
-    borderTop: '4px solid #00a3ff',
-    borderRadius: '50%',
-    width: '40px',
-    height: '40px',
-    animation: `${spin} 1s linear infinite`,
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-}));
-
-const fadeIn = keyframes`
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-`;
-
-const AvatarContainer = styled('div')(({ theme, isAvatarLoaded }) => ({
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    opacity: isAvatarLoaded ? 1 : 0,
-    animation: `${fadeIn} 10s ease-in-out`,
-}));
-
-export default function DashboardLayoutBasic(props) {
-    const { window } = props;
-
-    const router = useDemoRouter('/dashboard');
-
-    const [avatarUrl, setAvatarUrl] = React.useState(null);
-    const [username, setUsername] = React.useState(null);
-    const [isLoading, setLoading] = React.useState(true);
-    const [isAvatarLoaded, setIsAvatarLoaded] = React.useState(false);
-
-    React.useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const sessionResponse = await axios.get(
-                    'http://localhost:5050/api/get-session',
-                    { withCredentials: true }
-                );
-                setUsername(sessionResponse.data.username);
-                const userId = sessionResponse.data.userId;
-                if (!userId) {
-                    throw new Error('No user ID found in session data.');
-                }
-
-                const avatarResponse = await axios.get(
-                    `http://localhost:5050/api/get-avatarUrl/${userId}`,
-                    { withCredentials: true }
-                );
-
-                setAvatarUrl(avatarResponse.data.avatarUrl);
-                setLoading(false);
-            } catch (err) {
-                console.error('Error fetching user data:', err);
-                if (err.response?.status === 401) {
-                    router.navigate('/');
-                }
-            }
-        };
-
-        fetchUserData();
-    }, [router]);
-
-    const logout = async () => {
-        try {
-            await axios.post('http://localhost:5050/api/logout', {}, { withCredentials: true });
-            router.navigate('/');
-        } catch (err) {
-            console.error('Error during logout:', err);
-        }
-    };
-
-    const capitalizeFirstLetter = (val) => {
-        return String(val).charAt(0).toUpperCase() + String(val).slice(1);
-    };
-
+export default function App() {
     return (
-        <AppProvider
-            navigation={NAVIGATION}
-            router={router}
-            theme={demoTheme}
-        >
-            <DashboardLayout>
-                <PageContainer>
-                    <Grid container spacing={1}>
-                        <Grid item xs={12} style={{ textAlign: 'center', marginTop: '20px' }}>
-                            <h2 style={{ color: 'white', fontFamily: 'cursive' }}>
-                                Welcome {capitalizeFirstLetter(username)} !
-                            </h2>
-                            <p style={{ color: 'whitesmoke', fontFamily: 'cursive' }}>This is your main digital-twin🤩</p>
-                        </Grid>
-                        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <AvatarContainer isAvatarLoaded={isAvatarLoaded}>
-                                <Avatar
-                                    modelSrc={avatarUrl + "?morphTargets=ARKit,Eyes Extra"}
-                                    headMovement={true}
-                                    animationSrc={"/animations/M_Standing_Idle_001.fbx"}
-                                    environment={"soft"}
-                                    shadows={true}
-                                    emotion={"happy"}
-                                    cameraInitialDistance={0.7}
-                                    cameraZoomTarget={[-0.11, 0, 3.2]}
-                                    idleRotation
-                                >
-                                    <Sparkles
-                                        color={"white"}
-                                        count={80}
-                                        opacity={0.5}
-                                        position={[0, 0.61, 0]}
-                                        scale={2}
-                                        size={3.5}
-                                        speed={0.25}
-                                    />
-                                </Avatar>
-                            </AvatarContainer>
-                        </Grid>
-                    </Grid>
-                </PageContainer>
-            </DashboardLayout>
-        </AppProvider>
+        <ReactRouterAppProvider navigation={NAVIGATION} branding={BRANDING}>
+            <Outlet />
+        </ReactRouterAppProvider>
     );
 }
