@@ -48,7 +48,7 @@
 // }
 
 
-import * as React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -97,15 +97,16 @@ const fetchRecommendationsFromDB = async (userId) => {
 };
 
 export default function RecommendedJobs() {
-    const [cvUploaded, setCvUploaded] = React.useState(false);
-    const [experienceLevel, setExperienceLevel] = React.useState('');
-    const [submitting, setSubmitting] = React.useState(false);
-    const [recommendations, setRecommendations] = React.useState([]);
-    const [activeStep, setActiveStep] = React.useState(0);
+    const [cvUploaded, setCvUploaded] = useState(false);
+    const [experienceLevel, setExperienceLevel] = useState('');
+    const [submitting, setSubmitting] = useState(false);
+    const [recommendations, setRecommendations] = useState([]);
+    const [activeStep, setActiveStep] = useState(0);
+    const [errorMessage, setErrorMessage] = useState('');
     const userId = "user123"; // Replace with actual user ID from authentication
 
     // Fetch saved recommendations on component mount
-    React.useEffect(() => {
+    useEffect(() => {
         const fetchSavedRecommendations = async () => {
             const savedRecommendations = await fetchRecommendationsFromDB(userId);
             if (savedRecommendations.length > 0) {
@@ -119,7 +120,16 @@ export default function RecommendedJobs() {
     const handleCvUpload = (event) => {
         const file = event.target.files[0];
         if (file) {
+            if (file.type !== 'application/pdf') {
+                setErrorMessage('Only PDF files are allowed.');
+                return;
+            }
+            if (file.size > 1024 * 1024) { // 2MB in bytes
+                setErrorMessage('File size should not exceed 1MB.');
+                return;
+            }
             setCvUploaded(true);
+            setErrorMessage('');
             setActiveStep(1); // Move to the next step
         }
     };
@@ -179,7 +189,7 @@ export default function RecommendedJobs() {
             {activeStep === 0 && (
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                     <input
-                        accept=".pdf,.doc,.docx"
+                        accept=".pdf"
                         style={{ display: 'none' }}
                         id="cv-upload"
                         type="file"
@@ -198,6 +208,11 @@ export default function RecommendedJobs() {
                     {cvUploaded && (
                         <Typography variant="body2" color="success.main">
                             CV Uploaded Successfully!
+                        </Typography>
+                    )}
+                    {errorMessage && (
+                        <Typography variant="body2" color="error.main">
+                            {errorMessage}
                         </Typography>
                     )}
                 </Box>
