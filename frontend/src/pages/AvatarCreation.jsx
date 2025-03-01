@@ -2,7 +2,7 @@ import React from 'react';
 import { AvatarCreator } from '@readyplayerme/react-avatar-creator';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Box } from '@mui/system';
+import { Box, height, width } from '@mui/system';
 import Typography from '@mui/material/Typography';
 
 const config = {
@@ -56,8 +56,8 @@ export default function AvatarCreation() {
     };
 
     return (
-        // <Box sx={{ p: 3 }}>
-        <Typography>
+        <>
+
             {/* <div className="avatar-creator-container" style={{ position: 'relative' }}> */}
             <AvatarCreator
                 subdomain="oneuni"
@@ -91,8 +91,7 @@ export default function AvatarCreation() {
                     </button>
                 </div> */}
             {/* </div> */}
-        </Typography>
-        // </Box>
+        </>
     );
 }
 

@@ -315,6 +315,7 @@ import StadiumTwoToneIcon from '@mui/icons-material/StadiumTwoTone';
 import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import AutoAwesomeTwoToneIcon from '@mui/icons-material/AutoAwesomeTwoTone';
 import { Outlet } from 'react-router';
+import { createTheme } from '@mui/material/styles';
 // import { Navigation } from '@toolpad/core';
 
 const NAVIGATION = [
@@ -328,17 +329,17 @@ const NAVIGATION = [
         icon: <DashboardIcon />,
     },
     {
-        segment: '/career-fair',
+        segment: 'career-fair',
         title: 'Join Event',
         icon: <StadiumTwoToneIcon />,
     },
     {
         segment: 'home/avatar-creation',
-        title: 'Avatar Creation',
+        title: 'Avatar Customization',
         icon: <AutoAwesomeTwoToneIcon />,
     },
     {
-        segment: 'recommended-jobs',
+        segment: 'home/recommended-jobs',
         title: 'Recommended Jobs',
         icon: <WorkTwoToneIcon />,
     },
@@ -346,15 +347,86 @@ const NAVIGATION = [
 
 const BRANDING = {
     title: 'PLUS',
-    color: 'red',
-    logo: <img src='../../public/images/lN.png' />,
+    logo: <img src='/ln3.png' />,
     homeUrl: '/home'
-
 };
+
+const Theme = createTheme({
+    cssVariables: {
+        colorSchemeSelector: 'data-toolpad-color-scheme',
+    },
+    // Remove light scheme and keep only dark
+    colorSchemes: { dark: true },
+    breakpoints: {
+        values: {
+            xs: 0,
+            sm: 600,
+            md: 600,
+            lg: 1200,
+            xl: 1536,
+        },
+    },
+    palette: {
+        mode: 'dark', // Force dark mode
+        primary: {
+            main: '#6745FCFF', // Color for top bar and menu
+        },
+        background: {
+            default: '#080808', // Main background color
+            paper: '#1A1A1A', // Color for cards and menus
+        },
+        text: {
+            primary: '#FFFFFF', // Default text color
+        },
+    },
+    components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                body: {
+                    margin: 0,
+                    padding: 0,
+                    background: 'linear-gradient(0deg, #080808FF, #5016ADFF 100%)',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundAttachment: 'fixed',
+                    minHeight: '100vh',
+                    overflow: 'hidden'
+                },
+                html: {
+                    overflow: 'hidden'
+                }
+            },
+        },
+        // Change top bar (AppBar) styling
+        MuiAppBar: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: '#1A1A1AD5', // Dark gray background
+                    borderBottom: '1px solidrgb(147, 102, 219)', // Purple accent border
+
+                },
+            },
+        },
+        // Change left menu (Drawer) styling
+        MuiDrawer: {
+            styleOverrides: {
+                paper: {
+                    backgroundColor: '#1A1A1A', // Dark gray background
+                    borderRight: '1px solidrgb(147, 102, 219)', // Purple accent border
+                },
+            },
+        },
+    },
+});
+
 
 export default function App() {
     return (
-        <ReactRouterAppProvider navigation={NAVIGATION} branding={BRANDING}>
+        <ReactRouterAppProvider navigation={NAVIGATION}
+            branding={BRANDING}
+            theme={Theme}
+            defaultColorScheme="dark" // Force dark mode
+            colorSchemeStorageKey={null} // Disable scheme persistence 
+        >
             <Outlet />
         </ReactRouterAppProvider>
     );

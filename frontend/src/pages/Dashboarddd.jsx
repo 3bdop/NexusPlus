@@ -27,7 +27,14 @@ export default function Dashboarddd() {
                 if (!userId) {
                     throw new Error('No user ID found in session data.');
                 }
-                setAvatarUrl(sessionResponse.data.avatarUrl)
+
+                // Step 2: Fetch avatar URL using userId
+                const avatarResponse = await axios.get(
+                    `http://localhost:5050/api/get-avatarUrl/${userId}`,
+                    { withCredentials: true }
+                );
+
+                setAvatarUrl(avatarResponse.data.avatarUrl);
                 setLoading(false)
             } catch (err) {
                 console.error('Error fetching user data:', err);
@@ -51,12 +58,12 @@ export default function Dashboarddd() {
             <div style={{
                 zIndex: 1, textAlign: 'center'
             }}>
-                <Typography variant="h2" style={{
-                    color: 'white', zIndex: 1, fontFamily: "cursive"
+                <Typography variant="h4" style={{
+                    color: 'white', zIndex: 1, fontFamily: "system-ui"
                 }}>
                     Welcome {capitalizeFirstLetter(username)} !
                 </Typography>
-                <Typography variant="body1" style={{ color: 'whitesmoke', fontFamily: 'cursive' }}>
+                <Typography variant="body1" style={{ color: 'whitesmoke', fontFamily: 'system-ui' }}>
                     This is your main digital-twin🤩
                 </Typography>
             </div>
@@ -75,9 +82,9 @@ export default function Dashboarddd() {
                     color={"white"}
                     count={80}
                     opacity={0.5}
-                    position={[0, 0.61, 0]}
+                    position={[0, 0.61, -0.02]}
                     scale={2}
-                    size={3.5}
+                    size={3}
                     speed={0.25}
                 />
             </Avatar>

@@ -73,9 +73,10 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Home from "./pages/Home.jsx";
 import AvatarCreation from "./pages/AvatarCreation.jsx";
 import CareerFair from "./pages/CareerFair.jsx";
-// import RecommendedJobs from "./pages/RecommendedJobs.jsx";
+import RecommendedJobs from "./pages/RecommendedJobs.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import Dashboarddd from "./pages/Dashboarddd.jsx";
+import Layout from "./layout/Dashboard.jsx";
 
 const router = createBrowserRouter([
   {
@@ -88,7 +89,7 @@ const router = createBrowserRouter([
     errorElement: <NotFoundPage />,
   },
   {
-    path: '/home',
+    // path: '/home',
     element: (
       <ProtectedRoute>
         <Home />
@@ -96,16 +97,20 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: '',
-        element: <Dashboarddd />,
+        path: '/home',
+        element: <Layout />,
         children: [
-          // {
-          //   path: 'career-fair',
-          //   element: <CareerFair />,
-          // },
+          {
+            path: '',
+            element: <Dashboarddd />,
+          },
           {
             path: 'avatar-creation',
             element: <AvatarCreation />,
+          },
+          {
+            path: 'recommended-jobs',
+            element: <RecommendedJobs />,
           },
         ]
       }

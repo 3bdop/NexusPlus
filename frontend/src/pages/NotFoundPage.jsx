@@ -15,7 +15,7 @@ export default function NotFoundpage() {
         }}>
             <h1 style={{ color: 'snow', fontFamily: "system-ui" }}>It worked on my machine🤔</h1>
             <p style={{ color: 'snow', fontFamily: "system-ui" }}>But apparently not on the world wide web. Sorry about that! 🌍</p>
-            <NavLink to={"/home"} style={{ fontFamily: "system-ui" }} >Back to home</NavLink>
+            <a href='/' style={{ fontFamily: "system-ui" }} >Back to home</a>
         </div>
     )
 }
