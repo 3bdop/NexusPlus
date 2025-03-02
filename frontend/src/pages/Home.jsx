@@ -307,16 +307,16 @@
 //         </Box>
 //     );
 // }
-
 import * as React from 'react';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import WorkTwoToneIcon from '@mui/icons-material/WorkTwoTone';
 import StadiumTwoToneIcon from '@mui/icons-material/StadiumTwoTone';
 import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import AutoAwesomeTwoToneIcon from '@mui/icons-material/AutoAwesomeTwoTone';
-import { Outlet } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 import { createTheme } from '@mui/material/styles';
-// import { Navigation } from '@toolpad/core';
+import LogoutIcon from '@mui/icons-material/Logout'; // Import logout icon
+import axios from 'axios'; // For making API calls
 
 const NAVIGATION = [
     {
@@ -324,7 +324,7 @@ const NAVIGATION = [
         title: 'Main items',
     },
     {
-        segment: 'home',
+        segment: 'dashboard',
         title: 'Dashboard',
         icon: <DashboardIcon />,
     },
@@ -334,28 +334,36 @@ const NAVIGATION = [
         icon: <StadiumTwoToneIcon />,
     },
     {
-        segment: 'home/avatar-creation',
+        segment: 'dashboard/avatar-creation',
         title: 'Avatar Customization',
         icon: <AutoAwesomeTwoToneIcon />,
     },
     {
-        segment: 'home/recommended-jobs',
+        segment: 'dashboard/recommended-jobs',
         title: 'Recommended Jobs',
         icon: <WorkTwoToneIcon />,
+    },
+    {
+        kind: 'divider',
+    },
+    {
+        kind: 'footer',
+        title: 'Logout',
+        icon: <LogoutIcon />,
+        onClick: () => { },
     },
 ];
 
 const BRANDING = {
     title: 'PLUS',
     logo: <img src='/ln3.png' />,
-    homeUrl: '/home'
+    homeUrl: '/dashboard',
 };
 
 const Theme = createTheme({
     cssVariables: {
         colorSchemeSelector: 'data-toolpad-color-scheme',
     },
-    // Remove light scheme and keep only dark
     colorSchemes: { dark: true },
     breakpoints: {
         values: {
@@ -367,16 +375,16 @@ const Theme = createTheme({
         },
     },
     palette: {
-        mode: 'dark', // Force dark mode
+        mode: 'dark',
         primary: {
-            main: '#6745FCFF', // Color for top bar and menu
+            main: '#6745FCFF',
         },
         background: {
-            default: '#080808', // Main background color
-            paper: '#1A1A1A', // Color for cards and menus
+            default: '#080808',
+            paper: '#1A1A1A',
         },
         text: {
-            primary: '#FFFFFF', // Default text color
+            primary: '#FFFFFF',
         },
     },
     components: {
@@ -389,43 +397,63 @@ const Theme = createTheme({
                     backgroundRepeat: 'no-repeat',
                     backgroundAttachment: 'fixed',
                     minHeight: '100vh',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
                 },
                 html: {
-                    overflow: 'hidden'
-                }
+                    overflow: 'hidden',
+                },
             },
         },
-        // Change top bar (AppBar) styling
         MuiAppBar: {
             styleOverrides: {
                 root: {
-                    backgroundColor: '#1A1A1AD5', // Dark gray background
-                    borderBottom: '1px solidrgb(147, 102, 219)', // Purple accent border
-
+                    backgroundColor: '#1A1A1AD5',
+                    borderBottom: '1px solid rgb(147, 102, 219)',
                 },
             },
         },
-        // Change left menu (Drawer) styling
         MuiDrawer: {
             styleOverrides: {
                 paper: {
-                    backgroundColor: '#1A1A1A', // Dark gray background
-                    borderRight: '1px solidrgb(147, 102, 219)', // Purple accent border
+                    backgroundColor: '#1A1A1A',
+                    borderRight: '1px solid rgb(147, 102, 219)',
                 },
             },
         },
     },
 });
 
-
 export default function App() {
+    const navigate = useNavigate();
+
+    // Logout method
+    const logout = async () => {
+        try {
+            await axios.post('http://localhost:5050/api/logout', {}, { withCredentials: true });
+            navigate('/'); // Redirect to the login page or home page after logout
+        } catch (err) {
+            console.error('Error during logout:', err);
+        }
+    };
+
+    // Add the logout method to the footer navigation item
+    const navigationWithLogout = NAVIGATION.map((item) => {
+        if (item.kind === 'footer') {
+            return {
+                ...item,
+                onClick: logout, // Attach the logout method
+            };
+        }
+        return item;
+    });
+
     return (
-        <ReactRouterAppProvider navigation={NAVIGATION}
+        <ReactRouterAppProvider
+            navigation={navigationWithLogout}
             branding={BRANDING}
             theme={Theme}
-            defaultColorScheme="dark" // Force dark mode
-            colorSchemeStorageKey={null} // Disable scheme persistence 
+            defaultColorScheme="dark"
+            colorSchemeStorageKey={null}
         >
             <Outlet />
         </ReactRouterAppProvider>
