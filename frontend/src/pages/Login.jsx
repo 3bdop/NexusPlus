@@ -23,7 +23,7 @@ export default function Login() {
             });
 
             if (response.status === 200) {
-                navigate('/home');
+                navigate('/dashboard');
             }
         } catch (error) {
             console.error('Login error:', error);
