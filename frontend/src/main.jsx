@@ -97,7 +97,7 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: '/home',
+        path: '/dashboard',
         element: <Layout />,
         children: [
           {
@@ -123,7 +123,7 @@ const router = createBrowserRouter([
         <CareerFair />
       </ProtectedRoute>
     ),
-    errorElement: <NotFoundPage />
+    // errorElement: <NotFoundPage />
   }
 ]);
 
