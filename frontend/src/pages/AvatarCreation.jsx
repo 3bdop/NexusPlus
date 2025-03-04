@@ -12,7 +12,7 @@ const config = {
     language: 'en',
 };
 
-const style = { width: '100%', height: '100vh', border: 'none' };
+const style = { width: '100%', height: '90vh', border: 'none' };
 
 export default function AvatarCreation() {
     const navigate = useNavigate();
