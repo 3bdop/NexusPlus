@@ -1,53 +1,3 @@
-// import * as React from 'react';
-// import Accordion from '@mui/material/Accordion';
-// import AccordionSummary from '@mui/material/AccordionSummary';
-// import AccordionDetails from '@mui/material/AccordionDetails';
-// import Typography from '@mui/material/Typography';
-// import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-// import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-
-// export default function RecommendedJobs() {
-//     return (
-//         <div style={{ padding: 10, margin: 10 }}>
-//             <Accordion>
-//                 <AccordionSummary
-//                     expandIcon={<ArrowDownwardIcon />}
-//                     aria-controls="panel1-content"
-//                     id="panel1-header"
-//                     style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: 2 }}
-//                 >
-//                     <img src='https://upload.wikimedia.org/wikipedia/commons/b/b6/Ooredoo.svg'
-//                         alt='wikimedia.org' style={{ width: 40 }} />
-//                     <Typography component="span">
-//                         AI Engineer</Typography>
-//                 </AccordionSummary>
-//                 <AccordionDetails>
-//                     <Typography>
-//                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-//                         malesuada lacus ex, sit amet blandit leo lobortis eget.
-//                     </Typography>
-//                 </AccordionDetails>
-//             </Accordion>
-//             <Accordion>
-//                 <AccordionSummary
-//                     expandIcon={<ArrowDownwardIcon />}
-//                     aria-controls="panel1-content"
-//                     id="panel1-header"
-//                 >
-//                     <Typography component="span">Software Engineer</Typography>
-//                 </AccordionSummary>
-//                 <AccordionDetails>
-//                     <Typography>
-//                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-//                         malesuada lacus ex, sit amet blandit leo lobortis eget.
-//                     </Typography>
-//                 </AccordionDetails>
-//             </Accordion>
-//         </div>
-//     )
-// }
-
-
 import React, { useState, useEffect, useRef } from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -124,8 +74,8 @@ export default function RecommendedJobs() {
                 setErrorMessage('Only PDF files are allowed.');
                 return;
             }
-            if (file.size > 1024 * 1024) { // 2MB in bytes
-                setErrorMessage('File size should not exceed 1MB.');
+            if (file.size > 3 * 1024 * 1024) { // 2MB in bytes
+                setErrorMessage('File size should not exceed 3MB.');
                 return;
             }
             setCvUploaded(true);
