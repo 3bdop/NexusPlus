@@ -1,20 +1,27 @@
 import { Navigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, requiredRole }) => {
     const [isLoading, setIsLoading] = useState(true);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [authState, setAuthState] = useState({
+        isAuthenticated: false,
+        role: null
+    });
+    console.log(authState.role)
 
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                await axios.get('http://localhost:5050/api/check-auth', {
+                const response = await axios.get('http://localhost:5050/api/check-auth', {
                     withCredentials: true
                 });
-                setIsAuthenticated(true);
+                setAuthState({
+                    isAuthenticated: true,
+                    role: response.data.role
+                });
             } catch (error) {
-                setIsAuthenticated(false);
+                setAuthState({ isAuthenticated: false, role: null });
             } finally {
                 setIsLoading(false);
             }
@@ -22,16 +29,15 @@ const ProtectedRoute = ({ children }) => {
         checkAuth();
     }, []);
 
-    if (isLoading) {
-        // return <div>Loading...</div>; // Or your loading component
-        return <></>; // Or your loading component
-    }
+    if (isLoading) return <></>;
 
-    if (!isAuthenticated) {
+    if (!authState.isAuthenticated) return <Navigate to="/" replace />;
+
+    if (requiredRole && authState.role !== requiredRole) {
         return <Navigate to="/" replace />;
     }
-
-    return children;
+    console.log(children)
+    return React.cloneElement(children, { role: authState.role });
 };
 
 export default ProtectedRoute;
