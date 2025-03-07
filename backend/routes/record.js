@@ -122,9 +122,9 @@ router.post("/api/login", async (req, res) => {
 router.get("/api/check-auth", validateSession, (req, res) => {
     res.status(200).json({
         authenticated: true,
-        user: {
-            username: req.user.username
-        }
+        username: req.user.username,
+        role: req.user.role
+
     });
 });
 
