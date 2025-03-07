@@ -77,6 +77,7 @@ import RecommendedJobs from "./pages/RecommendedJobs.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import Dashboarddd from "./pages/Dashboarddd.jsx";
 import Layout from "./layout/Dashboard.jsx";
+import JobApplications from "./pages/JobApplications.jsx";
 
 const router = createBrowserRouter([
   {
@@ -89,7 +90,7 @@ const router = createBrowserRouter([
     errorElement: <NotFoundPage />,
   },
   {
-    // path: '/home',
+    path: '/dashboard',
     element: (
       <ProtectedRoute>
         <Home />
@@ -97,35 +98,91 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: '/dashboard',
         element: <Layout />,
         children: [
           {
-            path: '',
-            element: <Dashboarddd />,
-          },
-          {
-            path: 'avatar-creation',
-            element: <AvatarCreation />,
+            index: true,
+            element: (
+              <Dashboarddd />
+            )
           },
           {
             path: 'recommended-jobs',
-            element: <RecommendedJobs />,
+            element: (
+              <ProtectedRoute requiredRole="attendee">
+                <RecommendedJobs />
+              </ProtectedRoute>
+            )
           },
+          {
+            path: 'job-applications',
+            element: (
+              <ProtectedRoute requiredRole="employer">
+                <JobApplications />
+              </ProtectedRoute>
+            )
+          },
+          {
+            path: 'avatar-creation',
+            element: <AvatarCreation />
+          }
         ]
       }
-    ],
+    ]
   },
   {
     path: '/career-fair',
-    element: (
-      <ProtectedRoute>
-        <CareerFair />
-      </ProtectedRoute>
-    ),
-    // errorElement: <NotFoundPage />
+    element: <ProtectedRoute><CareerFair /></ProtectedRoute>,
   }
 ]);
+// const router = createBrowserRouter([
+//   {
+//     path: '/',
+//     element: (
+//       <PlayProvider>
+//         <App />
+//       </PlayProvider>
+//     ),
+//     errorElement: <NotFoundPage />,
+//   },
+//   {
+//     // path: '/home',
+//     element: (
+//       <ProtectedRoute>
+//         <Home />
+//       </ProtectedRoute>
+//     ),
+//     children: [
+//       {
+//         path: '/dashboard',
+//         element: <Layout />,
+//         children: [
+//           {
+//             path: '',
+//             element: <Dashboarddd />,
+//           },
+//           {
+//             path: 'avatar-creation',
+//             element: <AvatarCreation />,
+//           },
+//           {
+//             path: 'recommended-jobs',
+//             element: <RecommendedJobs />,
+//           },
+//         ]
+//       }
+//     ],
+//   },
+//   {
+//     path: '/career-fair',
+//     element: (
+//       <ProtectedRoute>
+//         <CareerFair />
+//       </ProtectedRoute>
+//     ),
+//     // errorElement: <NotFoundPage />
+//   }
+// ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
