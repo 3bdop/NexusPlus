@@ -2,9 +2,13 @@ import {
   Box, Typography, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow, Link,
   Dialog, DialogTitle, DialogContent, IconButton,
-  TextField, Select, MenuItem, InputAdornment
+  TextField, Select, MenuItem, InputAdornment, Button
 } from '@mui/material';
-import { Close, ZoomIn, ZoomOut, ChevronLeft, ChevronRight } from '@mui/icons-material';
+import {
+  Close, ZoomIn, ZoomOut,
+  ChevronLeft, ChevronRight, CheckCircle,
+  Cancel
+} from '@mui/icons-material';
 import { useState } from 'react';
 import { Document, Page } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
@@ -17,19 +21,19 @@ export default function JobApplications() {
       name: "mehdi",
       position: "Data analyst",
       cv: '/CV/1mb.pdf',
-      date: Date.now(),
+      job: 'AI Engineer',
     },
     {
       name: "abood",
       position: "Data analyst",
       cv: '../../public/CV/Abdulrahman Muhanna 60101806.pdf',
-      date: Date.now(),
+      job: 'Software Developer',
     },
     {
       name: "ali",
       position: "Data analyst",
       cv: '/CV/1mb.pdf',
-      date: Date.now(),
+      job: 'Media and production',
     },
   ]
   // React.useEffect(() => {
@@ -66,33 +70,52 @@ export default function JobApplications() {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom>
-        Attendee Applications
+        Most Recommended Applicants
       </Typography>
       <TableContainer>
         <Table>
-          <TableHead>
+          <TableHead >
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Position</TableCell>
-              <TableCell>CV</TableCell>
-              <TableCell>Date</TableCell>
+              <TableCell align='center'>Name</TableCell>
+              <TableCell align='center'>Position</TableCell>
+              <TableCell align='center'>Resume</TableCell>
+              <TableCell align='center'>Job Position</TableCell>
+              <TableCell align='center'>Approve</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {applications.map((application) => (
               <TableRow key={application.id}>
-                <TableCell>{application.name}</TableCell>
-                <TableCell>{application.position}</TableCell>
-                <TableCell>
+                <TableCell align='center'>{application.name}</TableCell>
+                <TableCell align='center'>{application.position}</TableCell>
+                <TableCell align='center'>
                   <Link
                     component="button"
                     onClick={() => setSelectedPdf(application.cv)}
-                    sx={{ cursor: 'pointer', color: 'primary.main' }}
+                    sx={{ cursor: 'pointer', color: 'lightgreen' }}
                   >
-                    View CV
+                    View Resume
                   </Link>
                 </TableCell>
-                <TableCell>{new Date(application.date).toLocaleDateString()}</TableCell>
+                <TableCell align='center'>{application.job}</TableCell>
+                <TableCell align='center'>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    startIcon={<CheckCircle />}
+                    sx={{ borderRadius: '8px', marginRight: '8px' }}
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    startIcon={<Cancel />}
+                    sx={{ borderRadius: '8px' }}
+                  >
+                    Reject
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
