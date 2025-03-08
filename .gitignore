@@ -30,3 +30,4 @@ dist-ssr
 backend/b
 frontend/public/build
 frontend/public/build2
+frontend/public/CV/*
