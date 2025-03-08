@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { Document, Page } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
+import { border } from '@mui/system';
 
 export default function JobApplications() {
   // const [applications, setApplications] = React.useState([]);
@@ -72,10 +73,10 @@ export default function JobApplications() {
       <Typography variant="h4" gutterBottom>
         Most Recommended Applicants
       </Typography>
-      <TableContainer>
-        <Table>
+      <TableContainer sx={{ border: 1, borderRadius: 3 }}>
+        <Table >
           <TableHead >
-            <TableRow>
+            <TableRow sx={{ background: '#63636363' }}>
               <TableCell align='center'>Name</TableCell>
               <TableCell align='center'>Position</TableCell>
               <TableCell align='center'>Resume</TableCell>
