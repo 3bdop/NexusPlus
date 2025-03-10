@@ -10,7 +10,7 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 2px;
+  width: 10px;
 }
 
 /* TRACK */
@@ -20,8 +20,9 @@ body {
 
 /* HANDLE */
 ::-webkit-scrollbar-thumb {
-  background: white;
-  height: 10%;
+  background: rgb(218, 218, 218);
+  border-radius: 30%;
+  height: 15%;
 }
 
 .overlay {
