@@ -31,5 +31,4 @@ backend/b
 frontend/public/build
 frontend/public/build2
 
-LockDownBrowser-2-1-2-09-121943213.exe
-deployment_project/data/postings.csv
+*.csv
