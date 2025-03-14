@@ -23,8 +23,6 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SendIcon from '@mui/icons-material/Send';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import axios from 'axios';
-import { keyframes } from '@emotion/react';
-import { animated, useSpring } from '@react-spring/web';
 
 const EXPERIENCE_LEVELS = [
   "Entry Level",
@@ -41,32 +39,6 @@ const steps = [
 ];
 
 const API_URL = 'http://localhost:8000/api/recommendations';
-
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
-
-const stepperAnimation = {
-  animation: `${fadeIn} 0.8s ease-out forwards`,
-};
-
-const StepContent = ({ children, delay }) => {
-  const props = useSpring({
-    from: { opacity: 0, transform: 'translateY(20px)' },
-    to: { opacity: 1, transform: 'translateY(0)' },
-    delay,
-    config: { tension: 280, friction: 20 }
-  });
-
-  return <animated.div style={props}>{children}</animated.div>;
-};
 
 export default function RecommendedJobs() {
   const [cvFile, setCvFile] = useState(null);
@@ -203,28 +175,26 @@ export default function RecommendedJobs() {
     <Box sx={containerStyles}>
 
       {/* Stepper Section */}
-      <Box sx={{ 
-        width: '70%',
-        margin: '0 auto',
-        mb: 6,
-        ...stepperAnimation
-      }}>
-        <Stepper 
-          activeStep={activeStep} 
-          alternativeLabel 
-          sx={stepperStyles}
+      <Box sx={{ textAlign: 'center', mb: 8 }}>  {/* Increased mb from 6 to 8 */}
+        <Stepper
+          activeStep={activeStep}
+          alternativeLabel
+          sx={{
+            width: '80%',     // Increased from 65%
+            mx: 'auto',       // Center horizontally
+            py: 3,            // Added padding top/bottom
+            ...stepperStyles
+          }}
         >
-          {steps.map((step, index) => (
+          {steps.map((step) => (
             <Step key={step.label}>
-              <StepContent delay={index * 200}>
-                <StepLabel 
-                  icon={React.cloneElement(step.icon, { 
-                    style: { fontSize: '2rem' }
-                  })}
-                >
-                  {step.label}
-                </StepLabel>
-              </StepContent>
+              <StepLabel 
+                icon={React.cloneElement(step.icon, { 
+                  style: { fontSize: '2rem' }  // Make the icons inside larger
+                })}
+              >
+                {step.label}
+              </StepLabel>
             </Step>
           ))}
         </Stepper>
@@ -232,75 +202,71 @@ export default function RecommendedJobs() {
 
       {/* Upload CV Section */}
       {activeStep === 0 && (
-        <StepContent delay={300}>
-          <Box sx={{ textAlign: 'center', py: 6 }}>
-            <input
-              accept=".pdf"
-              style={{ display: 'none' }}
-              id="cv-upload"
-              type="file"
-              onChange={handleCvUpload}
-            />
-            <label htmlFor="cv-upload">
-              <Button
-                variant="contained"
-                component="span"
-                startIcon={<CloudUploadIcon />}
-                size="large"
-                sx={{
-                  py: 2.5,
-                  px: 6,
-                  fontSize: '1.2rem',
-                  backgroundColor: '#8B5CF6',
-                  '&:hover': {
-                    backgroundColor: '#7C3AED'
-                  }
-                }}
-              >
-                Upload CV
-              </Button>
-            </label>
-            {cvFile && (
-              <Typography sx={{ mt: 3 }} color="#8B5CF6" variant="h6">
-                CV Uploaded: {cvFile.name}
-              </Typography>
-            )}
-          </Box>
-        </StepContent>
+        <Box sx={{ textAlign: 'center', py: 6 }}>
+          <input
+            accept=".pdf"
+            style={{ display: 'none' }}
+            id="cv-upload"
+            type="file"
+            onChange={handleCvUpload}
+          />
+          <label htmlFor="cv-upload">
+            <Button
+              variant="contained"
+              component="span"
+              startIcon={<CloudUploadIcon />}
+              size="large"
+              sx={{
+                py: 2.5,
+                px: 6,
+                fontSize: '1.2rem',
+                backgroundColor: '#8B5CF6',
+                '&:hover': {
+                  backgroundColor: '#7C3AED'
+                }
+              }}
+            >
+              Upload CV
+            </Button>
+          </label>
+          {cvFile && (
+            <Typography sx={{ mt: 3 }} color="#8B5CF6" variant="h6">
+              CV Uploaded: {cvFile.name}
+            </Typography>
+          )}
+        </Box>
       )}
 
       {/* Experience Level Section */}
       {activeStep === 1 && (
-        <StepContent delay={300}>
-          <Box sx={{ textAlign: 'center', py: 4 }}>
-            <Select
-              value={experienceLevel}
-              onChange={(e) => setExperienceLevel(e.target.value)}
-              displayEmpty
-              sx={{ minWidth: 300, height: 56, fontSize: '1.1rem' }}
-            >
-              <MenuItem value="" disabled>
-                Select Experience Level
+        <Box sx={{ textAlign: 'center', py: 4 }}>
+          <Select
+            value={experienceLevel}
+            onChange={(e) => setExperienceLevel(e.target.value)}
+            displayEmpty
+            sx={{ minWidth: 300, height: 56, fontSize: '1.1rem' }}
+          >
+            <MenuItem value="" disabled>
+              Select Experience Level
+            </MenuItem>
+            {EXPERIENCE_LEVELS.map((level) => (
+              <MenuItem key={level} value={level}>
+                {level}
               </MenuItem>
-              {EXPERIENCE_LEVELS.map((level) => (
-                <MenuItem key={level} value={level}>
-                  {level}
-                </MenuItem>
-              ))}
-            </Select>
-            <Box sx={{ mt: 4 }}>
-              <Button
-                variant="contained"
-                onClick={handleSubmit}
-                endIcon={<SendIcon />}
-                size="large"
-                sx={{ py: 2, px: 4, fontSize: '1.1rem' }}
-              >
-                Get Recommendations
-              </Button>
-            </Box>
+            ))}
+          </Select>
+          <Box sx={{ mt: 4 }}>
+            <Button
+              variant="contained"
+              onClick={handleSubmit}
+              endIcon={<SendIcon />}
+              size="large"
+              sx={{ py: 2, px: 4, fontSize: '1.1rem' }}
+            >
+              Get Recommendations
+            </Button>
           </Box>
-        </StepContent>
+        </Box>
       )}
 
       {/* Loading Indicator */}
@@ -315,93 +281,91 @@ export default function RecommendedJobs() {
 
       {/* Results Section */}
       {activeStep === 2 && !loading && (
-        <StepContent delay={300}>
-          <Box sx={{ mt: 4 }}>
-            {/* Extracted Skills Section */}
-            {extractedSkills.length > 0 && (
-              <Box sx={{
-                mb: 6,
-                p: 4,
-                borderRadius: 2,
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(139, 92, 246, 0.2)'
-              }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                  <LightbulbIcon sx={{ color: '#8B5CF6', mr: 2 }} />
-                  <Typography variant="h5" color="#8B5CF6" fontWeight="600">
-                    Extracted Skills
-                  </Typography>
-                </Box>
-                <Stack direction="row" spacing={1.5} flexWrap="wrap" gap={1.5}>
-                  {extractedSkills.map((skill, index) => (
-                    <Chip 
-                      key={index} 
-                      label={skill} 
-                      sx={skillChipStyles}
-                    />
-                  ))}
-                </Stack>
+        <Box sx={{ mt: 4 }}>
+          {/* Extracted Skills Section */}
+          {extractedSkills.length > 0 && (
+            <Box sx={{
+              mb: 6,
+              p: 4,
+              borderRadius: 2,
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(139, 92, 246, 0.2)'
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <LightbulbIcon sx={{ color: '#8B5CF6', mr: 2 }} />
+                <Typography variant="h5" color="#8B5CF6" fontWeight="600">
+                  Extracted Skills
+                </Typography>
               </Box>
-            )}
+              <Stack direction="row" spacing={1.5} flexWrap="wrap" gap={1.5}>
+                {extractedSkills.map((skill, index) => (
+                  <Chip 
+                    key={index} 
+                    label={skill} 
+                    sx={skillChipStyles}
+                  />
+                ))}
+              </Stack>
+            </Box>
+          )}
 
-            {/* Recommended Jobs Section */}
-            <Typography 
-              variant="h5" 
-              gutterBottom 
-              color="#8B5CF6"
-              fontWeight="600"
-              sx={{ mb: 3 }}
-            >
-              Recommended Jobs
+          {/* Recommended Jobs Section */}
+          <Typography 
+            variant="h5" 
+            gutterBottom 
+            color="#8B5CF6"
+            fontWeight="600"
+            sx={{ mb: 3 }}
+          >
+            Recommended Jobs
+          </Typography>
+          {recommendations.length > 0 ? (
+            recommendations.map((job, index) => (
+              <Accordion 
+                key={index} 
+                sx={{
+                  mb: 2,
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(139, 92, 246, 0.2)',
+                  '&:before': {
+                    display: 'none',
+                  }
+                }}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography variant="h6">
+                    {job.title} - {job.company}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography variant="body1" paragraph>
+                    <strong>Experience Required:</strong> {job.experience}
+                  </Typography>
+                  <Typography variant="body1" paragraph>
+                    <strong>Required Skills:</strong> {job.skills.join(', ')}
+                  </Typography>
+                  <Typography variant="body1">
+                    {job.description}
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
+            ))
+          ) : (
+            <Typography color="text.secondary" variant="h6">
+              No job recommendations found.
             </Typography>
-            {recommendations.length > 0 ? (
-              recommendations.map((job, index) => (
-                <Accordion 
-                  key={index} 
-                  sx={{
-                    mb: 2,
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(139, 92, 246, 0.2)',
-                    '&:before': {
-                      display: 'none',
-                    }
-                  }}
-                >
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant="h6">
-                      {job.title} - {job.company}
-                    </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Typography variant="body1" paragraph>
-                      <strong>Experience Required:</strong> {job.experience}
-                    </Typography>
-                    <Typography variant="body1" paragraph>
-                      <strong>Required Skills:</strong> {job.skills.join(', ')}
-                    </Typography>
-                    <Typography variant="body1">
-                      {job.description}
-                    </Typography>
-                  </AccordionDetails>
-                </Accordion>
-              ))
-            ) : (
-              <Typography color="text.secondary" variant="h6">
-                No job recommendations found.
-              </Typography>
-            )}
+          )}
 
-            <Button
-              variant="contained"
-              onClick={handleReset}
-              sx={{ mt: 4, py: 2, px: 4, fontSize: '1.1rem' }}
-            >
-              Start New Search
-            </Button>
-          </Box>
-        </StepContent>
+          <Button
+            variant="contained"
+            onClick={handleReset}
+            sx={{ mt: 4, py: 2, px: 4, fontSize: '1.1rem' }}
+          >
+            Start New Search
+          </Button>
+        </Box>
       )}
 
       {/* Error Message */}
