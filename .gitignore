@@ -27,7 +27,6 @@ dist-ssr
 # .env
 
 #Ignore WebGL build
-backend/b
 frontend/public/build
-frontend/public/build2
+frontend/public/bt
 frontend/public/CV/*
