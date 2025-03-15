@@ -25,8 +25,10 @@ function CareerFair() {
                     'http://localhost:5050/api/get-session',
                     { withCredentials: true } // Include cookies in the request
                 );
+
                 const fetchedUsername = sessionResponse.data.username;
                 const userId = sessionResponse.data.userId
+
                 // Step 2: Fetch avatar URL using userId
                 const avatarResponse = await axios.get(
                     `http://localhost:5050/api/get-avatarUrl/${userId}`,
