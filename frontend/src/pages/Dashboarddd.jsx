@@ -74,16 +74,16 @@ export default function Dashboarddd() {
                 environment={"soft"}
                 shadows={true}
                 emotion={"happy"}
-                cameraInitialDistance={0.7}
+                cameraInitialDistance={0.2}
                 cameraZoomTarget={[-0.11, 0, 3.2]}
-                idleRotation
+            // idleRotation
             >
                 <Sparkles
                     color={"white"}
                     count={80}
                     opacity={0.5}
-                    position={[0, 0.61, -0.02]}
-                    scale={2}
+                    position={[0, 1, -0.02]}
+                    scale={1.2}
                     size={3}
                     speed={0.25}
                 />
