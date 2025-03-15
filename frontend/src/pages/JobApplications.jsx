@@ -20,19 +20,19 @@ export default function JobApplications() {
   const applications = [
     {
       name: "mehdi",
-      position: "Data analyst",
+      // position: "Data analyst",
       cv: '/CV/1mb.pdf',
       job: 'AI Engineer',
     },
     {
       name: "abood",
-      position: "Data analyst",
+      // position: "Data analyst",
       cv: '../../public/CV/Abdulrahman Muhanna 60101806.pdf',
       job: 'Software Developer',
     },
     {
       name: "ali",
-      position: "Data analyst",
+      // position: "Data analyst",
       cv: '/CV/1mb.pdf',
       job: 'Media and production',
     },
@@ -78,7 +78,7 @@ export default function JobApplications() {
           <TableHead >
             <TableRow sx={{ background: '#63636363' }}>
               <TableCell align='center'>Name</TableCell>
-              <TableCell align='center'>Position</TableCell>
+              {/* <TableCell align='center'>Position</TableCell> */}
               <TableCell align='center'>Resume</TableCell>
               <TableCell align='center'>Job Position</TableCell>
               <TableCell align='center'>Approve</TableCell>
@@ -88,7 +88,7 @@ export default function JobApplications() {
             {applications.map((application) => (
               <TableRow key={application.id}>
                 <TableCell align='center'>{application.name}</TableCell>
-                <TableCell align='center'>{application.position}</TableCell>
+                {/* <TableCell align='center'>{application.position}</TableCell> */}
                 <TableCell align='center'>
                   <Link
                     component="button"
