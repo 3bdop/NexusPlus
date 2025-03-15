@@ -47,7 +47,7 @@ export default function AvatarCreation() {
 
             if (updateResponse.status === 200) {
                 console.log('Avatar updated successfully:', updateResponse.data);
-                navigate('/home'); // Redirect to the home page
+                navigate('/dashboard'); // Redirect to the home page
             }
         } catch (error) {
             console.error('Error saving avatar:', error);
