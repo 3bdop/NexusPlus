@@ -10,7 +10,7 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 3px;
 }
 
 /* TRACK */
@@ -594,4 +594,21 @@ html.dark-mode {
   top: 0;
   left: 0;
   overflow: hidden;
+}
+
+/* Add to your chatbot CSS file */
+.formatted-response strong {
+  font-weight: 600;
+  color: #4caf50; /* Your preferred bold color */
+}
+
+/* Optional: Add animation for loading states */
+@keyframes blink {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.processing-message {
+  animation: blink 1.5s infinite;
 }
