@@ -6,7 +6,6 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-
 function CareerFair() {
     // Initialize the Unity context using the hook
     const { unityProvider, sendMessage,
@@ -50,7 +49,8 @@ function CareerFair() {
 
     const handleDisconnect = useCallback((flag) => {
         if (flag) {
-            navigate('/dashboard');
+            //? A workaround for now to solve the duplicate avatar when leaving and joining again
+            window.location.href = '/dashboard'
         }
     }, [navigate]);
 
