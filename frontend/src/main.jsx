@@ -130,7 +130,11 @@ const router = createBrowserRouter([
           },
           {
             path: 'avatar-creation',
-            element: <AvatarCreation />
+            element: (
+              <ProtectedRoute requiredRole={"employer" || "attendee"}>
+                <AvatarCreation />
+              </ProtectedRoute>
+            )
           }
         ]
       }
@@ -139,7 +143,7 @@ const router = createBrowserRouter([
   {
     path: '/career-fair',
     element: <ProtectedRoute><CareerFair /></ProtectedRoute>,
-  }
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
