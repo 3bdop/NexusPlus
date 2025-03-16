@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import WorkTwoToneIcon from '@mui/icons-material/WorkTwoTone';
 import StadiumTwoToneIcon from '@mui/icons-material/StadiumTwoTone';
@@ -7,44 +7,11 @@ import AutoAwesomeTwoToneIcon from '@mui/icons-material/AutoAwesomeTwoTone';
 import { Outlet, useNavigate } from 'react-router';
 import { createTheme } from '@mui/material/styles';
 import LogoutIcon from '@mui/icons-material/Logout'; // Import logout icon
-import axios from 'axios'; // For making API calls
+import { Avatar, Box, Tooltip, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 
-// const NAVIGATION = [
-//     {
-//         kind: 'header',
-//         title: 'Main items',
-//     },
-//     {
-//         segment: 'dashboard',
-//         title: 'Dashboard',
-//         icon: <DashboardIcon />,
-//     },
-//     {
-//         segment: 'career-fair',
-//         title: 'Join Event',
-//         icon: <StadiumTwoToneIcon />,
-//     },
-//     {
-//         segment: 'dashboard/avatar-creation',
-//         title: 'Avatar Customization',
-//         icon: <AutoAwesomeTwoToneIcon />,
-//     },
-//     {
-//         segment: 'dashboard/recommended-jobs',
-//         title: 'Recommended Jobs',
-//         icon: <WorkTwoToneIcon />,
-//     },
-//     {
-//         kind: 'divider',
-//     },
-//     {
-//         kind: 'footer',
-//         title: 'Logout',
-//         icon: <LogoutIcon />,
-//         onClick: () => { },
-//     },
-// ];
-// Navigation items configuration
+import axios from 'axios';
+import { Settings } from '@mui/icons-material';
+import { SettingsIcon } from 'lucide-react';
 
 const BRANDING = {
     title: 'PLUS',
@@ -117,17 +84,31 @@ const Theme = createTheme({
 
 export default function Home({ role }) {
     const navigate = useNavigate();
-    console.log(role)
-    // Logout method
-    const logout = async () => {
+    const [anchorElUser, setAnchorElUser] = useState(null);
+
+    const handleOpenUserMenu = (event) => {
+        setAnchorElUser(event.currentTarget);
+    };
+    const handleCloseUserMenu = () => {
+        setAnchorElUser(null);
+    };
+
+    const handleLogout = async () => {
+        handleCloseUserMenu(); // Close menu first
         try {
-            await axios.post('http://localhost:5050/api/logout', {}, { withCredentials: true });
-            navigate('/'); // Redirect to the login page or home page after logout
+            const res = await axios.post('http://localhost:5050/api/logout', {}, {
+                withCredentials: true
+            });
+            if (res.status === 200) {
+                navigate('/');
+            }
         } catch (err) {
-            console.error('Error during logout:', err);
+            console.error('Logout error:', err);
         }
     };
-    // Navigation configuration
+
+    const settings = ['Logout'];
+
     const NAVIGATION = [
         {
             kind: 'header',
@@ -159,38 +140,51 @@ export default function Home({ role }) {
                 title: 'Recommended Jobs',
                 icon: <WorkTwoToneIcon />,
             },
-        {
-            kind: 'divider',
-        },
-        {
-            kind: 'footer',
-            title: 'Logout',
-            icon: <LogoutIcon />,
-            onClick: logout,
-        },
     ];
 
 
 
-    // Add the logout method to the footer navigation item
-    const navigationWithLogout = NAVIGATION.map((item) => {
-        if (item.kind === 'footer') {
-            return {
-                ...item,
-                onClick: logout, // Attach the logout method
-            };
-        }
-        return item;
-    });
-
     return (
         <ReactRouterAppProvider
-            navigation={navigationWithLogout}
+            navigation={NAVIGATION}
             branding={BRANDING}
             theme={Theme}
             defaultColorScheme="dark"
             colorSchemeStorageKey={null}
         >
+            <Box sx={{
+                position: 'absolute',
+                right: 20,
+                top: 16,
+                zIndex: 9999
+            }}>
+                <Tooltip title="Open settings">
+                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                        <SettingsIcon fontSize={"large"} />
+                    </IconButton>
+                </Tooltip>
+
+                <Menu
+                    sx={{ mt: '45px' }}
+                    anchorEl={anchorElUser}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    keepMounted
+                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    open={Boolean(anchorElUser)}
+                    onClose={handleCloseUserMenu}
+                >
+                    {settings.map((setting) => (
+                        <MenuItem
+                            key={setting}
+                            onClick={setting === 'Logout' ? handleLogout : handleCloseUserMenu}
+                        >
+                            <Typography textAlign="center">
+                                {setting}
+                            </Typography>
+                        </MenuItem>
+                    ))}
+                </Menu>
+            </Box>
             <Outlet />
         </ReactRouterAppProvider>
     );
