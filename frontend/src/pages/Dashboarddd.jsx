@@ -36,12 +36,12 @@ export default function Dashboarddd() {
 
                 setAvatarUrl(avatarResponse.data.avatarUrl);
                 setLoading(false)
-            } catch (err) {
+            } catch (error) {
                 console.error('Error fetching user data:', err);
                 setError(err.message);
 
                 // Redirect to login if unauthorized
-                if (err.response?.status === 401) {
+                if (error.response?.status === 401) {
                     navigate('/');
                 }
             }
