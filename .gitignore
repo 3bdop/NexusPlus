@@ -32,4 +32,4 @@ frontend/public/bt
 frontend/public/CV/*
 
 #ChatBot
-backend/bot/vector-index
+backend/bot/vector-index/*
