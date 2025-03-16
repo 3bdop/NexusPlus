@@ -6,13 +6,18 @@ import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import AutoAwesomeTwoToneIcon from '@mui/icons-material/AutoAwesomeTwoTone';
 import { Outlet, useNavigate } from 'react-router';
 import { createTheme } from '@mui/material/styles';
-import LogoutIcon from '@mui/icons-material/Logout'; // Import logout icon
-import { Avatar, Box, Tooltip, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import { Box, Tooltip, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import SmartToyTwoToneIcon from '@mui/icons-material/SmartToyTwoTone';
+
+import Chatbot from 'react-chatbot-kit';
+import 'react-chatbot-kit/build/main.css';
+import config from '../bot/config'
+import ActionProvider from '../bot/ActionProvider';
+import MessageParser from '../bot/MessageParser';
+
 
 import axios from 'axios';
-import { Settings } from '@mui/icons-material';
-import { SettingsIcon } from 'lucide-react';
-
+import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
 const BRANDING = {
     title: 'PLUS',
     logo: <img src='/ln3.png' />,
@@ -93,6 +98,12 @@ export default function Home({ role }) {
         setAnchorElUser(null);
     };
 
+    const [showChatbot, setShowChatbot] = useState(false);
+    const toggleChatbot = () => {
+        setShowChatbot(!showChatbot);
+    };
+
+
     const handleLogout = async () => {
         handleCloseUserMenu(); // Close menu first
         try {
@@ -160,7 +171,7 @@ export default function Home({ role }) {
             }}>
                 <Tooltip title="Open settings">
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                        <SettingsIcon fontSize={"large"} />
+                        <SettingsTwoToneIcon fontSize={"large"} />
                     </IconButton>
                 </Tooltip>
 
@@ -185,6 +196,53 @@ export default function Home({ role }) {
                     ))}
                 </Menu>
             </Box>
+            <div style={{
+                position: 'fixed',
+                bottom: '32px',
+                right: '32px',
+                zIndex: 1000,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-end',
+                // gap: '16px'
+            }}>
+                {showChatbot && (
+                    <div style={{
+                        borderRadius: '9px',
+                        overflow: 'hidden',
+                        boxShadow: '0 5px 15px rgba(0,0,0,0.2)'
+                    }}>
+                        <Chatbot
+                            config={config}
+                            messageParser={MessageParser}
+                            actionProvider={ActionProvider}
+                        />
+                    </div>
+                )}
+
+                {/* Custom chat button */}
+                <button
+                    onClick={toggleChatbot}
+                    style={{
+                        background: '#0D1AA6FF',
+                        border: 'none',
+                        borderRadius: '100%',
+                        width: '60px',
+                        height: '60px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                        transition: 'transform 0.2s ease',
+                        ':hover': {
+                            transform: 'scale(1.1)'
+                        }
+                    }}
+                >
+                    <SmartToyTwoToneIcon style={{ color: 'white', fontSize: '28px' }} />
+                </button>
+            </div>
             <Outlet />
         </ReactRouterAppProvider>
     );
