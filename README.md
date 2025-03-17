@@ -27,7 +27,7 @@
 </picture>
 </h2>
 
-**NexsuPlus** is an immersive virtual career fair experience set within the metaverse. The platform is designed to bridge the gap between job seekers and recruiters by offering an engaging, interactive, and dynamic 3D environment.
+<p align="center"> <b>NexsuPlus</b> is an immersive virtual career fair experience set within the metaverse. The platform is designed to bridge the gap between job seekers and recruiters by offering an engaging, interactive, and dynamic 3D environment.</p>
 
 <br/>
 
@@ -39,7 +39,7 @@
   Key Features
 </h3>
 
-  - **3D Virtual Environment:** Users can explore a fully interactive career fair environment, complete with booths, lounges, and networking spaces.  
+  - **3D Virtual Environment:** Users can explore a fully interactive multiplayer career fair environment, ask companies employers, and networking spaces.  
   - **Digital Twin Avatars:** Attendees can create personalized digital twins, representing themselves within the virtual space.  
   - **AI-Powered Systems:**  
     <p>
