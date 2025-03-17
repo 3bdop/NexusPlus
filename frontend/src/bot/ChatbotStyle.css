@@ -2,12 +2,16 @@
   border-radius: 10px; /* Optional: rounded corners */
   box-shadow: 0 1px 20px rgba(115, 191, 253, 0.986); /* Optional: subtle shadow */
   overflow: hidden; /* Ensure content doesn't overflow */
+  position: relative !important;
+  width: 105% !important;
+  height: 100% !important;
+  box-shadow: none !important;
 }
 
 .react-chatbot-kit-chat-bot-message {
   background: rgba(38, 19, 206, 0.8);
   border-radius: 10px;
-  padding: 10px;
+  padding: 11px;
   margin: 5px 0;
 }
 
