@@ -29,7 +29,8 @@ recommender.load_jobs(jobs_collection)
 @app.post("/api/recommendations")
 async def get_recommendations(
     cv_file: UploadFile = File(...),
-    experience_level: str = Form(...)
+    experience_level: str = Form(...),
+    cv_path: Optional[str] = Form(None)  # Add cv_path parameter
 ):
     try:
         # Read and process CV
@@ -41,7 +42,7 @@ async def get_recommendations(
         cv_skills = extract_skills_with_gemini(cv_text, GEMINI_API_KEY)
         cv_embedding = recommender.create_cv_embedding(processed_cv_text)
 
-        # Get recommendations with default parameters
+        # Store CV path in recommendations if provided
         recommendations = recommender.get_recommendations(
             cv_embedding=cv_embedding,
             user_experience=experience_level,
@@ -53,22 +54,15 @@ async def get_recommendations(
             skills_weight=0.1
         )
 
-        # Ensure recommendations have the correct structure
-        formatted_recommendations = []
-        for job in recommendations:
-            formatted_recommendations.append({
-                "title": job.get("title", "No Title"),
-                "company": job.get("company", "No Company"),
-                "experience": job.get("experience", "Not specified"),
-                "skills": job.get("skills", []),
-                "description": job.get("description", "No description available")
-            })
-
-        return {
+        # Add CV path to response if available
+        response_data = {
             "status": "success",
-            "recommendations": formatted_recommendations,
-            "extracted_skills": cv_skills if isinstance(cv_skills, list) else []
+            "recommendations": recommendations
         }
+        if cv_path:
+            response_data["cv_path"] = cv_path
+
+        return response_data
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

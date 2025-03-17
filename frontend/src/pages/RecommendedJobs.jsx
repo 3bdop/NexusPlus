@@ -44,21 +44,41 @@ export default function RecommendedJobs() {
     const [errorMessage, setErrorMessage] = useState('');
     const userId = "user123"; // Replace with actual user ID from authentication if needed
 
-    const handleCvUpload = (event) => {
+    const handleCvUpload = async (event) => {
         const file = event.target.files[0];
         if (file) {
             if (file.type !== 'application/pdf') {
                 setErrorMessage('Only PDF files are allowed.');
                 return;
             }
-            if (file.size > 3 * 1024 * 1024) { // 3MB in bytes
+            if (file.size > 3 * 1024 * 1024) {
                 setErrorMessage('File size should not exceed 3MB.');
                 return;
             }
-            setCvUploaded(true);
-            setCvFile(file);
-            setErrorMessage('');
-            setActiveStep(1); // Move to the next step
+
+            try {
+                // First, upload the CV to storage
+                const formData = new FormData();
+                formData.append('cv_file', file);
+
+                const uploadResponse = await fetch('http://localhost:5050/api/upload-cv', {
+                    method: 'POST',
+                    credentials: 'include', // Important for cookies
+                    body: formData,
+                });
+
+                if (!uploadResponse.ok) {
+                    throw new Error('Failed to upload CV');
+                }
+
+                setCvUploaded(true);
+                setCvFile(file);
+                setErrorMessage('');
+                setActiveStep(1); // Move to the next step
+            } catch (error) {
+                setErrorMessage('Error uploading CV: ' + error.message);
+                console.error('CV upload error:', error);
+            }
         }
     };
 
