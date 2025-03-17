@@ -114,6 +114,7 @@ export default function Home({ role }) {
                 withCredentials: true
             });
             if (res.status === 200) {
+                localStorage.clear()
                 navigate('/');
             }
         } catch (err) {
@@ -197,9 +198,9 @@ export default function Home({ role }) {
                 top: 16,
                 zIndex: 9999
             }}>
-                <Tooltip title="Open settings">
+                <Tooltip title="Actions">
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                        <MoreVertTwoToneIcon fontSize={"large"} />
+                        <MoreVertTwoToneIcon fontSize={"medium"} />
                     </IconButton>
                 </Tooltip>
 
@@ -227,12 +228,12 @@ export default function Home({ role }) {
             <div style={{
                 position: 'fixed',
                 bottom: '20px',
-                right: '35px',
+                right: '65px',
                 zIndex: 99999,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'flex-end',
-                gap: '10px'
+                gap: '15px'
             }}>
                 {showChatbot && (
                     <>
@@ -241,6 +242,7 @@ export default function Home({ role }) {
                             messageParser={MessageParser}
                             actionProvider={ActionProvider}
                             placeholderText='Ask Daleel !'
+                            // runInitialMessagesWithHistory
                             saveMessages={saveMessages}
                             messageHistory={loadMessages()}
                         />
