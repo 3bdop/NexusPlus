@@ -8,16 +8,19 @@ import { Outlet, useNavigate } from 'react-router';
 import { createTheme } from '@mui/material/styles';
 import { Box, Tooltip, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import SmartToyTwoToneIcon from '@mui/icons-material/SmartToyTwoTone';
+import styled from 'styled-components'
 
 import Chatbot from 'react-chatbot-kit';
 import 'react-chatbot-kit/build/main.css';
 import config from '../bot/config'
 import ActionProvider from '../bot/ActionProvider';
 import MessageParser from '../bot/MessageParser';
+import ChatbotStyle from '../bot/ChatbotStyle.css'
 
 
 import axios from 'axios';
-import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
+import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
+
 const BRANDING = {
     title: 'PLUS',
     logo: <img src='/ln3.png' />,
@@ -153,8 +156,33 @@ export default function Home({ role }) {
             },
     ];
 
+    const ChatButton = styled.button`
+    background: #E3E3E3FF;
+    border: none;
+    border-radius: 100%;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, background 0.2s ease;
 
+    &:hover {
+        transform: scale(1.2);
+        background: #c0c0c0;
+    }
+`;
 
+    const saveMessages = (messages) => {
+        localStorage.setItem('chat_messages', JSON.stringify(messages));
+    };
+
+    const loadMessages = () => {
+        const messages = localStorage.getItem('chat_messages');
+        return messages ? JSON.parse(messages) : [];
+    };
     return (
         <ReactRouterAppProvider
             navigation={NAVIGATION}
@@ -171,7 +199,7 @@ export default function Home({ role }) {
             }}>
                 <Tooltip title="Open settings">
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                        <SettingsTwoToneIcon fontSize={"large"} />
+                        <MoreVertTwoToneIcon fontSize={"large"} />
                     </IconButton>
                 </Tooltip>
 
@@ -198,50 +226,31 @@ export default function Home({ role }) {
             </Box>
             <div style={{
                 position: 'fixed',
-                bottom: '32px',
-                right: '32px',
-                zIndex: 1000,
+                bottom: '20px',
+                right: '35px',
+                zIndex: 99999,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'flex-end',
-                // gap: '16px'
+                gap: '10px'
             }}>
                 {showChatbot && (
-                    <div style={{
-                        borderRadius: '9px',
-                        overflow: 'hidden',
-                        boxShadow: '0 5px 15px rgba(0,0,0,0.2)'
-                    }}>
+                    <>
                         <Chatbot
                             config={config}
                             messageParser={MessageParser}
                             actionProvider={ActionProvider}
+                            placeholderText='Ask Daleel !'
+                            saveMessages={saveMessages}
+                            messageHistory={loadMessages()}
                         />
-                    </div>
+                    </>
                 )}
 
                 {/* Custom chat button */}
-                <button
-                    onClick={toggleChatbot}
-                    style={{
-                        background: '#0D1AA6FF',
-                        border: 'none',
-                        borderRadius: '100%',
-                        width: '60px',
-                        height: '60px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-                        transition: 'transform 0.2s ease',
-                        ':hover': {
-                            transform: 'scale(1.1)'
-                        }
-                    }}
-                >
-                    <SmartToyTwoToneIcon style={{ color: 'white', fontSize: '28px' }} />
-                </button>
+                <ChatButton onClick={toggleChatbot}>
+                    <SmartToyTwoToneIcon style={{ color: 'black', fontSize: '28px' }} />
+                </ChatButton>
             </div>
             <Outlet />
         </ReactRouterAppProvider>
