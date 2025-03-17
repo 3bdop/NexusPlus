@@ -1,12 +1,16 @@
 <h1 align="center">
-    <picture>
+<!-- <picture>
   <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f929/512.webp" type="image/webp"  align="center">
-  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f929/512.gif" alt="🤩" width="80" height="80"  align="center">
+  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f929/512.gif" alt="🤩" width="75" height="75"  align="center">
+</picture> -->
+<picture>
+  <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6f8/512.webp" type="image/webp">
+  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6f8/512.gif" alt="🛸" width="75" height="75"align="center">
 </picture>
   Career Fair in Metaverse 
-  <picture>
-  <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f929/512.webp" type="image/webp"  align="center">
-  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f929/512.gif" alt="🤩" width="80" height="80"  align="center">
+<picture>
+  <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6f8/512.webp" type="image/webp">
+  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6f8/512.gif" alt="🛸" width="75" height="75"align="center">
 </picture>
 </h1>
 
@@ -17,6 +21,10 @@
   <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.gif" alt="🚀" width="32" height="32" align="center">
 </picture>
  Overview
+<picture>
+  <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.webp" type="image/webp" align="center">
+  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.gif" alt="🚀" width="32" height="32" align="center">
+</picture>
 </h2>
 
 **NexsuPlus** is an immersive virtual career fair experience set within the metaverse. The platform is designed to bridge the gap between job seekers and recruiters by offering an engaging, interactive, and dynamic 3D environment.
@@ -74,4 +82,8 @@
   <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2699_fe0f/512.gif" alt="⚙" width="32" height="32"align="center">
 </picture>
  Installation and Setup
+<picture>
+  <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/2699_fe0f/512.webp" type="image/webp"align="center">
+  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2699_fe0f/512.gif" alt="⚙" width="32" height="32"align="center">
+</picture>
 </h2>
