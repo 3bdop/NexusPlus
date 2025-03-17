@@ -1,0 +1,614 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter&display=swap");
+
+#root {
+  width: 100vw;
+  height: 100vh;
+}
+
+body {
+  margin: 0;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+/* TRACK */
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.23);
+}
+
+/* HANDLE */
+::-webkit-scrollbar-thumb {
+  background: rgb(218, 218, 218);
+  border-radius: 30%;
+  height: 15%;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.overlay--disable {
+  pointer-events: none;
+}
+
+.loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgb(154, 207, 225);
+  transition: opacity 2s ease-in-out;
+}
+
+.loader--disappear {
+  opacity: 0;
+}
+
+.intro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+.logo {
+  font-family: "DM Serif Display", serif;
+  color: white;
+  font-size: 8rem;
+  letter-spacing: 0.5rem;
+  padding: 0;
+  margin: 0;
+  transform: translateY(-50%);
+  position: absolute;
+  top: 50vh;
+  animation: fadeUp 2.4s ease-in-out;
+  transition: all 2s ease-in-out;
+}
+
+.intro--disappear .logo {
+  top: 42px;
+  transform: scale(0.25);
+  transform-origin: center top;
+}
+
+.spinner {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  margin-right: -42px;
+  margin-top: -42px;
+  animation: fadeIn 2.4s ease-in-out 1.2s forwards;
+  opacity: 0;
+}
+
+.spinner__image {
+  width: 164px;
+  height: 164px;
+  background-size: contain;
+  background-image: url("/images/airlines.svg");
+  animation: rotate 10s linear infinite;
+}
+
+.intro--disappear .spinner {
+  opacity: 1;
+  animation: fadeOut 1s ease-in-out forwards;
+}
+
+.intro__scroll {
+  opacity: 0;
+  color: white;
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.05rem;
+  position: absolute;
+  top: 24vh;
+}
+
+.intro--disappear .intro__scroll {
+  animation: fadeIn 1s ease-in-out 1.5s forwards;
+}
+
+.overlay--scrolled .intro__scroll {
+  animation: fadeOut 1s ease-in-out forwards;
+}
+
+.explore {
+  padding: 1rem 2rem;
+  border: none;
+  font-family: "DM Serif Display", serif;
+  font-size: 1.25rem;
+  letter-spacing: 0.25rem;
+  color: #0038b2;
+  border-radius: 32px;
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 320px;
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  transition: 0.42s ease-in-out;
+  animation: fadeIn 2.4s ease-in-out 2s forwards;
+  opacity: 0;
+}
+
+.explore:hover {
+  color: white;
+}
+
+.explore:hover:before {
+  width: 200%;
+  height: 300%;
+  border-radius: 100%;
+}
+
+.explore:before {
+  content: "";
+  background: #3574cc;
+  position: absolute;
+  width: 0%;
+  bottom: 0;
+  left: 50%;
+  height: 0%;
+  transition: 0.42s ease-in-out;
+  z-index: -1;
+  transform: translateX(-50%) translateY(50%);
+}
+.explore:disabled {
+  z-index: -10;
+}
+.cta:disabled {
+  z-index: -10;
+}
+
+.intro--disappear .explore {
+  animation: fadeOut 1s ease-in-out forwards;
+}
+.intro--disappear .cta {
+  animation: fadeOut 1s ease-in-out forwards;
+}
+
+.outro {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 4s ease-in-out;
+  pointer-events: none;
+}
+
+.outro--appear {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.outro__text {
+  font-family: "Inter", sans-serif;
+  font-size: 1.5rem;
+  color: white;
+}
+
+/* RESPONSIVE */
+
+@media screen and (max-width: 768px) {
+  .logo {
+    font-size: 3rem;
+    letter-spacing: 0.25rem;
+  }
+
+  .intro--disappear .logo {
+    top: 24px;
+    transform: scale(0.5);
+    transform-origin: center top;
+  }
+
+  .spinner__image {
+    width: 82px;
+    height: 82px;
+  }
+
+  .outro__text {
+    font-size: 1rem;
+  }
+}
+
+/* ANIMATIONS */
+
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(100px);
+    filter: blur(9px);
+  }
+
+  100% {
+    opacity: 1;
+    filter: none;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* From Uiverse.io by dalbrechtmartin */
+.custbutton {
+  position: relative;
+  padding: 25px 60px;
+  background: #ffffff;
+  font-size: 30px;
+  font-weight: 600;
+  color: #000000;
+  box-shadow: 0px 0px 10px 0px rgb(255, 255, 255);
+  border-radius: 100px;
+  border: none;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  margin: 100px;
+}
+
+.star-1,
+.star-2,
+.star-3,
+.star-4,
+.star-5,
+.star-6 {
+  position: absolute;
+  filter: drop-shadow(0 0 0 #fffdef);
+  z-index: -5;
+  transition: all 0.8s cubic-bezier(0.05, 0.83, 0.43, 0.96);
+}
+
+.star-1 {
+  top: 20%;
+  left: 20%;
+  width: 25px;
+}
+.star-2 {
+  top: 45%;
+  left: 45%;
+  width: 15px;
+}
+.star-3 {
+  top: 40%;
+  left: 40%;
+  width: 5px;
+}
+.star-4 {
+  top: 20%;
+  left: 40%;
+  width: 8px;
+}
+.star-5 {
+  top: 25%;
+  left: 45%;
+  width: 15px;
+}
+.star-6 {
+  top: 5%;
+  left: 50%;
+  width: 5px;
+}
+
+.outro_button:hover {
+  background: #0c2e76;
+  color: #ffffff;
+  box-shadow: 0 0 80px #ffffff8c;
+}
+
+.outro_button:hover .star-1 {
+  top: -20%;
+  left: -20%;
+  width: 20px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+.outro_button:hover .star-2 {
+  top: 35%;
+  left: -25%;
+  width: 15px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+.outro_button:hover .star-3 {
+  top: 80%;
+  left: -10%;
+  width: 10px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+.outro_button:hover .star-4 {
+  top: -25%;
+  left: 105%;
+  width: 20px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+.outro_button:hover .star-5 {
+  top: 30%;
+  left: 115%;
+  width: 15px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+.outro_button:hover .star-6 {
+  top: 80%;
+  left: 105%;
+  width: 10px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+
+.fil0 {
+  fill: #fffdef;
+}
+
+/* Responsive spacing for smaller screens */
+@media screen and (max-width: 768px) {
+  .outro_button {
+    margin: 20px;
+    font-size: 18px;
+    padding: 12px 30px;
+  }
+}
+html {
+  --cursor-color: #cc2626;
+}
+
+html.dark-mode {
+  --cursor-color: #fff;
+}
+.outro__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.outro__buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.fixed-stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Ensure the stars do not interfere with other elements */
+  z-index: -1; /* Ensure the stars are behind other content */
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+  /* background-color: rgba(0, 0, 0, 0.5); */
+  z-index: 1000;
+}
+
+.navbar__button {
+  margin-left: 10px;
+  padding: 10px 20px;
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+.navbar__button:hover {
+  background-color: #424fff;
+}
+
+/* From Uiverse.io by alexmaracinaru */
+.cta {
+  border: none;
+  background: none;
+  cursor: pointer;
+  margin-top: 20px;
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  /* overflow: hidden; */
+  transition: 0.42s ease-in-out;
+  animation: fadeIn 2.4s ease-in-out 2.5s forwards;
+  opacity: 0;
+}
+
+.cta span {
+  padding-bottom: 7px;
+  letter-spacing: 4px;
+  font-size: 15px;
+  padding-right: 15px;
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+.cta svg {
+  transform: translateX(-8px);
+  transition: all 0.3s ease;
+}
+
+.cta:hover svg {
+  transform: translateX(0);
+}
+
+.cta:active svg {
+  transform: scale(0.9);
+}
+
+.hover-underline-animation {
+  position: relative;
+  color: black;
+  padding-bottom: 20px;
+}
+
+.hover-underline-animation:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #000000;
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.cta:hover .hover-underline-animation:after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* Transparent and blurred form wrapper */
+.login-form-wrapper {
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent white background */
+  backdrop-filter: blur(1px); /* Blur effect */
+  padding: 30px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Light border for contrast */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Form styling */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  font-family: system-ui;
+  font-weight: 500;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333; /* Dark text for contrast */
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.2); /* Light border */
+  border-radius: 5px;
+  background: rgba(
+    255,
+    255,
+    255,
+    0.8
+  ); /* Slightly transparent input background */
+  box-sizing: border-box;
+}
+
+.login-button {
+  padding: 10px;
+  background-color: #007bff; /* Blue button */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #0c00b3; /* Darker blue on hover */
+}
+
+.form-links {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.form-links a {
+  margin: 0 10px;
+  color: #007bff; /* Blue links */
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.form-links a:hover {
+  text-decoration: underline;
+  color: #0c00b3;
+}
+.error-message {
+  color: #ff3333;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group input.error {
+  border-color: #ff3333;
+}
+
+.avatar-creator-container {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+/* Add to your chatbot CSS file */
+.formatted-response strong {
+  font-weight: 600;
+  color: #4caf50; /* Your preferred bold color */
+}
+
+/* Optional: Add animation for loading states */
+@keyframes blink {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.processing-message {
+  animation: blink 1.5s infinite;
+}
