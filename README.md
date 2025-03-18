@@ -87,3 +87,35 @@
   <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6a7/512.gif" alt="🚧" width="32" height="32"align="center">
 </picture>
 </h2>
+
+<br/>
+
+
+  Follow these steps to get the project up and running:
+
+       
+1. **Clone the repository:**
+
+   ```Bash
+   git clone https://github.com/3bdop/career-fair-metaverse.git
+   ```
+   
+3. **Install the WebGL build:**
+  - [Install WebGL build]( https://gluonhq.com/products/javafx/](https://drive.google.com/file/d/1L4ULqhGlk11bPRumg6TibCMJKbgTXIbE/view?usp=sharing ).
+  - After installing the build, drag and drop the files in ```/frontend/src/public/bt/```
+    
+3. **Install dependencies in frontend and run:**
+   
+   ```Bash
+   cd frontend
+   npm i
+   npm run dev
+   ```
+   
+5. **Install dependencies in backend and run**
+   ```Bash
+   cd backend
+   npm i
+   npm run dev
+   ```
+   > **_Note:_** If nodemon not installed on your machine: ```npm i -g nodemon```
