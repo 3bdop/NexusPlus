@@ -1,0 +1,22 @@
+body {
+  font-family: sans-serif;
+  margin: 0;
+  background: #1c1c1c;
+  overflow: hidden;
+}
+
+.svg svg {
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
+img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-width: 100%;
+  min-height: 100%;
+  mix-blend-mode: overlay;
+  opacity: 0.2;
+  pointer-events: none;
+}
