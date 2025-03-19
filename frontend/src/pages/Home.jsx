@@ -17,11 +17,11 @@ import ActionProvider from '../bot/ActionProvider';
 import MessageParser from '../bot/MessageParser';
 import '../bot/ChatbotStyle.css'
 
-import Bg from '../components/bg';
-
 import axios from 'axios';
 import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
 import WavyBackground from '../components/ui/wavy-background';
+
+
 const BRANDING = {
     title: 'PLUS',
     logo: <img src='/ln3.png' />,
@@ -169,11 +169,6 @@ export default function Home({ role }) {
     justify-content: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     transition: transform 0.2s ease, background 0.2s ease;
-
-    &:hover {
-        transform: scale(1.2);
-        background: #c0c0c0;
-    }
 `;
 
     const saveMessages = (messages) => {
@@ -209,7 +204,7 @@ export default function Home({ role }) {
                     top: 16,
                     zIndex: 9999
                 }}>
-                    <Tooltip title="Actions">
+                    <Tooltip title="Actions" >
                         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                             <MoreVertTwoToneIcon fontSize={"medium"} />
                         </IconButton>
@@ -238,8 +233,8 @@ export default function Home({ role }) {
                 </Box>
                 <div style={{
                     position: 'fixed',
-                    bottom: '20px',
-                    right: '65px',
+                    bottom: '30px',
+                    right: '100px',
                     zIndex: 99999,
                     display: 'flex',
                     flexDirection: 'column',
@@ -262,26 +257,8 @@ export default function Home({ role }) {
                     )}
 
                     {/* Custom chat button */}
-                    <ChatButton
-                        onClick={toggleChatbot}
-                        style={{
-                            background: '#0D1AA6FF',
-                            border: 'none',
-                            borderRadius: '100%',
-                            width: '60px',
-                            height: '60px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-                            transition: 'transform 0.2s ease',
-                            ':hover': {
-                                transform: 'scale(1.1)'
-                            }
-                        }}
-                    >
-                        <SmartToyTwoToneIcon style={{ color: 'white', fontSize: '28px' }} />
+                    <ChatButton onClick={toggleChatbot}>
+                        <SmartToyTwoToneIcon style={{ color: 'black', fontSize: '28px' }} />
                     </ChatButton>
                 </div>
                 <Outlet />
