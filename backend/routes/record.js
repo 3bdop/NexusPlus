@@ -7,6 +7,38 @@ import db from "../db/connection.js"
 import { ObjectId } from "mongodb";
 import crypto from 'crypto'; // For generating session IDs
 import validateSession from "../middleware/validateSession.js"
+import multer from "multer";
+import fs from 'fs'
+
+// Configure multer for CV storage
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const uploadDir = './uploads/cv';
+        // Create directory if it doesn't exist
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'application/pdf') {
+            cb(null, true);
+        } else {
+            cb(new Error('Only PDF files are allowed'));
+        }
+    },
+    limits: {
+        fileSize: 3 * 1024 * 1024 // 3MB limit
+    }
+});
+
 
 // The router will be added as a middleware and will take control of requests starting with path /record.
 const router = express.Router();
@@ -183,4 +215,45 @@ router.post("/api/logout", async (req, res) => {
         res.status(500).send("An error occurred during logout.");
     }
 });
+
+// Add new route to handle CV upload
+router.post("/api/upload-cv", upload.single('cv_file'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).send("No file uploaded.");
+        }
+
+        const sessionId = req.cookies.sessionId;
+        if (!sessionId) {
+            return res.status(401).send("No session found.");
+        }
+
+        // Get user info from session
+        const sessionCollection = db.collection("session");
+        const session = await sessionCollection.findOne({ sessionId });
+        if (!session) {
+            return res.status(401).send("Invalid session.");
+        }
+
+        // Update user document with CV path
+        const usersCollection = db.collection("users");
+        const result = await usersCollection.updateOne(
+            { _id: new ObjectId(session.userId) },
+            { $set: { cvPath: req.file.path } }
+        );
+
+        if (result.modifiedCount === 0) {
+            return res.status(404).send("User not found or CV not updated.");
+        }
+
+        res.status(200).json({
+            message: "CV uploaded successfully",
+            cvPath: req.file.path
+        });
+    } catch (error) {
+        console.error("Error uploading CV:", error);
+        res.status(500).send("Error uploading CV.");
+    }
+});
+
 export default router;
