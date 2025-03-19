@@ -1,0 +1,34 @@
+.react-chatbot-kit-chat-container {
+  border-radius: 10px; /* Optional: rounded corners */
+  box-shadow: 0 1px 20px rgba(115, 191, 253, 0.986); /* Optional: subtle shadow */
+  overflow: hidden; /* Ensure content doesn't overflow */
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  box-shadow: none !important;
+}
+
+.react-chatbot-kit-chat-bot-message {
+  background: rgba(38, 19, 206, 0.8);
+  border-radius: 10px;
+  padding: 11px;
+  margin: 5px 0;
+}
+
+.react-chatbot-kit-chat-bot-avatar-letter {
+  font-size: 24px; /* Adjust the font size */
+  font-weight: bold; /* Make the letter bold */
+  color: white; /* Set the text color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; /* Adjust the width */
+  height: 40px; /* Adjust the height */
+  background-color: rgb(66, 58, 182); /* Set the background color */
+  border-radius: 50%; /* Make it a circle */
+  content: none;
+}
+
+.react-chatbot-kit-chat-input {
+  background-color: rgb(31, 31, 31);
+}

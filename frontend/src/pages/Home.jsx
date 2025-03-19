@@ -8,16 +8,19 @@ import { Outlet, useNavigate } from 'react-router';
 import { createTheme } from '@mui/material/styles';
 import { Box, Tooltip, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import SmartToyTwoToneIcon from '@mui/icons-material/SmartToyTwoTone';
+import styled from 'styled-components'
 
 import Chatbot from 'react-chatbot-kit';
 import 'react-chatbot-kit/build/main.css';
 import config from '../bot/config'
 import ActionProvider from '../bot/ActionProvider';
 import MessageParser from '../bot/MessageParser';
+import '../bot/ChatbotStyle.css'
 
+import Bg from '../components/bg';
 
 import axios from 'axios';
-import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
+import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
 import WavyBackground from '../components/ui/wavy-background';
 const BRANDING = {
     title: 'PLUS',
@@ -111,6 +114,7 @@ export default function Home({ role }) {
                 withCredentials: true
             });
             if (res.status === 200) {
+                // localStorage.clear()
                 navigate('/');
             }
         } catch (err) {
@@ -153,8 +157,33 @@ export default function Home({ role }) {
             },
     ];
 
+    const ChatButton = styled.button`
+    background: #E3E3E3FF;
+    border: none;
+    border-radius: 100%;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, background 0.2s ease;
 
+    &:hover {
+        transform: scale(1.2);
+        background: #c0c0c0;
+    }
+`;
 
+    const saveMessages = (messages) => {
+        localStorage.setItem('chat_messages', JSON.stringify(messages));
+    };
+
+    const loadMessages = () => {
+        const messages = localStorage.getItem('chat_messages');
+        return messages ? JSON.parse(messages) : [];
+    };
     return (
         <div style={{ position: 'relative', minHeight: '100vh' }}>
             <div style={{
@@ -180,9 +209,9 @@ export default function Home({ role }) {
                     top: 16,
                     zIndex: 9999
                 }}>
-                    <Tooltip title="Open settings">
+                    <Tooltip title="Actions">
                         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                            <SettingsTwoToneIcon fontSize={"large"} />
+                            <MoreVertTwoToneIcon fontSize={"medium"} />
                         </IconButton>
                     </Tooltip>
 
@@ -209,30 +238,31 @@ export default function Home({ role }) {
                 </Box>
                 <div style={{
                     position: 'fixed',
-                    bottom: '32px',
-                    right: '32px',
-                    zIndex: 1000,
+                    bottom: '20px',
+                    right: '65px',
+                    zIndex: 99999,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'flex-end',
-                    // gap: '16px'
+                    gap: '15px'
                 }}>
                     {showChatbot && (
-                        <div style={{
-                            borderRadius: '9px',
-                            overflow: 'hidden',
-                            boxShadow: '0 5px 15px rgba(0,0,0,0.2)'
-                        }}>
+                        <>
                             <Chatbot
                                 config={config}
                                 messageParser={MessageParser}
                                 actionProvider={ActionProvider}
+                                placeholderText='Ask Daleel !'
+                                headerText='Chat with Daleel'
+                            // runInitialMessagesWithHistory={true}
+                            // saveMessages={saveMessages}
+                            // messageHistory={loadMessages()}
                             />
-                        </div>
+                        </>
                     )}
 
                     {/* Custom chat button */}
-                    <button
+                    <ChatButton
                         onClick={toggleChatbot}
                         style={{
                             background: '#0D1AA6FF',
@@ -252,7 +282,7 @@ export default function Home({ role }) {
                         }}
                     >
                         <SmartToyTwoToneIcon style={{ color: 'white', fontSize: '28px' }} />
-                    </button>
+                    </ChatButton>
                 </div>
                 <Outlet />
             </ReactRouterAppProvider>
