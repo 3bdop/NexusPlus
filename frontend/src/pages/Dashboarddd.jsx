@@ -6,10 +6,13 @@ import { Avatar } from "@readyplayerme/visage";
 import { Sparkles } from '@react-three/drei';
 import axios from 'axios';
 import styled, { keyframes } from 'styled-components';
+import { TextGenerateEffect } from '../components/ui/text-generate-effect';
+import { TextHoverEffect } from '../components/ui/text-hover-effect';
 
 export default function Dashboarddd() {
     const [avatarUrl, setAvatarUrl] = useState(null);
     const [username, setUsername] = useState(null)
+    const [usernameCap, setUsernameCap] = useState(null)
     const [isLoading, setLoading] = useState(true)
     const [isAvatarLoaded, setIsAvatarLoaded] = useState(false)
     const navigate = useNavigate();
@@ -22,7 +25,7 @@ export default function Dashboarddd() {
                     'http://localhost:5050/api/get-session',
                     { withCredentials: true } // Include cookies in the request
                 );
-                setUsername(sessionResponse.data.username)
+                capitalizeFirstLetter(sessionResponse.data.username)
                 const userId = sessionResponse.data.userId;
                 if (!userId) {
                     throw new Error('No user ID found in session data.');
@@ -33,8 +36,8 @@ export default function Dashboarddd() {
                     `http://localhost:5050/api/get-avatarUrl/${userId}`,
                     { withCredentials: true }
                 );
-
-                setAvatarUrl(avatarResponse.data.avatarUrl);
+                localStorage.setItem("avatar_url", avatarResponse.data.avatarUrl)
+                // setAvatarUrl(avatarResponse.data.avatarUrl);
                 setLoading(false)
             } catch (error) {
                 console.error('Error fetching user data:', err);
@@ -51,7 +54,8 @@ export default function Dashboarddd() {
     }, [navigate]);
 
     function capitalizeFirstLetter(val) {
-        return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+        // return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+        setUsername(String(val).charAt(0).toUpperCase() + String(val).slice(1));
     }
     return (
         <>
@@ -61,14 +65,18 @@ export default function Dashboarddd() {
                 <Typography variant="h4" style={{
                     color: 'white', zIndex: 1, fontFamily: "system-ui"
                 }}>
-                    Welcome {capitalizeFirstLetter(username)} !
+                    <TextGenerateEffect words={`Welcome ${username}👋`} duration={1.5} />
                 </Typography>
                 <Typography variant="body1" style={{ color: 'whitesmoke', fontFamily: 'system-ui' }}>
-                    This is your main digital-twin🤩
+                    <TextGenerateEffect words={`This is your main digital-twin`} duration={2} />
+                    {/* <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f44b/512.gif" alt="👋" width="50" height="50" align='center' /> */}
+                    {/* This is your main digital-twin */}
+                    {/* <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f929/512.gif" alt="🤩" width="32" height="32" align='center' /> */}
                 </Typography>
+
             </div>
             <Avatar
-                modelSrc={avatarUrl + "?morphTargets=ARKit,Eyes Extra"}
+                modelSrc={localStorage.getItem("avatar_url") + "?morphTargets=ARKit,Eyes Extra"}
                 headMovement={true}
                 animationSrc={"/animations/M_Standing_Idle_001.fbx"}
                 environment={"soft"}
@@ -78,15 +86,15 @@ export default function Dashboarddd() {
                 cameraZoomTarget={[-0.11, 0, 3.2]}
             // idleRotation
             >
-                <Sparkles
+                {/* <Sparkles
                     color={"white"}
-                    count={50}
+                    count={30}
                     opacity={0.5}
                     position={[0, 1, -0.02]}
                     scale={1.2}
                     size={2}
                     speed={0.20}
-                />
+                /> */}
             </Avatar>
         </>
 
