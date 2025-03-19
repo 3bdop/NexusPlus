@@ -42,8 +42,6 @@ export default function RecommendedJobs() {
     const [recommendations, setRecommendations] = useState([]);
     const [activeStep, setActiveStep] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
-    // Object to track applied job IDs: key is job._id and value is true once applied.
-    const [appliedJobs, setAppliedJobs] = useState({});
 
     // On mount, check for existing recommendations.
     useEffect(() => {
@@ -149,7 +147,9 @@ export default function RecommendedJobs() {
         }
     };
 
-    // New function to handle job application
+    // Function to handle applying to a job.
+    // The job object already includes an "applied" flag from the backend.
+    // After a successful apply call, we update the recommendations state accordingly.
     const handleApply = async (jobId) => {
         try {
             const sessionResponse = await fetch('http://localhost:5050/api/get-session', {
@@ -160,15 +160,22 @@ export default function RecommendedJobs() {
             }
             const sessionData = await sessionResponse.json();
             const userId = sessionData.userId;
-            const applyResponse = await fetch(`http://localhost:8000/api/jobs/${jobId}/apply?user_id=${userId}`, {
+            await fetch(`http://localhost:8000/api/jobs/${jobId}/apply?user_id=${userId}`, {
                 method: 'POST',
             });
-            // Regardless of backend response, mark as applied
-            setAppliedJobs(prev => ({ ...prev, [jobId]: true }));
+            // Update local recommendations to mark this job as applied.
+            setRecommendations(prev =>
+                prev.map(job =>
+                    job._id === jobId ? { ...job, applied: true } : job
+                )
+            );
         } catch (error) {
-            // Even if an error occurs (for example, "already applied"),
-            // mark the job as applied.
-            setAppliedJobs(prev => ({ ...prev, [jobId]: true }));
+            // Even if there's an error, we mark the job as applied.
+            setRecommendations(prev =>
+                prev.map(job =>
+                    job._id === jobId ? { ...job, applied: true } : job
+                )
+            );
             console.error(error);
         }
     };
@@ -180,7 +187,6 @@ export default function RecommendedJobs() {
         setRecommendations([]);
         setActiveStep(0);
         setErrorMessage('');
-        setAppliedJobs({});
     };
 
     return (
@@ -301,11 +307,11 @@ export default function RecommendedJobs() {
                                         variant="contained"
                                         color="primary"
                                         onClick={() => handleApply(job._id)}
-                                        disabled={!!appliedJobs[job._id]}
+                                        disabled={job.applied}
                                     >
                                         Apply
                                     </Button>
-                                    {appliedJobs[job._id] && (
+                                    {job.applied && (
                                         <Typography sx={{ ml: 2 }} variant="subtitle2">
                                             Applied
                                         </Typography>

@@ -81,6 +81,7 @@ async def get_recommendations(
 async def get_existing_recommendations(user_id: str):
     """
     Retrieve saved recommended jobs for a user in the same order as initially recommended.
+    Each job will include an 'applied' flag indicating whether the user has applied.
     """
     try:
         users_collection = db["users"]
@@ -91,8 +92,8 @@ async def get_existing_recommendations(user_id: str):
         if not recommended_job_ids:
             return {"status": "no recommendations", "recommendations": []}
         
-        # Retrieve job details and build the list in the saved order
-        job_details_dict = get_job_details_by_ids(jobs_collection, recommended_job_ids)
+        # Retrieve job details with applied flag using current user id
+        job_details_dict = get_job_details_by_ids(jobs_collection, recommended_job_ids, current_user_id=user_id)
         recommendations = [
             job_details_dict[job_id]
             for job_id in recommended_job_ids

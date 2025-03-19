@@ -30,10 +30,12 @@ def get_all_job_embeddings(jobs_collection):
         job_list.append(job)
     return job_list
 
-def get_job_details_by_ids(jobs_collection, job_ids: list) -> dict:
+def get_job_details_by_ids(jobs_collection, job_ids: list, current_user_id: str = None) -> dict:
     """
     Retrieve detailed job information for specific job IDs.
     Returns a dict keyed by job id (as a string).
+    If current_user_id is provided, adds an 'applied' flag (True/False)
+    based on whether the user's ObjectId is present in the 'applicants' field.
     """
     object_ids = [ObjectId(id_) for id_ in job_ids]
     cursor = jobs_collection.find(
@@ -43,19 +45,27 @@ def get_job_details_by_ids(jobs_collection, job_ids: list) -> dict:
             "title": 1,
             "description": 1,
             "experience": 1,
-            "company": 1  # Ensure company is returned for the UI
+            "company": 1,
+            "applicants": 1  # Include applicants for checking applied status
         }
     )
     
     job_details = {}
     for doc in cursor:
         job_id = str(doc["_id"])
+        applied = False
+        if current_user_id:
+            try:
+                applied = ObjectId(current_user_id) in doc.get("applicants", [])
+            except Exception as e:
+                applied = False
         job_details[job_id] = {
-            "_id": job_id,  # Include _id in the job object
+            "_id": job_id,
             "title": doc.get("title", "N/A"),
             "description": doc.get("description", "N/A"),
             "experience": doc.get("experience", "N/A"),
             "company": doc.get("company", "N/A"),
+            "applied": applied
         }
     return job_details
 
