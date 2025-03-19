@@ -4,24 +4,29 @@ from typing import Optional
 from bson import ObjectId
 import io
 
-from src.domain.cv.processor import extract_text_from_pdf, process_cv_text, get_cv_embedding
+from src.domain.cv.processor import extract_text_from_pdf, process_cv_text
 from src.domain.cv.ner import extract_skills_with_gemini
 from src.domain.recommendation.recommendation_service import JobRecommender
-from src.utils.db_service import connect_to_mongo, save_user_recommendations, get_job_details_by_ids
+from src.utils.db_service import (
+    connect_to_mongo,
+    save_user_recommendations,
+    get_job_details_by_ids,
+    apply_to_job
+)
 from src.config import GEMINI_API_KEY, MONGODB_URI, MONGODB_DB_NAME
 
 app = FastAPI(title="Job Recommendation API")
 
-# CORS middleware configuration
+# Configure CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Update this in production
+    allow_origins=["*"],  # Change this in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Initialize MongoDB connection and recommender
+# Initialize MongoDB connection and job recommender
 db = connect_to_mongo(MONGODB_URI, MONGODB_DB_NAME)
 jobs_collection = db["job"]
 recommender = JobRecommender()
@@ -31,11 +36,11 @@ recommender.load_jobs(jobs_collection)
 async def get_recommendations(
     cv_file: UploadFile = File(...),
     experience_level: str = Form(...),
-    user_id: str = Form(...),  # user_id parameter
-    cv_path: Optional[str] = Form(None)  # cv_path parameter
+    user_id: str = Form(...),
+    cv_path: Optional[str] = Form(None)
 ):
     try:
-        # Read and process CV
+        # Process the CV
         cv_bytes = await cv_file.read()
         cv_text = extract_text_from_pdf(cv_bytes)
         processed_cv_text = process_cv_text(cv_text)
@@ -56,13 +61,10 @@ async def get_recommendations(
             skills_weight=0.1
         )
 
-        # Extract job IDs from recommendations
+        # Extract job IDs from recommendations and save them for the user
         job_ids = [rec['job_id'] for rec in recommendations]
-        
-        # Save recommendations to user's document
         save_user_recommendations(db, user_id, job_ids)
 
-        # Build response
         response_data = {
             "status": "success",
             "recommendations": recommendations
@@ -78,8 +80,7 @@ async def get_recommendations(
 @app.get("/api/recommendations")
 async def get_existing_recommendations(user_id: str):
     """
-    Retrieve saved recommended jobs for a user if they exist.
-    The returned jobs are in the same order as saved by the recommendation system.
+    Retrieve saved recommended jobs for a user in the same order as initially recommended.
     """
     try:
         users_collection = db["users"]
@@ -90,10 +91,8 @@ async def get_existing_recommendations(user_id: str):
         if not recommended_job_ids:
             return {"status": "no recommendations", "recommendations": []}
         
-        # Retrieve detailed job information based on saved job IDs
+        # Retrieve job details and build the list in the saved order
         job_details_dict = get_job_details_by_ids(jobs_collection, recommended_job_ids)
-        
-        # Build recommendations list in the same order as saved in recommended_job_ids
         recommendations = [
             job_details_dict[job_id]
             for job_id in recommended_job_ids
@@ -101,6 +100,20 @@ async def get_existing_recommendations(user_id: str):
         ]
         
         return {"status": "success", "recommendations": recommendations}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/jobs/{job_id}/apply")
+async def apply_to_job_endpoint(job_id: str, user_id: str):
+    """
+    Add the user's _id to the specified job's applicants array.
+    """
+    try:
+        success = apply_to_job(db, job_id, user_id)
+        if success:
+            return {"status": "success", "message": "Applied successfully"}
+        else:
+            return {"status": "error", "message": "Could not apply to job (job might not exist or already updated)."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

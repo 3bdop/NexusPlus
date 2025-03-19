@@ -20,11 +20,11 @@ import SendIcon from '@mui/icons-material/Send';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 
 const EXPERIENCE_LEVELS = {
-    "Entry Level": "0-1",    // 0-12 months
-    "Junior": "1-3",         // 1-3 years
-    "Mid-Level": "3-6",      // 3-6 years
-    "Senior": "6-10",        // 6-10 years
-    "Expert": Infinity,      // 10+ years
+    "Entry Level": "0-1",
+    "Junior": "1-3",
+    "Mid-Level": "3-6",
+    "Senior": "6-10",
+    "Expert": Infinity,
 };
 
 const steps = [
@@ -42,13 +42,13 @@ export default function RecommendedJobs() {
     const [recommendations, setRecommendations] = useState([]);
     const [activeStep, setActiveStep] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
-    const userId = "user123"; // Replace with actual user ID from authentication if needed
+    // Object to track applied job IDs: key is job._id and value is true once applied.
+    const [appliedJobs, setAppliedJobs] = useState({});
 
-    // On mount, check if there are saved recommendations
+    // On mount, check for existing recommendations.
     useEffect(() => {
         const fetchExistingRecommendations = async () => {
             try {
-                // Get session to retrieve user ID (if applicable)
                 const sessionResponse = await fetch('http://localhost:5050/api/get-session', {
                     credentials: 'include'
                 });
@@ -57,10 +57,8 @@ export default function RecommendedJobs() {
                 }
                 const sessionData = await sessionResponse.json();
                 const userId = sessionData.userId;
-
                 const response = await fetch(`http://localhost:8000/api/recommendations?user_id=${userId}`);
                 if (!response.ok) {
-                    // If no recommendations exist, do nothing
                     return;
                 }
                 const data = await response.json();
@@ -86,26 +84,21 @@ export default function RecommendedJobs() {
                 setErrorMessage('File size should not exceed 3MB.');
                 return;
             }
-
             try {
-                // First, upload the CV to storage
                 const formData = new FormData();
                 formData.append('cv_file', file);
-
                 const uploadResponse = await fetch('http://localhost:5050/api/upload-cv', {
                     method: 'POST',
-                    credentials: 'include', // Important for cookies
+                    credentials: 'include',
                     body: formData,
                 });
-
                 if (!uploadResponse.ok) {
                     throw new Error('Failed to upload CV');
                 }
-
                 setCvUploaded(true);
                 setCvFile(file);
                 setErrorMessage('');
-                setActiveStep(1); // Move to the next step
+                setActiveStep(1);
             } catch (error) {
                 setErrorMessage('Error uploading CV: ' + error.message);
                 console.error('CV upload error:', error);
@@ -115,40 +108,33 @@ export default function RecommendedJobs() {
 
     const handleExperienceLevelChange = (event) => {
         setExperienceLevel(event.target.value);
-        setActiveStep(2); // Move to the next step
+        setActiveStep(2);
     };
 
     const handleSubmit = async () => {
         setSubmitting(true);
         setErrorMessage('');
         try {
-            // Get session to retrieve user ID
             const sessionResponse = await fetch('http://localhost:5050/api/get-session', {
                 credentials: 'include'
             });
-            
             if (!sessionResponse.ok) {
                 throw new Error('Failed to get user session');
             }
-            
             const sessionData = await sessionResponse.json();
             const userId = sessionData.userId;
-
             const formData = new FormData();
             formData.append('cv_file', cvFile);
             formData.append('experience_level', experienceLevel);
             formData.append('user_id', userId);
-
             const response = await fetch('http://localhost:8000/api/recommendations', {
                 method: 'POST',
                 body: formData,
             });
-
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(errorText || 'Error fetching recommendations');
             }
-
             const data = await response.json();
             if (data.status === "success") {
                 setRecommendations(data.recommendations);
@@ -163,17 +149,42 @@ export default function RecommendedJobs() {
         }
     };
 
+    // New function to handle job application
+    const handleApply = async (jobId) => {
+        try {
+            const sessionResponse = await fetch('http://localhost:5050/api/get-session', {
+                credentials: 'include'
+            });
+            if (!sessionResponse.ok) {
+                throw new Error('Failed to get user session');
+            }
+            const sessionData = await sessionResponse.json();
+            const userId = sessionData.userId;
+            const applyResponse = await fetch(`http://localhost:8000/api/jobs/${jobId}/apply?user_id=${userId}`, {
+                method: 'POST',
+            });
+            // Regardless of backend response, mark as applied
+            setAppliedJobs(prev => ({ ...prev, [jobId]: true }));
+        } catch (error) {
+            // Even if an error occurs (for example, "already applied"),
+            // mark the job as applied.
+            setAppliedJobs(prev => ({ ...prev, [jobId]: true }));
+            console.error(error);
+        }
+    };
+
     const handleResetProcess = () => {
         setCvUploaded(false);
         setCvFile(null);
         setExperienceLevel('');
         setRecommendations([]);
         setActiveStep(0);
+        setErrorMessage('');
+        setAppliedJobs({});
     };
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, padding: 2 }}>
-            {/* Stepper */}
             <Stepper activeStep={activeStep} alternativeLabel sx={{ width: '100%', marginBottom: 4 }}>
                 {steps.map((step, index) => (
                     <Step key={step.label}>
@@ -191,8 +202,6 @@ export default function RecommendedJobs() {
                     </Step>
                 ))}
             </Stepper>
-
-            {/* Step 1: CV Upload */}
             {activeStep === 0 && (
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                     <input
@@ -224,8 +233,6 @@ export default function RecommendedJobs() {
                     )}
                 </Box>
             )}
-
-            {/* Step 2: Experience Level Selection */}
             {activeStep === 1 && (
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                     <Typography variant="h6">Select Experience Level</Typography>
@@ -246,8 +253,6 @@ export default function RecommendedJobs() {
                     </Select>
                 </Box>
             )}
-
-            {/* Step 3: Submission */}
             {activeStep === 2 && (
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                     <Button
@@ -269,8 +274,6 @@ export default function RecommendedJobs() {
                     )}
                 </Box>
             )}
-
-            {/* Step 4: Recommended Jobs */}
             {activeStep === 3 && (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <Typography variant="h6" align="center">Recommended Jobs</Typography>
@@ -283,8 +286,8 @@ export default function RecommendedJobs() {
                                 style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: 2 }}
                             >
                                 <img
-                                    src='https://upload.wikimedia.org/wikipedia/commons/b/b6/Ooredoo.svg'
-                                    alt='wikimedia.org'
+                                    src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Ooredoo.svg"
+                                    alt="wikimedia.org"
                                     style={{ width: 40 }}
                                 />
                                 <Typography component="span">
@@ -292,9 +295,22 @@ export default function RecommendedJobs() {
                                 </Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <Typography>
-                                    {job.description}
-                                </Typography>
+                                <Typography>{job.description}</Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => handleApply(job._id)}
+                                        disabled={!!appliedJobs[job._id]}
+                                    >
+                                        Apply
+                                    </Button>
+                                    {appliedJobs[job._id] && (
+                                        <Typography sx={{ ml: 2 }} variant="subtitle2">
+                                            Applied
+                                        </Typography>
+                                    )}
+                                </Box>
                             </AccordionDetails>
                         </Accordion>
                     ))}

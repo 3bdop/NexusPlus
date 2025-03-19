@@ -33,6 +33,7 @@ def get_all_job_embeddings(jobs_collection):
 def get_job_details_by_ids(jobs_collection, job_ids: list) -> dict:
     """
     Retrieve detailed job information for specific job IDs.
+    Returns a dict keyed by job id (as a string).
     """
     object_ids = [ObjectId(id_) for id_ in job_ids]
     cursor = jobs_collection.find(
@@ -42,7 +43,7 @@ def get_job_details_by_ids(jobs_collection, job_ids: list) -> dict:
             "title": 1,
             "description": 1,
             "experience": 1,
-            "company": 1  # Added to support UI expecting company info
+            "company": 1  # Ensure company is returned for the UI
         }
     )
     
@@ -50,6 +51,7 @@ def get_job_details_by_ids(jobs_collection, job_ids: list) -> dict:
     for doc in cursor:
         job_id = str(doc["_id"])
         job_details[job_id] = {
+            "_id": job_id,  # Include _id in the job object
             "title": doc.get("title", "N/A"),
             "description": doc.get("description", "N/A"),
             "experience": doc.get("experience", "N/A"),
@@ -70,7 +72,6 @@ def get_job_skills_by_ids(jobs_collection, job_ids: list) -> dict:
     job_skills = {}
     for doc in cursor:
         job_id = str(doc["_id"])
-        # doc.get("skills", []) is usually a list or JSON if stored
         job_skills[job_id] = doc.get("skills", [])
     return job_skills
 
@@ -87,4 +88,19 @@ def save_user_recommendations(db, user_id: str, job_ids: list):
         return result.modified_count > 0
     except Exception as e:
         logging.error(f"Error saving recommendations: {e}")
+        return False
+
+def apply_to_job(db, job_id: str, user_id: str) -> bool:
+    """
+    Add the user_id to the job's 'applicants' array (creates the field if it doesn't exist).
+    """
+    jobs_collection = db["job"]
+    try:
+        result = jobs_collection.update_one(
+            {"_id": ObjectId(job_id)},
+            {"$addToSet": {"applicants": ObjectId(user_id)}}
+        )
+        return result.modified_count > 0
+    except Exception as e:
+        logging.error(f"Error applying to job: {e}")
         return False
