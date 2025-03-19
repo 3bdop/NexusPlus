@@ -37,3 +37,6 @@ backend/bot/vector-index/*
 #recommendation ignored files/folders
 */.venv
 __pycache__/
+
+#ignoring uploads
+uploads/
