@@ -80,12 +80,12 @@ export default function Dashboarddd() {
             >
                 <Sparkles
                     color={"white"}
-                    count={80}
+                    count={50}
                     opacity={0.5}
                     position={[0, 1, -0.02]}
                     scale={1.2}
-                    size={3}
-                    speed={0.25}
+                    size={2}
+                    speed={0.20}
                 />
             </Avatar>
         </>
