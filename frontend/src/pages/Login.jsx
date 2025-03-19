@@ -73,7 +73,7 @@ export default function Login() {
                     )}
                 </div>
                 <div align="center">
-                    <Button val={"Login"} />
+                    <Button val={"Login"} type="submit" />
                 </div>
                 {/* <button type="submit" className="login-button">Login</button> */}
                 <div className="form-links">

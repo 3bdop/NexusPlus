@@ -1,12 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Button = ({ val }) => {
-    return (
-        <StyledWrapper>
-            <button id="btn">{val}</button>
-        </StyledWrapper>
-    );
+const Button = ({ val, type }) => {
+  return (
+    <StyledWrapper>
+      <button id="btn" type={type}>{val}</button>
+    </StyledWrapper>
+  );
 }
 
 const StyledWrapper = styled.div`
