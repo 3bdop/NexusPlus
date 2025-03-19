@@ -31,7 +31,9 @@ frontend/public/build/*
 frontend/public/bt
 frontend/public/CV/*
 
-#ChatBot
+#ChatBot ignored files
 backend/bot/vector-index/*
 
+#recommendation ignored files/folders
 */.venv
+__pycache__/
