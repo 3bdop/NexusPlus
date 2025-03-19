@@ -148,7 +148,6 @@ export default function RecommendedJobs() {
     };
 
     // Function to handle applying to a job.
-    // The job object already includes an "applied" flag from the backend.
     // After a successful apply call, we update the recommendations state accordingly.
     const handleApply = async (jobId) => {
         try {
@@ -170,7 +169,7 @@ export default function RecommendedJobs() {
                 )
             );
         } catch (error) {
-            // Even if there's an error, we mark the job as applied.
+            // Even if there's an error, mark the job as applied.
             setRecommendations(prev =>
                 prev.map(job =>
                     job._id === jobId ? { ...job, applied: true } : job

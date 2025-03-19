@@ -1,6 +1,7 @@
 import logging
 from bson import ObjectId
 from pymongo import MongoClient
+import numpy as np  # Needed to check for numpy arrays
 
 def connect_to_mongo(uri: str, db_name: str):
     """
@@ -98,6 +99,25 @@ def save_user_recommendations(db, user_id: str, job_ids: list):
         return result.modified_count > 0
     except Exception as e:
         logging.error(f"Error saving recommendations: {e}")
+        return False
+
+def store_user_cv_embedding(db, user_id: str, cv_embedding):
+    """
+    Store the CV embedding in the user's document.
+    Converts the embedding to a list if it is a NumPy array.
+    """
+    users_collection = db["users"]
+    try:
+        # Convert cv_embedding to a list if it's a NumPy array
+        if isinstance(cv_embedding, np.ndarray):
+            cv_embedding = cv_embedding.tolist()
+        result = users_collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": {"cv_embedding": cv_embedding}}
+        )
+        return result.modified_count > 0
+    except Exception as e:
+        logging.error(f"Error storing CV embedding: {e}")
         return False
 
 def apply_to_job(db, job_id: str, user_id: str) -> bool:

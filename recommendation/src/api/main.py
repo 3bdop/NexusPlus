@@ -11,7 +11,8 @@ from src.utils.db_service import (
     connect_to_mongo,
     save_user_recommendations,
     get_job_details_by_ids,
-    apply_to_job
+    apply_to_job,
+    store_user_cv_embedding
 )
 from src.config import GEMINI_API_KEY, MONGODB_URI, MONGODB_DB_NAME
 
@@ -48,6 +49,9 @@ async def get_recommendations(
         # Extract skills and create embedding
         cv_skills = extract_skills_with_gemini(cv_text, GEMINI_API_KEY)
         cv_embedding = recommender.create_cv_embedding(processed_cv_text)
+
+        # Store the CV embedding in the user's document
+        store_user_cv_embedding(db, user_id, cv_embedding)
 
         # Get job recommendations
         recommendations = recommender.get_recommendations(
