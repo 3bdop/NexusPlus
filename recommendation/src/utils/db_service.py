@@ -1,5 +1,3 @@
-# src/utils/db_service.py
-
 import logging
 from bson import ObjectId
 from pymongo import MongoClient
@@ -44,7 +42,7 @@ def get_job_details_by_ids(jobs_collection, job_ids: list) -> dict:
             "title": 1,
             "description": 1,
             "experience": 1,
-            # Add other fields if needed, e.g. company, location
+            "company": 1  # Added to support UI expecting company info
         }
     )
     
@@ -55,7 +53,7 @@ def get_job_details_by_ids(jobs_collection, job_ids: list) -> dict:
             "title": doc.get("title", "N/A"),
             "description": doc.get("description", "N/A"),
             "experience": doc.get("experience", "N/A"),
-            # Add other fields if needed
+            "company": doc.get("company", "N/A"),
         }
     return job_details
 
@@ -75,3 +73,18 @@ def get_job_skills_by_ids(jobs_collection, job_ids: list) -> dict:
         # doc.get("skills", []) is usually a list or JSON if stored
         job_skills[job_id] = doc.get("skills", [])
     return job_skills
+
+def save_user_recommendations(db, user_id: str, job_ids: list):
+    """
+    Save recommended job IDs to user's document.
+    """
+    users_collection = db["users"]
+    try:
+        result = users_collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": {"recommended_jobs": job_ids}}
+        )
+        return result.modified_count > 0
+    except Exception as e:
+        logging.error(f"Error saving recommendations: {e}")
+        return False

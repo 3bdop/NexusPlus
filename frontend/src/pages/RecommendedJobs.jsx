@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -24,7 +24,7 @@ const EXPERIENCE_LEVELS = {
     "Junior": "1-3",         // 1-3 years
     "Mid-Level": "3-6",      // 3-6 years
     "Senior": "6-10",        // 6-10 years
-    "Expert": Infinity,   // 10+ years
+    "Expert": Infinity,      // 10+ years
 };
 
 const steps = [
@@ -43,6 +43,37 @@ export default function RecommendedJobs() {
     const [activeStep, setActiveStep] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
     const userId = "user123"; // Replace with actual user ID from authentication if needed
+
+    // On mount, check if there are saved recommendations
+    useEffect(() => {
+        const fetchExistingRecommendations = async () => {
+            try {
+                // Get session to retrieve user ID (if applicable)
+                const sessionResponse = await fetch('http://localhost:5050/api/get-session', {
+                    credentials: 'include'
+                });
+                if (!sessionResponse.ok) {
+                    throw new Error('Failed to get user session');
+                }
+                const sessionData = await sessionResponse.json();
+                const userId = sessionData.userId;
+
+                const response = await fetch(`http://localhost:8000/api/recommendations?user_id=${userId}`);
+                if (!response.ok) {
+                    // If no recommendations exist, do nothing
+                    return;
+                }
+                const data = await response.json();
+                if (data.status === "success" && data.recommendations.length > 0) {
+                    setRecommendations(data.recommendations);
+                    setActiveStep(3);
+                }
+            } catch (error) {
+                console.error("Error fetching existing recommendations", error);
+            }
+        };
+        fetchExistingRecommendations();
+    }, []);
 
     const handleCvUpload = async (event) => {
         const file = event.target.files[0];
@@ -91,9 +122,22 @@ export default function RecommendedJobs() {
         setSubmitting(true);
         setErrorMessage('');
         try {
+            // Get session to retrieve user ID
+            const sessionResponse = await fetch('http://localhost:5050/api/get-session', {
+                credentials: 'include'
+            });
+            
+            if (!sessionResponse.ok) {
+                throw new Error('Failed to get user session');
+            }
+            
+            const sessionData = await sessionResponse.json();
+            const userId = sessionData.userId;
+
             const formData = new FormData();
             formData.append('cv_file', cvFile);
             formData.append('experience_level', experienceLevel);
+            formData.append('user_id', userId);
 
             const response = await fetch('http://localhost:8000/api/recommendations', {
                 method: 'POST',
@@ -108,7 +152,7 @@ export default function RecommendedJobs() {
             const data = await response.json();
             if (data.status === "success") {
                 setRecommendations(data.recommendations);
-                setActiveStep(3); // Move to the final step
+                setActiveStep(3);
             } else {
                 throw new Error("Unexpected response from API");
             }
