@@ -15,6 +15,8 @@ const config = {
             backgroundColor: '#5ccc9d',
         },
     },
+    initialMessages: [createChatBotMessage(`Hey 👋, I'm ${botName} how can I help you with UDST career fair?`)],
+    botName: botName,
 };
 
 export default config;

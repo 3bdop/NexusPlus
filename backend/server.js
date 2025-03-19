@@ -10,8 +10,7 @@ const app = express();
 app.use(cookieParser()); // Add this before your routes
 const allowedOrigins = [
     'http://localhost:5173',
-    'http://192.168.118.115:5173',
-    'http://localhost:5174',
+    'http://192.168.118.115:5173'
 ];
 
 app.use(cors(

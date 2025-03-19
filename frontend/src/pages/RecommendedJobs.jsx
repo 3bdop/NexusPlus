@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -106,7 +106,7 @@ export default function RecommendedJobs() {
 
     const handleExperienceLevelChange = (event) => {
         setExperienceLevel(event.target.value);
-        setActiveStep(2);
+        setActiveStep(2); // Move to the next step
     };
 
     const handleSubmit = async () => {
@@ -190,6 +190,7 @@ export default function RecommendedJobs() {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, padding: 2 }}>
+            {/* Stepper */}
             <Stepper activeStep={activeStep} alternativeLabel sx={{ width: '100%', marginBottom: 4 }}>
                 {steps.map((step, index) => (
                     <Step key={step.label}>
@@ -207,6 +208,8 @@ export default function RecommendedJobs() {
                     </Step>
                 ))}
             </Stepper>
+
+            {/* Step 1: CV Upload */}
             {activeStep === 0 && (
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                     <input
@@ -238,6 +241,8 @@ export default function RecommendedJobs() {
                     )}
                 </Box>
             )}
+
+            {/* Step 2: Experience Level Selection */}
             {activeStep === 1 && (
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                     <Typography variant="h6">Select Experience Level</Typography>
@@ -258,6 +263,8 @@ export default function RecommendedJobs() {
                     </Select>
                 </Box>
             )}
+
+            {/* Step 3: Submission */}
             {activeStep === 2 && (
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                     <Button
@@ -291,8 +298,8 @@ export default function RecommendedJobs() {
                                 style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: 2 }}
                             >
                                 <img
-                                    src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Ooredoo.svg"
-                                    alt="wikimedia.org"
+                                    src='https://upload.wikimedia.org/wikipedia/commons/b/b6/Ooredoo.svg'
+                                    alt='wikimedia.org'
                                     style={{ width: 40 }}
                                 />
                                 <Typography component="span">
