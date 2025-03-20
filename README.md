@@ -153,5 +153,5 @@ pip install -r requirements.txt
 3. **Run model:**
 
 ```Bash
-python src.api.run_api
+python -m src.api.run_api
 ```
