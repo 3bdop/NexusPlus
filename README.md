@@ -102,7 +102,7 @@
    ```
    
 3. **Install the WebGL build:**
-  - [Install WebGL build]( https://gluonhq.com/products/javafx/](https://drive.google.com/file/d/1L4ULqhGlk11bPRumg6TibCMJKbgTXIbE/view?usp=sharing ).
+  - [Install WebGL build]( https://drive.google.com/file/d/1L4ULqhGlk11bPRumg6TibCMJKbgTXIbE/view?usp=drive_link ).
   - After installing the build, drag and drop the files in ```/frontend/src/public/bt/```
     
 3. **Install dependencies in frontend and run:**
