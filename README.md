@@ -56,7 +56,7 @@
     <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f916/512.gif" alt="🤖" width="32" height="32"align="center">
     </picture> 
     <b>Chatbot Assistance:</b> Provides instant support and answers queries related to the event.
-  </p> 
+  </p>
 
 - **Blockchain Integration:** Ensures secure data handling and supports digital authentication for event participation.
 - **Voice Chat Communication:** Facilitates real-time networking, allowing participants to engage in seamless conversations during the event.
@@ -79,12 +79,79 @@
 
 <h2 align="center">
 <picture>
-  <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/2699_fe0f/512.webp" type="image/webp"align="center">
-  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2699_fe0f/512.gif" alt="⚙" width="32" height="32"align="center">
+  <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6a7/512.webp" type="image/webp">
+  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6a7/512.gif" alt="🚧" width="32" height="32"align="center">
 </picture>
  Installation and Setup
 <picture>
-  <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/2699_fe0f/512.webp" type="image/webp"align="center">
-  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2699_fe0f/512.gif" alt="⚙" width="32" height="32"align="center">
+  <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6a7/512.webp" type="image/webp">
+  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6a7/512.gif" alt="🚧" width="32" height="32"align="center">
 </picture>
 </h2>
+
+<br/>
+
+Follow these steps to get the project up and running:
+
+1. **Clone the repository:**
+
+   ```Bash
+   git clone https://github.com/3bdop/career-fair-metaverse.git
+   ```
+
+2. **Install the WebGL build:**
+
+- [Install WebGL build](https://drive.google.com/file/d/1L4ULqhGlk11bPRumg6TibCMJKbgTXIbE/view?usp=drive_link).
+- After installing the build, drag and drop the files in `/frontend/src/public/bt/`
+
+3. **Install dependencies in frontend and run:**
+
+   ```Bash
+   cd frontend
+   npm i
+   npm run dev
+   ```
+
+4. **Install dependencies in backend and run:**
+
+   ```Bash
+   cd backend
+   npm i
+   npm run dev
+   ```
+
+   > **_Note:_** If nodemon not installed on your machine: `npm i -g nodemon`
+
+## Python Model Development:
+
+Follow these steps to set up the Python environment for model development:
+
+1. **Create a virtual environment:**
+
+For Windows:
+
+```bash
+cd backend/recommendation
+python -m venv .venv
+.\.venv\Scripts\activate.bat
+```
+
+For Linux/macOS:
+
+```bash
+cd backend/recommendation
+python -m venv .venv
+source .venv/bin/activate
+```
+
+2.  **Install Python dependencies:**
+
+```bash
+pip install -r requirements.txt
+```
+
+3. **Run model:**
+
+```Bash
+python src.api.run_api
+```
