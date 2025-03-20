@@ -89,29 +89,41 @@ router.get("/api/get-session", async (req, res) => {
 //*This will check login.
 router.post("/api/login", async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { wallet } = req.body;
+
+        if (!wallet) {
+            return res.status(400).json({ message: "Wallet address is required." });
+        }
+
+        const usersCollection = db.collection('users')
+        const user = await usersCollection.findOne({ wallet });
+
+        if (!user) {
+            return res.status(401).json({ message: "Wallet not registered. Please sign up first." });
+        }
+        // const { username, password } = req.body;
 
         // Check if username and password are provided
-        if (!username || !password) {
-            return res.status(400).send("Username and password are required.");
-        }
+        // if (!username || !password) {
+        //     return res.status(400).send("Username and password are required.");
+        // }
 
         // Find the user in the database
-        const usersCollection = db.collection("users");
-        const user = await usersCollection.findOne({ username });
+        // const usersCollection = db.collection("users");
+        // const user = await usersCollection.findOne({ username });
 
         // If user doesn't exist
-        if (!user) {
-            return res.status(404).send("User not found.");
-        }
+        // if (!user) {
+        //     return res.status(404).send("User not found.");
+        // }
 
         // Compare the provided password with the stored hashed password
         // const isPasswordValid = await bcrypt.compare(password, user.password);
-        const isPasswordValid = password == user.password
+        // const isPasswordValid = password == user.password
 
-        if (!isPasswordValid) {
-            return res.status(401).send("Invalid password.");
-        }
+        // if (!isPasswordValid) {
+        //     return res.status(401).send("Invalid password.");
+        // }
 
         // Generate a session ID
         const sessionId = crypto.randomBytes(16).toString('hex');
@@ -123,10 +135,12 @@ router.post("/api/login", async (req, res) => {
         const sessionsCollection = db.collection('session');
         await sessionsCollection.insertOne({
             sessionId,
+            wallet,
             userId: user._id,
             username: user.username,
             avatarUrl: user.avatarUrl,
             role: user.role,
+            loggedIn: true,
             expiresAt,
         });
 
@@ -149,6 +163,43 @@ router.post("/api/login", async (req, res) => {
         console.error("Login error:", err);
         res.status(500).send("An error occurred during login.");
     }
+})
+
+router.post('/api/register', async (req, res) => {
+    try {
+        const { wallet, username, email, gender } = req.body
+
+        if (!wallet || !email || !username || !gender) {
+            return res.status(400).json({ message: "Missing required fields." });
+        }
+        const usersCollection = db.collection('users');
+
+        const existingUser = await usersCollection.findOne({ wallet });
+        if (existingUser) {
+            return res.status(400).json({ message: "Wallet is already registered." });
+        }
+        const gAvatarurl = 'https://models.readyplayer.me/671fba5095f66d10f33251c6.glb'
+        if (gender == 'girl') {
+            gAvatarurl = "https://models.readyplayer.me/67228d2ba754a4d51bc05336.glb"
+        }
+
+        await usersCollection.insertOne(
+            {
+                wallet,
+                username: username,
+                email: email,
+                avatarUrl: gAvatarurl,
+                role: 'attendee',
+                gender
+            });
+
+        res.status(201).json({ message: "Registration successful!" });
+    }
+    catch (error) {
+        console.error("Registration error:", error);
+        res.status(500).json({ message: "Server error during registration." });
+    }
+
 })
 
 router.get("/api/check-auth", validateSession, (req, res) => {
