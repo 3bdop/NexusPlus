@@ -35,7 +35,7 @@ frontend/public/CV/*
 backend/bot/vector-index/*
 
 #recommendation ignored files/folders
-*/.venv
+.venv/
 __pycache__/
 
 #ignoring uploads
