@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import records from "./routes/record.js";
 import cookieParser from "cookie-parser";
-import WebGLBuild from './routes/WebGL-build.js';
+// import botRoute from './routes/botRoute.js';
 
 const PORT = process.env.PORT;
 const app = express();
@@ -26,8 +26,9 @@ app.use(cors(
         },
         credentials: true // Important for cookies
     })); app.use(express.json());
+
 app.use("/", records);
-app.use("/webgl", WebGLBuild)
+// app.use("/query", botRoute)
 
 // start the Express server
 app.listen(PORT, '0.0.0.0', () => {

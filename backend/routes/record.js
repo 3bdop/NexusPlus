@@ -8,6 +8,91 @@ import { ObjectId } from "mongodb";
 import crypto from 'crypto'; // For generating session IDs
 import validateSession from "../middleware/validateSession.js"
 
+
+
+//recently added by AKH
+// export default function createRouter(db) {  // ✅ Ensure function name is correct
+//     const router = express.Router();
+//     const usersCollection = db.collection("users");
+
+//     // ✅ Register a user
+//     router.post("/api/register", async (req, res) => {
+//         try {
+//             const { wallet, email, company } = req.body;
+
+//             if (!wallet || !email || !company) {
+//                 return res.status(400).json({ message: "Missing required fields." });
+//             }
+
+//             // Check if the user already exists
+//             const existingUser = await usersCollection.findOne({ wallet });
+
+//             if (existingUser) {
+//                 return res.status(400).json({ message: "Wallet is already registered." });
+//             }
+
+//             // Save the new user
+//             await usersCollection.insertOne({ wallet, email, company, createdAt: new Date() });
+
+//             res.status(201).json({ message: "Registration successful!" });
+//         } catch (error) {
+//             console.error("Registration error:", error);
+//             res.status(500).json({ message: "Server error during registration." });
+//         }
+//     });
+
+//     // ✅ Login a user function return true or false
+//     router.post("/api/login", async (req, res) => {
+//         try {
+//             const { wallet } = req.body;
+
+//             if (!wallet) {
+//                 return res.status(400).json({ message: "Wallet address is required." });
+//             }
+
+//             // Check if the wallet exists in the database
+//             const user = await usersCollection.findOne({ wallet });
+
+//             if (!user) {
+//                 return res.status(401).json({ message: "Wallet not registered. Please sign up first." });
+//             }
+
+//             const sessionId = crypto.randomBytes(16).toString('hex');
+
+//             // Set session expiration time (e.g., 1 hour from now)
+//             const expiresAt = new Date(Date.now() + 50 * 60 * 1000); 
+
+//             const sessionsCollection = db.collection('session');
+//         await sessionsCollection.insertOne({
+//             sessionId,
+//             wallet,
+//             userId: user._id,
+//             username: user.username,
+//             role: user.role,
+//             expiresAt,
+//         });
+
+//         // Set a cookie with the session ID
+//         res.cookie('sessionId', sessionId, {
+//             httpOnly: true,
+//             maxAge: 50 * 60 * 1000,  
+//             sameSite: 'lax', // Add this
+//             path: '/' // Add this
+//         });
+
+//             res.status(200).json({ message: "Login successful!", user });
+//         } catch (error) {
+//             console.error("Login error:", error);
+//             res.status(500).json({ message: "Server error during login." });
+//         }
+//     });
+
+//     return router;  // ✅ Ensure this is inside the function
+// }
+
+// the end of AKH added part
+
+
 // The router will be added as a middleware and will take control of requests starting with path /record.
 const router = express.Router();
 
@@ -36,7 +121,7 @@ router.get("/api/get-avatarUrl/:id", async (req, res) => {
 
 router.get("/api/get-session", async (req, res) => {
     try {
-        const sessionId = req.cookies.sessionId; // Assuming the session ID is stored in a cookie
+        const sessionId = req.cookies.sessionId;
         if (!sessionId) {
             return res.status(400).send("Session ID is required.");
         }
@@ -57,29 +142,29 @@ router.get("/api/get-session", async (req, res) => {
 //*This will check login.
 router.post("/api/login", async (req, res) => {
     try {
-        const { username, password } = req.body;
-
-        // Check if username and password are provided
-        if (!username || !password) {
-            return res.status(400).send("Username and password are required.");
+        const { wallet } = req.body;
+        if (!wallet) {
+            return res.status(400).json({ message: "Wallet address is required." });
         }
+        // // Find the user in the database
+        const usersCollection = db.collection('users')
+        const user = await usersCollection.findOne({ wallet });         
 
-        // Find the user in the database
-        const usersCollection = db.collection("users");
-        const user = await usersCollection.findOne({ username });
-
-        // If user doesn't exist
         if (!user) {
-            return res.status(404).send("User not found.");
+            return res.status(401).json({ message: "Wallet not registered. Please sign up first." });
         }
+        // // If user doesn't exist
+        // if (!user) {
+        //     return res.status(404).send("User not found.");
+        // }
 
-        // Compare the provided password with the stored hashed password
-        // const isPasswordValid = await bcrypt.compare(password, user.password);
-        const isPasswordValid = password == user.password
+        // // Compare the provided password with the stored hashed password
+        // // const isPasswordValid = await bcrypt.compare(password, user.password);
+        // const isPasswordValid = password == user.password
 
-        if (!isPasswordValid) {
-            return res.status(401).send("Invalid password.");
-        }
+        // if (!isPasswordValid) {
+        //     return res.status(401).send("Invalid password.");
+        // }
 
         // Generate a session ID
         const sessionId = crypto.randomBytes(16).toString('hex');
@@ -183,4 +268,5 @@ router.post("/api/logout", async (req, res) => {
         res.status(500).send("An error occurred during logout.");
     }
 });
-export default router;
+
+export default router
