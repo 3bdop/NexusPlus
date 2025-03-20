@@ -15,6 +15,7 @@
 </h1>
 
 ---
+
 <h2 align="center">
 <picture>
   <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.webp" type="image/webp" align="center">
@@ -39,26 +40,26 @@
   Key Features
 </h3>
 
-  - **3D Virtual Environment:** Users can explore a fully interactive multiplayer career fair environment, ask companies employers, and networking spaces.  
-  - **Digital Twin Avatars:** Attendees can create personalized digital twins, representing themselves within the virtual space.  
-  - **AI-Powered Systems:**  
-    <p>
-      <picture>
-      <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f3af/512.webp" type="image/webp"align="center">
-      <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f3af/512.gif" alt="🎯" width="32" height="32"align="center">
-      </picture> 
-      <b>Job Recommendation System:</b> Suggests jobs and booths based on the user’s resume.
-    </p> 
-    <p>
-      <picture>
-      <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f916/512.webp" type="image/webp"align="center">
-      <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f916/512.gif" alt="🤖" width="32" height="32"align="center">
-      </picture> 
-      <b>Chatbot Assistance:</b> Provides instant support and answers queries related to the event.
-    </p> 
-        
-  - **Blockchain Integration:** Ensures secure data handling and supports digital authentication for event participation.  
-  - **Voice Chat Communication:** Facilitates real-time networking, allowing participants to engage in seamless conversations during the event.  
+- **3D Virtual Environment:** Users can explore a fully interactive multiplayer career fair environment, ask companies employers, and networking spaces.
+- **Digital Twin Avatars:** Attendees can create personalized digital twins, representing themselves within the virtual space.
+- **AI-Powered Systems:**
+  <p>
+    <picture>
+    <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f3af/512.webp" type="image/webp"align="center">
+    <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f3af/512.gif" alt="🎯" width="32" height="32"align="center">
+    </picture> 
+    <b>Job Recommendation System:</b> Suggests jobs and booths based on the user’s resume.
+  </p> 
+  <p>
+    <picture>
+    <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f916/512.webp" type="image/webp"align="center">
+    <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f916/512.gif" alt="🤖" width="32" height="32"align="center">
+    </picture> 
+    <b>Chatbot Assistance:</b> Provides instant support and answers queries related to the event.
+  </p> 
+
+- **Blockchain Integration:** Ensures secure data handling and supports digital authentication for event participation.
+- **Voice Chat Communication:** Facilitates real-time networking, allowing participants to engage in seamless conversations during the event.
 
 <br/>
 
@@ -70,9 +71,9 @@
   Why NexusPlus?
 </h3>
 
-  - **Enhanced Networking:** Break geographical barriers and connect with recruiters and professionals globally.  
-  - **Personalized Experience:** Tailored recommendations and customizable avatars for an engaging experience.  
-  - **Secure and Reliable:** Powered by blockchain for robust security and authentication.  
+- **Enhanced Networking:** Break geographical barriers and connect with recruiters and professionals globally.
+- **Personalized Experience:** Tailored recommendations and customizable avatars for an engaging experience.
+- **Secure and Reliable:** Powered by blockchain for robust security and authentication.
 
 ---
 

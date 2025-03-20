@@ -3,6 +3,7 @@ import '../index.css';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import Button from '../components/ui/button';
 
 export default function Login() {
     const {
@@ -71,7 +72,10 @@ export default function Login() {
                         <span className="error-message">{errors.password.message}</span>
                     )}
                 </div>
-                <button type="submit" className="login-button">Login</button>
+                <div align="center">
+                    <Button val={"Login"} type="submit" />
+                </div>
+                {/* <button type="submit" className="login-button">Login</button> */}
                 <div className="form-links">
                     {/* <a href="/forgot-password">Forgot password?</a> */}
                     <Link to="/register">Don't have an account? Register</Link>

@@ -131,7 +131,7 @@ const router = createBrowserRouter([
           {
             path: 'avatar-creation',
             element: (
-              <ProtectedRoute requiredRole={"employer" || "attendee"}>
+              <ProtectedRoute>
                 <AvatarCreation />
               </ProtectedRoute>
             )

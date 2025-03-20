@@ -1,0 +1,15 @@
+# requirements.txt
+uvicorn
+pandas
+spacy
+tqdm
+sentence-transformers
+pymongo
+PyMuPDF
+pytesseract
+python-dotenv
+fastapi
+python-multipart
+
+# If you need the specific en_core_web_sm file:
+en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0.tar.gz

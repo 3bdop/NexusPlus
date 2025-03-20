@@ -15,11 +15,12 @@ import 'react-chatbot-kit/build/main.css';
 import config from '../bot/config'
 import ActionProvider from '../bot/ActionProvider';
 import MessageParser from '../bot/MessageParser';
-import ChatbotStyle from '../bot/ChatbotStyle.css'
-
+import '../bot/ChatbotStyle.css'
 
 import axios from 'axios';
 import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
+import WavyBackground from '../components/ui/wavy-background';
+
 
 const BRANDING = {
     title: 'PLUS',
@@ -44,7 +45,7 @@ const Theme = createTheme({
     palette: {
         mode: 'dark',
         primary: {
-            main: '#6745FCFF',
+            main: '#63C1F8FF',
         },
         background: {
             default: '#080808',
@@ -57,33 +58,32 @@ const Theme = createTheme({
     components: {
         MuiCssBaseline: {
             styleOverrides: {
-                body: {
-                    margin: 0,
-                    padding: 0,
-                    background: 'linear-gradient(0deg, #080808FF, #5016ADFF 100%)',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundAttachment: 'fixed',
-                    minHeight: '100vh',
-                    overflow: 'hidden',
-                },
-                html: {
-                    overflow: 'hidden',
-                },
+                // body: {
+                // margin: 0,
+                // padding: 0,
+                // background: 'linear-gradient(0deg, #080808FF, #5016ADFF 100%)',
+                // backgroundRepeat: 'no-repeat',
+                // backgroundAttachment: 'fixed',
+                // minHeight: '100vh',
+                // overflow: 'hidden',
+                // },
+                // html: {
+                //     overflow: 'hidden',
+                // },
             },
         },
         MuiAppBar: {
             styleOverrides: {
                 root: {
                     backgroundColor: '#1A1A1AD5',
-                    borderBottom: '1px solid rgb(147, 102, 219)',
+                    // borderBottom: '1px solid rgb(147, 102, 219)',
                 },
             },
         },
         MuiDrawer: {
             styleOverrides: {
                 paper: {
-                    backgroundColor: '#1A1A1A',
-                    borderRight: '1px solid rgb(147, 102, 219)',
+                    backgroundColor: '#1A1A1AFF',
                 },
             },
         },
@@ -114,7 +114,7 @@ export default function Home({ role }) {
                 withCredentials: true
             });
             if (res.status === 200) {
-                localStorage.clear()
+                // localStorage.clear()
                 navigate('/');
             }
         } catch (err) {
@@ -169,11 +169,6 @@ export default function Home({ role }) {
     justify-content: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     transition: transform 0.2s ease, background 0.2s ease;
-
-    &:hover {
-        transform: scale(1.2);
-        background: #c0c0c0;
-    }
 `;
 
     const saveMessages = (messages) => {
@@ -185,76 +180,89 @@ export default function Home({ role }) {
         return messages ? JSON.parse(messages) : [];
     };
     return (
-        <ReactRouterAppProvider
-            navigation={NAVIGATION}
-            branding={BRANDING}
-            theme={Theme}
-            defaultColorScheme="dark"
-            colorSchemeStorageKey={null}
-        >
-            <Box sx={{
-                position: 'absolute',
-                right: 20,
-                top: 16,
-                zIndex: 9999
-            }}>
-                <Tooltip title="Actions">
-                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                        <MoreVertTwoToneIcon fontSize={"medium"} />
-                    </IconButton>
-                </Tooltip>
-
-                <Menu
-                    sx={{ mt: '45px' }}
-                    anchorEl={anchorElUser}
-                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                    keepMounted
-                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                    open={Boolean(anchorElUser)}
-                    onClose={handleCloseUserMenu}
-                >
-                    {settings.map((setting) => (
-                        <MenuItem
-                            key={setting}
-                            onClick={setting === 'Logout' ? handleLogout : handleCloseUserMenu}
-                        >
-                            <Typography textAlign="center">
-                                {setting}
-                            </Typography>
-                        </MenuItem>
-                    ))}
-                </Menu>
-            </Box>
+        <div style={{ position: 'relative', minHeight: '100vh' }}>
             <div style={{
                 position: 'fixed',
-                bottom: '20px',
-                right: '65px',
-                zIndex: 99999,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-end',
-                gap: '15px'
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                zIndex: 0
             }}>
-                {showChatbot && (
-                    <>
-                        <Chatbot
-                            config={config}
-                            messageParser={MessageParser}
-                            actionProvider={ActionProvider}
-                            placeholderText='Ask Daleel !'
-                            // runInitialMessagesWithHistory
-                            saveMessages={saveMessages}
-                            messageHistory={loadMessages()}
-                        />
-                    </>
-                )}
-
-                {/* Custom chat button */}
-                <ChatButton onClick={toggleChatbot}>
-                    <SmartToyTwoToneIcon style={{ color: 'black', fontSize: '28px' }} />
-                </ChatButton>
+                <WavyBackground blur={6} waveWidth={40} waveOpacity={0.6} speed='slow' />
             </div>
-            <Outlet />
-        </ReactRouterAppProvider>
+            <ReactRouterAppProvider
+                navigation={NAVIGATION}
+                branding={BRANDING}
+                theme={Theme}
+                defaultColorScheme="dark"
+                colorSchemeStorageKey={null}
+            >
+                <Box sx={{
+                    position: 'absolute',
+                    right: 20,
+                    top: 16,
+                    zIndex: 9999
+                }}>
+                    <Tooltip title="Actions" >
+                        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                            <MoreVertTwoToneIcon fontSize={"medium"} />
+                        </IconButton>
+                    </Tooltip>
+
+                    <Menu
+                        sx={{ mt: '45px' }}
+                        anchorEl={anchorElUser}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        keepMounted
+                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        open={Boolean(anchorElUser)}
+                        onClose={handleCloseUserMenu}
+                    >
+                        {settings.map((setting) => (
+                            <MenuItem
+                                key={setting}
+                                onClick={setting === 'Logout' ? handleLogout : handleCloseUserMenu}
+                            >
+                                <Typography textAlign="center">
+                                    {setting}
+                                </Typography>
+                            </MenuItem>
+                        ))}
+                    </Menu>
+                </Box>
+                <div style={{
+                    position: 'fixed',
+                    bottom: '30px',
+                    right: '100px',
+                    zIndex: 99999,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    gap: '15px'
+                }}>
+                    {showChatbot && (
+                        <>
+                            <Chatbot
+                                config={config}
+                                messageParser={MessageParser}
+                                actionProvider={ActionProvider}
+                                placeholderText='Ask Daleel !'
+                                headerText='Chat with Daleel'
+                            // runInitialMessagesWithHistory={true}
+                            // saveMessages={saveMessages}
+                            // messageHistory={loadMessages()}
+                            />
+                        </>
+                    )}
+
+                    {/* Custom chat button */}
+                    <ChatButton onClick={toggleChatbot}>
+                        <SmartToyTwoToneIcon style={{ color: 'black', fontSize: '28px' }} />
+                    </ChatButton>
+                </div>
+                <Outlet />
+            </ReactRouterAppProvider>
+        </div>
     );
 }
