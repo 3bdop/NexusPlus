@@ -475,13 +475,12 @@ export default function Login() {
 
                     {/* </button> */}
                     {!window.ethereum && (
-                        <p style={{ fontFamily: 'DM Serif Display, sans-serif', fontSize: '25px' }}>
-                            <LinkPreview url="https://metamask.io/download"
-                                quality={50} >
+                        <span style={{ fontFamily: 'DM Serif Display, sans-serif', fontSize: '25px' }}>
+                            <LinkPreview url="https://metamask.io/download" quality={50}>
                                 <b><ShinyText text={'MetaMask'} disabled={false} speed={3} /></b>
                             </LinkPreview>{" "}
                             must be installed
-                        </p>
+                        </span>
 
                         //<ShinyText text={'Please install MetaMask extension first'} disabled={false} speed={3} className='custom-class' />
                         //<p className="text-red-400 mt-2">
