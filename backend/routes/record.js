@@ -89,8 +89,7 @@ router.get("/api/get-session", async (req, res) => {
 //*This will check login.
 router.post("/api/login", async (req, res) => {
     try {
-        const { wallet } = req.body;
-
+        const wallet = req.body.wallet;
         if (!wallet) {
             return res.status(400).json({ message: "Wallet address is required." });
         }
@@ -101,29 +100,6 @@ router.post("/api/login", async (req, res) => {
         if (!user) {
             return res.status(401).json({ message: "Wallet not registered. Please sign up first." });
         }
-        // const { username, password } = req.body;
-
-        // Check if username and password are provided
-        // if (!username || !password) {
-        //     return res.status(400).send("Username and password are required.");
-        // }
-
-        // Find the user in the database
-        // const usersCollection = db.collection("users");
-        // const user = await usersCollection.findOne({ username });
-
-        // If user doesn't exist
-        // if (!user) {
-        //     return res.status(404).send("User not found.");
-        // }
-
-        // Compare the provided password with the stored hashed password
-        // const isPasswordValid = await bcrypt.compare(password, user.password);
-        // const isPasswordValid = password == user.password
-
-        // if (!isPasswordValid) {
-        //     return res.status(401).send("Invalid password.");
-        // }
 
         // Generate a session ID
         const sessionId = crypto.randomBytes(16).toString('hex');
@@ -199,7 +175,21 @@ router.post('/api/register', async (req, res) => {
         console.error("Registration error:", error);
         res.status(500).json({ message: "Server error during registration." });
     }
+})
 
+router.get('/api/getUserByWallet/:id', async (req, res) => {
+    try {
+        const wallet = req.params.id
+        const usersCollection = db.collection('users')
+        const walletExist = await usersCollection.findOne({ wallet })
+
+        if (!walletExist) {
+            return res.status(301).json({ message: "Wallet not found in db, please register first", exists: false })
+        }
+        return res.status(200).json({ message: "wallet found!", exists: true })
+    } catch (error) {
+        return res.status(404).json({ message: "some error happened while checking wallet" })
+    }
 })
 
 router.get("/api/check-auth", validateSession, (req, res) => {
