@@ -16,17 +16,17 @@
 
 ---
 
-<h2 align="center">
+<h1 align="center">
 <picture>
   <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.webp" type="image/webp" align="center">
-  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.gif" alt="🚀" width="32" height="32" align="center">
+  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.gif" alt="🚀" width="42" height="42" align="center">
 </picture>
  Overview
 <picture>
   <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.webp" type="image/webp" align="center">
-  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.gif" alt="🚀" width="32" height="32" align="center">
+  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.gif" alt="🚀" width="42" height="42" align="center">
 </picture>
-</h2>
+</h1>
 
 <p align="center"> <b>NexsuPlus</b> is an immersive virtual career fair experience set within the metaverse. The platform is designed to bridge the gap between job seekers and recruiters by offering an engaging, interactive, and dynamic 3D environment.</p>
 
@@ -77,17 +77,17 @@
 
 ---
 
-<h2 align="center">
+<h1 align="center">
 <picture>
   <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6a7/512.webp" type="image/webp">
-  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6a7/512.gif" alt="🚧" width="32" height="32"align="center">
+  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6a7/512.gif" alt="🚧" width="42" height="42"align="center">
 </picture>
  Installation and Setup
 <picture>
   <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6a7/512.webp" type="image/webp">
-  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6a7/512.gif" alt="🚧" width="32" height="32"align="center">
+  <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6a7/512.gif" alt="🚧" width="42" height="42"align="center">
 </picture>
-</h2>
+</h1>
 
 <br/>
 
@@ -122,13 +122,13 @@ Follow these steps to get the project up and running:
 
    > **_Note:_** If nodemon not installed on your machine: `npm i -g nodemon`
 
-## Python Model Development:
+## Python Model Development <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f40d/512.gif" alt="🐍" width="42" height="42" align='center'>:
 
 Follow these steps to set up the Python environment for model development:
 
 1. **Create a virtual environment:**
 
-For Windows:
+&emsp; For Windows:
 
 ```bash
 cd backend/recommendation
@@ -136,7 +136,7 @@ python -m venv .venv
 .\.venv\Scripts\activate.bat
 ```
 
-For Linux/macOS:
+&emsp; For Linux/macOS:
 
 ```bash
 cd backend/recommendation
@@ -153,5 +153,5 @@ pip install -r requirements.txt
 3. **Run model:**
 
 ```Bash
-python src.api.run_api
+python -m src.api.run_api
 ```
