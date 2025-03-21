@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Button = ({ val, type }) => {
+const Button = ({ val, onClick, color, disabled }) => {
   return (
-    <StyledWrapper>
-      <button id="btn" type={type}>{val}</button>
+    <StyledWrapper color={color} hidden={disabled}>
+      <button id="btn" onClick={onClick} disabled={disabled}>{val}</button>
     </StyledWrapper>
   );
 }
@@ -16,7 +16,7 @@ const StyledWrapper = styled.div`
     border-radius: 8px;
     font-size: 17px;
     font-weight: 500;
-    color: #ffffff80;
+    color: #FFFFFF9A;
     text-shadow: none;
     background: transparent;
     cursor: pointer;
@@ -25,15 +25,20 @@ const StyledWrapper = styled.div`
     transition: 0.5s ease;
     user-select: none;
   }
-
   #btn:hover,
-  :focus {
+  #btn:focus {
     color: #ffffff;
-    background: #8C00FFFF;
-    border: 1px solid #8C00FFFF;
+    background: ${props => props.color || '#0ef'};
+    border: 1px solid ${props => props.color || '#0ef'};
     text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 20px #ffffff;
-    box-shadow: 0 0 5px #8C00FFFF, 0 0 20px #8C00FFFF, 0 0 50px #8C00FFFF,
-      0 0 100px #8C00FFFF;
+    box-shadow: 0 0 5px ${props => props.color || '#0ef'}, 
+                0 0 20px ${props => props.color || '#0ef'}, 
+                0 0 50px ${props => props.color || '#0ef'}, 
+                0 0 100px ${props => props.color || '#0ef'};
+    scale: 1.2;
+  }
+  #btn:active {
+    transform: scale(0.8);
   }`;
 
 export default Button;
