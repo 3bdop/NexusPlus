@@ -18,6 +18,7 @@
     "@mui/styles": "^6.4.6",
     "@mui/system": "^6.4.6",
     "@mui/utils": "^6.4.6",
+    "@radix-ui/react-hover-card": "^1.1.6",
     "@react-three/drei": "^9.56.28",
     "@react-three/fiber": "^8.11.5",
     "@react-three/postprocessing": "^2.7.1",
@@ -28,11 +29,13 @@
     "axios": "^1.7.9",
     "clsx": "^2.1.1",
     "ethers": "^6.13.5",
+    "framer-motion": "^12.5.0",
     "gsap": "^3.11.5",
     "lamina": "^1.1.23",
     "lucide-react": "^0.477.0",
     "motion": "^12.5.0",
     "postprocessing": "^6.35.6",
+    "qss": "^3.0.0",
     "react": "^18.3.1",
     "react-animated-cursor": "^2.11.2",
     "react-chatbot-kit": "^2.2.2",
@@ -46,7 +49,8 @@
     "simplex-noise": "^4.0.3",
     "styled-components": "^6.1.15",
     "tailwind-merge": "^3.0.2",
-    "three": "^0.166.1"
+    "three": "^0.166.1",
+    "vite-plugin-image-optimizer": "^1.1.8"
   },
   "devDependencies": {
     "@types/react": "^18.0.27",
