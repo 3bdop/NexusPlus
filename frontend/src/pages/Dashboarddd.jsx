@@ -65,13 +65,24 @@ export default function Dashboarddd() {
                 <Typography variant="h4" style={{
                     color: 'white', zIndex: 1, fontFamily: "system-ui"
                 }}>
-                    <TextGenerateEffect words={`Welcome ${username}👋`} duration={1.5} />
+                    <TextGenerateEffect elements={[
+                        'Welcome ',
+                        username || '', // Ensure username exists
+                        <img
+                            key="wave-emoji"
+                            src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f44b/512.gif"
+                            alt="👋"
+                            width="50"
+                            height="50"
+                            style={{
+                                verticalAlign: 'middle',
+                                display: 'inline-block'
+                            }}
+                        />
+                    ]} duration={1.5} />
                 </Typography>
                 <Typography variant="body1" style={{ color: 'whitesmoke', fontFamily: 'system-ui' }}>
-                    <TextGenerateEffect words={`This is your main digital-twin`} duration={2} />
-                    {/* <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f44b/512.gif" alt="👋" width="50" height="50" align='center' /> */}
-                    {/* This is your main digital-twin */}
-                    {/* <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f929/512.gif" alt="🤩" width="32" height="32" align='center' /> */}
+                    <TextGenerateEffect elements={[`This`, ` is your`, ` main`, ` digital-twin`]} duration={2} />
                 </Typography>
 
             </div>
@@ -84,7 +95,7 @@ export default function Dashboarddd() {
                 emotion={"happy"}
                 cameraInitialDistance={0.2}
                 cameraZoomTarget={[-0.11, 0, 3.2]}
-            // idleRotation
+                idleRotation
             >
                 {/* <Sparkles
                     color={"white"}
