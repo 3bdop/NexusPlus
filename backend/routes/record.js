@@ -173,14 +173,24 @@ router.post("/api/login", async (req, res) => {
     }
 });
 
-router.post("/api/register", async (req, res) => {
+router.post('/api/register', async (req, res) => {
     try {
-        const { wallet, username, email, gender, role, avatarUrl } = req.body;
-        const usersCollection = db.collection("users");
+        const { wallet, username, email, gender } = req.body;
 
-        const existing = await usersCollection.findOne({ wallet });
-        if (existing) {
-            return res.status(409).json({ message: "Wallet already registered." });
+        if (!wallet || !email || !username || !gender) {
+            return res.status(400).json({ message: "Missing required fields." });
+        }
+
+        const usersCollection = db.collection('users');
+
+        const existingUser = await usersCollection.findOne({ wallet });
+        if (existingUser) {
+            return res.status(400).json({ message: "Wallet is already registered." });
+        }
+
+        let gAvatarurl = 'https://models.readyplayer.me/67e1544a7f65c63ac72f55d6.glb';
+        if (gender == 'girl') {
+            gAvatarurl = "https://models.readyplayer.me/67228d2ba754a4d51bc05336.glb";
         }
 
         const did = `wallet:${wallet}`;
@@ -195,11 +205,11 @@ router.post("/api/register", async (req, res) => {
 
         const newUser = {
             wallet,
-            username,
-            email,
+            username: username,
+            email: email,
+            avatarUrl: gAvatarurl,
+            role: 'attendee',
             gender,
-            role,
-            avatarUrl,
             certificate: {
                 did,
                 issuedBy: "UDST",
@@ -209,13 +219,16 @@ router.post("/api/register", async (req, res) => {
             }
         };
 
-        const result = await usersCollection.insertOne(newUser);
-        res.status(201).json({ message: "User registered and certificate issued!", id: result.insertedId });
-    } catch (err) {
-        console.error("Registration error:", err);
-        res.status(500).send("Registration failed.");
+        await usersCollection.insertOne(newUser);
+
+        res.status(201).json({ message: "Registration successful and certificate issued!" });
+    }
+    catch (error) {
+        console.error("Registration error:", error);
+        res.status(500).json({ message: "Server error during registration." });
     }
 });
+
 router.get('/api/getUserByWallet/:id', async (req, res) => {
     try {
         const wallet = req.params.id;
