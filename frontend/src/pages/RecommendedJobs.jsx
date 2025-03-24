@@ -20,11 +20,11 @@ import SendIcon from '@mui/icons-material/Send';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 
 const EXPERIENCE_LEVELS = {
-    "Entry Level": 12,    // 0-12 months
-    "Junior": 36,         // 1-3 years
-    "Mid-Level": 72,      // 3-6 years
-    "Senior": 120,        // 6-10 years
-    "Expert": Infinity,   // 10+ years
+    "Entry Level": "0-1",
+    "Junior": "1-3",
+    "Mid-Level": "3-6",
+    "Senior": "6-10",
+    "Expert": Infinity,
 };
 
 const steps = [
@@ -34,53 +34,73 @@ const steps = [
     { label: 'Recommended Jobs', icon: <AssignmentTurnedInIcon /> },
 ];
 
-// Simulate database storage (replace with actual API calls)
-const saveRecommendationsToDB = async (userId, recommendations) => {
-    // Simulate saving to a database
-    localStorage.setItem(`recommendations_${userId}`, JSON.stringify(recommendations));
-};
-
-const fetchRecommendationsFromDB = async (userId) => {
-    // Simulate fetching from a database
-    const data = localStorage.getItem(`recommendations_${userId}`);
-    return data ? JSON.parse(data) : [];
-};
-
 export default function RecommendedJobs() {
     const [cvUploaded, setCvUploaded] = useState(false);
+    const [cvFile, setCvFile] = useState(null);
     const [experienceLevel, setExperienceLevel] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [recommendations, setRecommendations] = useState([]);
     const [activeStep, setActiveStep] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
-    const userId = "user123"; // Replace with actual user ID from authentication
 
-    // Fetch saved recommendations on component mount
+    // On mount, check for existing recommendations.
     useEffect(() => {
-        const fetchSavedRecommendations = async () => {
-            const savedRecommendations = await fetchRecommendationsFromDB(userId);
-            if (savedRecommendations.length > 0) {
-                setRecommendations(savedRecommendations);
-                setActiveStep(3); // Skip to the final step
+        const fetchExistingRecommendations = async () => {
+            try {
+                const sessionResponse = await fetch('http://localhost:5050/api/get-session', {
+                    credentials: 'include'
+                });
+                if (!sessionResponse.ok) {
+                    throw new Error('Failed to get user session');
+                }
+                const sessionData = await sessionResponse.json();
+                const userId = sessionData.userId;
+                const response = await fetch(`http://localhost:8000/api/recommendations?user_id=${userId}`);
+                if (!response.ok) {
+                    return;
+                }
+                const data = await response.json();
+                if (data.status === "success" && data.recommendations.length > 0) {
+                    setRecommendations(data.recommendations);
+                    setActiveStep(3);
+                }
+            } catch (error) {
+                console.error("Error fetching existing recommendations", error);
             }
         };
-        fetchSavedRecommendations();
-    }, [userId]);
+        fetchExistingRecommendations();
+    }, []);
 
-    const handleCvUpload = (event) => {
+    const handleCvUpload = async (event) => {
         const file = event.target.files[0];
         if (file) {
             if (file.type !== 'application/pdf') {
                 setErrorMessage('Only PDF files are allowed.');
                 return;
             }
-            if (file.size > 3 * 1024 * 1024) { // 2MB in bytes
+            if (file.size > 3 * 1024 * 1024) {
                 setErrorMessage('File size should not exceed 3MB.');
                 return;
             }
-            setCvUploaded(true);
-            setErrorMessage('');
-            setActiveStep(1); // Move to the next step
+            try {
+                const formData = new FormData();
+                formData.append('cv_file', file);
+                const uploadResponse = await fetch('http://localhost:5050/api/upload-cv', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData,
+                });
+                if (!uploadResponse.ok) {
+                    throw new Error('Failed to upload CV');
+                }
+                setCvUploaded(true);
+                setCvFile(file);
+                setErrorMessage('');
+                setActiveStep(1);
+            } catch (error) {
+                setErrorMessage('Error uploading CV: ' + error.message);
+                console.error('CV upload error:', error);
+            }
         }
     };
 
@@ -91,27 +111,81 @@ export default function RecommendedJobs() {
 
     const handleSubmit = async () => {
         setSubmitting(true);
-        // Simulate an API call to your AI model
-        setTimeout(() => {
-            const newRecommendations = [
-                { title: 'AI Engineer', company: 'Ooredoo', description: 'Work on cutting-edge AI technologies.' },
-                { title: 'Software Engineer', company: 'Tech Corp', description: 'Develop scalable software solutions.' },
-            ];
-            setRecommendations(newRecommendations);
+        setErrorMessage('');
+        try {
+            const sessionResponse = await fetch('http://localhost:5050/api/get-session', {
+                credentials: 'include'
+            });
+            if (!sessionResponse.ok) {
+                throw new Error('Failed to get user session');
+            }
+            const sessionData = await sessionResponse.json();
+            const userId = sessionData.userId;
+            const formData = new FormData();
+            formData.append('cv_file', cvFile);
+            formData.append('experience_level', experienceLevel);
+            formData.append('user_id', userId);
+            const response = await fetch('http://localhost:8000/api/recommendations', {
+                method: 'POST',
+                body: formData,
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || 'Error fetching recommendations');
+            }
+            const data = await response.json();
+            if (data.status === "success") {
+                setRecommendations(data.recommendations);
+                setActiveStep(3);
+            } else {
+                throw new Error("Unexpected response from API");
+            }
+        } catch (error) {
+            setErrorMessage(error.message);
+        } finally {
             setSubmitting(false);
-            setActiveStep(3); // Move to the final step
+        }
+    };
 
-            // Save recommendations to the database
-            saveRecommendationsToDB(userId, newRecommendations);
-        }, 2000);
+    // Function to handle applying to a job.
+    // After a successful apply call, we update the recommendations state accordingly.
+    const handleApply = async (jobId) => {
+        try {
+            const sessionResponse = await fetch('http://localhost:5050/api/get-session', {
+                credentials: 'include'
+            });
+            if (!sessionResponse.ok) {
+                throw new Error('Failed to get user session');
+            }
+            const sessionData = await sessionResponse.json();
+            const userId = sessionData.userId;
+            await fetch(`http://localhost:8000/api/jobs/${jobId}/apply?user_id=${userId}`, {
+                method: 'POST',
+            });
+            // Update local recommendations to mark this job as applied.
+            setRecommendations(prev =>
+                prev.map(job =>
+                    job._id === jobId ? { ...job, applied: true } : job
+                )
+            );
+        } catch (error) {
+            // Even if there's an error, mark the job as applied.
+            setRecommendations(prev =>
+                prev.map(job =>
+                    job._id === jobId ? { ...job, applied: true } : job
+                )
+            );
+            console.error(error);
+        }
     };
 
     const handleResetProcess = () => {
         setCvUploaded(false);
+        setCvFile(null);
         setExperienceLevel('');
         setRecommendations([]);
         setActiveStep(0);
-        localStorage.removeItem(`recommendations_${userId}`); // Clear saved recommendations
+        setErrorMessage('');
     };
 
     return (
@@ -183,7 +257,7 @@ export default function RecommendedJobs() {
                         </MenuItem>
                         {Object.entries(EXPERIENCE_LEVELS).map(([level, value]) => (
                             <MenuItem key={level} value={level}>
-                                {level} ({value} months)
+                                {level} ({value} years)
                             </MenuItem>
                         ))}
                     </Select>
@@ -205,10 +279,13 @@ export default function RecommendedJobs() {
                     {submitting && (
                         <LinearProgress sx={{ width: '100%', marginTop: 2 }} />
                     )}
+                    {errorMessage && (
+                        <Typography variant="body2" color="error.main">
+                            {errorMessage}
+                        </Typography>
+                    )}
                 </Box>
             )}
-
-            {/* Step 4: Recommended Jobs */}
             {activeStep === 3 && (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <Typography variant="h6" align="center">Recommended Jobs</Typography>
@@ -230,9 +307,22 @@ export default function RecommendedJobs() {
                                 </Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <Typography>
-                                    {job.description}
-                                </Typography>
+                                <Typography>{job.description}</Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => handleApply(job._id)}
+                                        disabled={job.applied}
+                                    >
+                                        Apply
+                                    </Button>
+                                    {job.applied && (
+                                        <Typography sx={{ ml: 2 }} variant="subtitle2">
+                                            Applied
+                                        </Typography>
+                                    )}
+                                </Box>
                             </AccordionDetails>
                         </Accordion>
                     ))}

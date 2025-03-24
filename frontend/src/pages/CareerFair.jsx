@@ -6,16 +6,15 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-
 function CareerFair() {
     // Initialize the Unity context using the hook
     const { unityProvider, sendMessage,
         loadingProgression, isLoaded,
         addEventListener, removeEventListener } = useUnityContext({
-            loaderUrl: "build/webGL.loader.js",
-            dataUrl: "build/webGL.data",
-            frameworkUrl: "build/webGL.framework.js",
-            codeUrl: "build/webGL.wasm",
+            loaderUrl: "bt/webGL.loader.js",
+            dataUrl: "bt/webGL.data",
+            frameworkUrl: "bt/webGL.framework.js",
+            codeUrl: "bt/webGL.wasm",
         });
     const navigate = useNavigate();
     useEffect(() => {
@@ -25,10 +24,20 @@ function CareerFair() {
                     'http://localhost:5050/api/get-session',
                     { withCredentials: true } // Include cookies in the request
                 );
-                const fetchedAvatarUrl = sessionResponse.data.avatarUrl;
+
+                const fetchedUsername = sessionResponse.data.username;
+                const userId = sessionResponse.data.userId
+
+                // Step 2: Fetch avatar URL using userId
+                const avatarResponse = await axios.get(
+                    `http://localhost:5050/api/get-avatarUrl/${userId}`,
+                    { withCredentials: true }
+                );
+                const fetchedAvatarUrl = avatarResponse.data.avatarUrl;
                 console.log("Avatar URL fetched from API:", fetchedAvatarUrl);
                 if (fetchedAvatarUrl) {
                     sendMessage("Photon Setup", "SetAvatarUrl", fetchedAvatarUrl);
+                    sendMessage("Photon Setup", "SetUsername", fetchedUsername);
                 }
             } catch (error) {
                 console.error("Error fetching session data:", error);
@@ -40,7 +49,8 @@ function CareerFair() {
 
     const handleDisconnect = useCallback((flag) => {
         if (flag) {
-            navigate('/dashboard');
+            //? A workaround for now to solve the duplicate avatar when leaving and joining again
+            window.location.href = '/dashboard'
         }
     }, [navigate]);
 

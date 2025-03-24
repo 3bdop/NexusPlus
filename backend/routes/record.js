@@ -8,6 +8,58 @@ import db from "../db/connection.js"
 import { ObjectId } from "mongodb";
 import crypto from 'crypto'; // For generating session IDs
 import validateSession from "../middleware/validateSession.js"
+import multer from "multer";
+import fs from 'fs'
+import path from "path";
+
+// Configure multer for CV storage
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const uploadDir = './uploads/cv';
+        // Create directory if it doesn't exist
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
+    },
+    filename: async function (req, file, cb) {
+        try {
+            // Get session ID from cookies
+            const sessionId = req.cookies.sessionId;
+            if (!sessionId) {
+                throw new Error('No session found');
+            }
+
+            // Get user ID from session
+            const session = await db.collection("session").findOne({ sessionId });
+            if (!session) {
+                throw new Error('Invalid session');
+            }
+
+            // Use userId as filename with PDF extension
+            const userId = session.userId;
+            const filename = `${userId}.pdf`;
+            cb(null, filename);
+
+        } catch (error) {
+            cb(error);
+        }
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'application/pdf') {
+            cb(null, true);
+        } else {
+            cb(new Error('Only PDF files are allowed'), false);
+        }
+    },
+    limits: {
+        fileSize: 3 * 1024 * 1024 // 3MB limit
+    }
+});
 
 // The router will be added as a middleware and will take control of requests starting with path /record.
 const router = express.Router();
@@ -58,28 +110,16 @@ router.get("/api/get-session", async (req, res) => {
 //*This will check login.
 router.post("/api/login", async (req, res) => {
     try {
-        const { username, password } = req.body;
-
-        // Check if username and password are provided
-        if (!username || !password) {
-            return res.status(400).send("Username and password are required.");
+        const wallet = req.body.wallet;
+        if (!wallet) {
+            return res.status(400).json({ message: "Wallet address is required." });
         }
 
-        // Find the user in the database
-        const usersCollection = db.collection("users");
-        const user = await usersCollection.findOne({ username });
+        const usersCollection = db.collection('users')
+        const user = await usersCollection.findOne({ wallet });
 
-        // If user doesn't exist
         if (!user) {
-            return res.status(404).send("User not found.");
-        }
-
-        // Compare the provided password with the stored hashed password
-        // const isPasswordValid = await bcrypt.compare(password, user.password);
-        const isPasswordValid = password == user.password
-
-        if (!isPasswordValid) {
-            return res.status(401).send("Invalid password.");
+            return res.status(401).json({ message: "Wallet not registered. Please sign up first." });
         }
 
         // Generate a session ID
@@ -92,10 +132,12 @@ router.post("/api/login", async (req, res) => {
         const sessionsCollection = db.collection('session');
         await sessionsCollection.insertOne({
             sessionId,
+            wallet,
             userId: user._id,
             username: user.username,
             avatarUrl: user.avatarUrl,
             role: user.role,
+            loggedIn: true,
             expiresAt,
         });
 
@@ -119,6 +161,62 @@ router.post("/api/login", async (req, res) => {
         res.status(500).send("An error occurred during login.");
     }
 })
+
+router.post('/api/register', async (req, res) => {
+    try {
+        const { wallet, username, email, gender } = req.body
+
+        if (!wallet || !email || !username || !gender) {
+            return res.status(400).json({ message: "Missing required fields." });
+        }
+        const usersCollection = db.collection('users');
+
+        const existingUser = await usersCollection.findOne({ wallet });
+        if (existingUser) {
+            return res.status(400).json({ message: "Wallet is already registered." });
+        }
+        const gAvatarurl = 'https://models.readyplayer.me/67e1544a7f65c63ac72f55d6.glb'
+        if (gender == 'girl') {
+            gAvatarurl = "https://models.readyplayer.me/67228d2ba754a4d51bc05336.glb"
+        }
+
+        await usersCollection.insertOne(
+            {
+                wallet,
+                username: username,
+                email: email,
+                avatarUrl: gAvatarurl,
+                role: 'attendee',
+                gender
+            });
+
+        res.status(201).json({ message: "Registration successful!" });
+    }
+    catch (error) {
+        console.error("Registration error:", error);
+        res.status(500).json({ message: "Server error during registration." });
+    }
+})
+router.get('/api/getUserByWallet/:id', async (req, res) => {
+    try {
+        const wallet = req.params.id;
+        const usersCollection = db.collection('users');
+        const walletExist = await usersCollection.findOne({ wallet });
+
+        // Always return 200 with exists flag
+        return res.status(200).json({
+            exists: !!walletExist,
+            message: walletExist ? "Wallet found" : "Wallet not found"
+        });
+
+    } catch (error) {
+        console.error("Error checking wallet:", error);
+        return res.status(500).json({
+            exists: false,
+            message: "Error checking wallet"
+        });
+    }
+});
 
 router.get("/api/check-auth", validateSession, (req, res) => {
     res.status(200).json({
@@ -185,60 +283,31 @@ router.post("/api/logout", async (req, res) => {
     }
 });
 
-import { issueCertificate } from "../utils/pdcaContract.js";
-
-// ✅ New signup route
-router.post("/api/signup", async (req, res) => {
+// Add new route to handle CV upload
+router.post("/api/upload-cv", upload.single('cv_file'), async (req, res) => {
     try {
-        const { username, password, metamask_id, user_id, user_role, gender } = req.body;
-
-        if (!username || !password || !metamask_id) {
-            return res.status(400).json({ message: "Missing required fields." });
+        if (!req.file) {
+            return res.status(400).send("No file uploaded.");
         }
 
-        const usersCollection = db.collection("usertest");
+        const sessionId = req.cookies.sessionId;
+        const session = await db.collection("session").findOne({ sessionId });
 
-        // Check if user already exists by wallet
-        const existingUser = await usersCollection.findOne({ metamask_id });
-        if (existingUser) {
-            return res.status(400).json({ message: "Wallet already registered." });
-        }
-
-        // ✅ Construct DID
-        const did = `wallet:${metamask_id}`;
-
-        // ✅ Issue certificate on blockchain
-        const success = await issueCertificate(did);
-        if (!success) {
-            return res.status(500).json({ message: "Failed to issue certificate on blockchain." });
-        }
-
-        const issuedAt = Math.floor(Date.now() / 1000);
-        const expiresAt = issuedAt + (86400 * 365); // 1 year
-
-        // ✅ Create user with certificate
-        const newUser = {
-            username,
-            password,
-            metamask_id,
-            user_id,
-            user_role,
-            gender,
-            certificate: {
-                did,
-                issuedBy: "UDST",
-                issuedAt,
-                expiresAt,
-                isValid: true
+        // Update user document with CV metadata
+        await db.collection("users").updateOne(
+            { _id: new ObjectId(session.userId) },
+            {
+                $set: { cvPath: req.file.path, }
             }
-        };
+        );
 
-        await usersCollection.insertOne(newUser);
-
-        res.status(201).json({ message: "User registered with certificate!", user: newUser });
-    } catch (err) {
-        console.error("Signup error:", err);
-        res.status(500).json({ message: "Signup failed." });
+        res.status(200).json({
+            message: "CV uploaded successfully",
+            cvPath: `/cv/${req.file.filename}` // Return web-accessible path
+        });
+    } catch (error) {
+        console.error("Error uploading CV:", error);
+        res.status(500).send(error.message || "Error uploading CV.");
     }
 });
 

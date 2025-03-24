@@ -6,10 +6,13 @@ import { Avatar } from "@readyplayerme/visage";
 import { Sparkles } from '@react-three/drei';
 import axios from 'axios';
 import styled, { keyframes } from 'styled-components';
+import { TextGenerateEffect } from '../components/ui/text-generate-effect';
+import { TextHoverEffect } from '../components/ui/text-hover-effect';
 
 export default function Dashboarddd() {
     const [avatarUrl, setAvatarUrl] = useState(null);
     const [username, setUsername] = useState(null)
+    const [usernameCap, setUsernameCap] = useState(null)
     const [isLoading, setLoading] = useState(true)
     const [isAvatarLoaded, setIsAvatarLoaded] = useState(false)
     const navigate = useNavigate();
@@ -22,7 +25,7 @@ export default function Dashboarddd() {
                     'http://localhost:5050/api/get-session',
                     { withCredentials: true } // Include cookies in the request
                 );
-                setUsername(sessionResponse.data.username)
+                capitalizeFirstLetter(sessionResponse.data.username)
                 const userId = sessionResponse.data.userId;
                 if (!userId) {
                     throw new Error('No user ID found in session data.');
@@ -33,15 +36,15 @@ export default function Dashboarddd() {
                     `http://localhost:5050/api/get-avatarUrl/${userId}`,
                     { withCredentials: true }
                 );
-
-                setAvatarUrl(avatarResponse.data.avatarUrl);
+                localStorage.setItem("avatar_url", avatarResponse.data.avatarUrl)
+                // setAvatarUrl(avatarResponse.data.avatarUrl);
                 setLoading(false)
-            } catch (err) {
+            } catch (error) {
                 console.error('Error fetching user data:', err);
                 setError(err.message);
 
                 // Redirect to login if unauthorized
-                if (err.response?.status === 401) {
+                if (error.response?.status === 401) {
                     navigate('/');
                 }
             }
@@ -51,42 +54,58 @@ export default function Dashboarddd() {
     }, [navigate]);
 
     function capitalizeFirstLetter(val) {
-        return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+        // return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+        setUsername(String(val).charAt(0).toUpperCase() + String(val).slice(1));
     }
     return (
         <>
-            <div style={{
+            <span style={{
                 zIndex: 1, textAlign: 'center'
             }}>
                 <Typography variant="h4" style={{
                     color: 'white', zIndex: 1, fontFamily: "system-ui"
                 }}>
-                    Welcome {capitalizeFirstLetter(username)} !
+                    <TextGenerateEffect elements={[
+                        'Welcome ',
+                        username || '', // Ensure username exists
+                        <img
+                            key="wave-emoji"
+                            src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f44b/512.gif"
+                            alt="👋"
+                            width="50"
+                            height="50"
+                            style={{
+                                verticalAlign: 'middle',
+                                display: 'inline-block'
+                            }}
+                        />
+                    ]} duration={1.5} />
                 </Typography>
                 <Typography variant="body1" style={{ color: 'whitesmoke', fontFamily: 'system-ui' }}>
-                    This is your main digital-twin🤩
+                    <TextGenerateEffect elements={[`This`, ` is your`, ` main`, ` digital-twin`]} duration={2} />
                 </Typography>
-            </div>
+
+            </span>
             <Avatar
-                modelSrc={avatarUrl + "?morphTargets=ARKit,Eyes Extra"}
+                modelSrc={localStorage.getItem("avatar_url") + "?morphTargets=ARKit,Eyes Extra"}
                 headMovement={true}
                 animationSrc={"/animations/M_Standing_Idle_001.fbx"}
                 environment={"soft"}
                 shadows={true}
                 emotion={"happy"}
-                cameraInitialDistance={0.7}
+                cameraInitialDistance={0.2}
                 cameraZoomTarget={[-0.11, 0, 3.2]}
                 idleRotation
             >
-                <Sparkles
+                {/* <Sparkles
                     color={"white"}
-                    count={80}
+                    count={30}
                     opacity={0.5}
-                    position={[0, 0.61, -0.02]}
-                    scale={2}
-                    size={3}
-                    speed={0.25}
-                />
+                    position={[0, 1, -0.02]}
+                    scale={1.2}
+                    size={2}
+                    speed={0.20}
+                /> */}
             </Avatar>
         </>
 

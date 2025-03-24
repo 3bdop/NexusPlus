@@ -27,6 +27,16 @@ dist-ssr
 # .env
 
 #Ignore WebGL build
-backend/b
-frontend/public/build
-frontend/public/build2
+frontend/public/build/*
+frontend/public/bt
+frontend/public/CV/*
+
+#ChatBot ignored files
+backend/bot/vector-index/*
+
+#recommendation ignored files/folders
+.venv/
+__pycache__/
+
+#ignoring uploads
+uploads/

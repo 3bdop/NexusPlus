@@ -8,7 +8,6 @@ const ProtectedRoute = ({ children, requiredRole }) => {
         isAuthenticated: false,
         role: null
     });
-    console.log(authState.role)
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -36,7 +35,6 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     if (requiredRole && authState.role !== requiredRole) {
         return <Navigate to="/" replace />;
     }
-    console.log(children)
     return React.cloneElement(children, { role: authState.role });
 };
 

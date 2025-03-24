@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import WorkTwoToneIcon from '@mui/icons-material/WorkTwoTone';
 import StadiumTwoToneIcon from '@mui/icons-material/StadiumTwoTone';
@@ -6,45 +6,21 @@ import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import AutoAwesomeTwoToneIcon from '@mui/icons-material/AutoAwesomeTwoTone';
 import { Outlet, useNavigate } from 'react-router';
 import { createTheme } from '@mui/material/styles';
-import LogoutIcon from '@mui/icons-material/Logout'; // Import logout icon
-import axios from 'axios'; // For making API calls
+import { Box, Tooltip, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import SmartToyTwoToneIcon from '@mui/icons-material/SmartToyTwoTone';
+import styled from 'styled-components'
 
-// const NAVIGATION = [
-//     {
-//         kind: 'header',
-//         title: 'Main items',
-//     },
-//     {
-//         segment: 'dashboard',
-//         title: 'Dashboard',
-//         icon: <DashboardIcon />,
-//     },
-//     {
-//         segment: 'career-fair',
-//         title: 'Join Event',
-//         icon: <StadiumTwoToneIcon />,
-//     },
-//     {
-//         segment: 'dashboard/avatar-creation',
-//         title: 'Avatar Customization',
-//         icon: <AutoAwesomeTwoToneIcon />,
-//     },
-//     {
-//         segment: 'dashboard/recommended-jobs',
-//         title: 'Recommended Jobs',
-//         icon: <WorkTwoToneIcon />,
-//     },
-//     {
-//         kind: 'divider',
-//     },
-//     {
-//         kind: 'footer',
-//         title: 'Logout',
-//         icon: <LogoutIcon />,
-//         onClick: () => { },
-//     },
-// ];
-// Navigation items configuration
+import Chatbot from 'react-chatbot-kit';
+import 'react-chatbot-kit/build/main.css';
+import config from '../bot/config'
+import ActionProvider from '../bot/ActionProvider';
+import MessageParser from '../bot/MessageParser';
+import '../bot/ChatbotStyle.css'
+
+import axios from 'axios';
+import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
+import WavyBackground from '../components/ui/wavy-background';
+
 
 const BRANDING = {
     title: 'PLUS',
@@ -69,7 +45,7 @@ const Theme = createTheme({
     palette: {
         mode: 'dark',
         primary: {
-            main: '#6745FCFF',
+            main: '#63C1F8FF',
         },
         background: {
             default: '#080808',
@@ -82,33 +58,32 @@ const Theme = createTheme({
     components: {
         MuiCssBaseline: {
             styleOverrides: {
-                body: {
-                    margin: 0,
-                    padding: 0,
-                    background: 'linear-gradient(0deg, #080808FF, #5016ADFF 100%)',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundAttachment: 'fixed',
-                    minHeight: '100vh',
-                    overflow: 'hidden',
-                },
-                html: {
-                    overflow: 'hidden',
-                },
+                // body: {
+                // margin: 0,
+                // padding: 0,
+                // background: 'linear-gradient(0deg, #080808FF, #5016ADFF 100%)',
+                // backgroundRepeat: 'no-repeat',
+                // backgroundAttachment: 'fixed',
+                // minHeight: '100vh',
+                // overflow: 'hidden',
+                // },
+                // html: {
+                //     overflow: 'hidden',
+                // },
             },
         },
         MuiAppBar: {
             styleOverrides: {
                 root: {
                     backgroundColor: '#1A1A1AD5',
-                    borderBottom: '1px solid rgb(147, 102, 219)',
+                    // borderBottom: '1px solid rgb(147, 102, 219)',
                 },
             },
         },
         MuiDrawer: {
             styleOverrides: {
                 paper: {
-                    backgroundColor: '#1A1A1A',
-                    borderRight: '1px solid rgb(147, 102, 219)',
+                    backgroundColor: '#1A1A1AFF',
                 },
             },
         },
@@ -117,17 +92,38 @@ const Theme = createTheme({
 
 export default function Home({ role }) {
     const navigate = useNavigate();
-    console.log(role)
-    // Logout method
-    const logout = async () => {
+    const [anchorElUser, setAnchorElUser] = useState(null);
+
+    const handleOpenUserMenu = (event) => {
+        setAnchorElUser(event.currentTarget);
+    };
+    const handleCloseUserMenu = () => {
+        setAnchorElUser(null);
+    };
+
+    const [showChatbot, setShowChatbot] = useState(false);
+    const toggleChatbot = () => {
+        setShowChatbot(!showChatbot);
+    };
+
+
+    const handleLogout = async () => {
+        handleCloseUserMenu(); // Close menu first
         try {
-            await axios.post('http://localhost:5050/api/logout', {}, { withCredentials: true });
-            navigate('/'); // Redirect to the login page or home page after logout
+            const res = await axios.post('http://localhost:5050/api/logout', {}, {
+                withCredentials: true
+            });
+            if (res.status === 200) {
+                // localStorage.clear()
+                navigate('/');
+            }
         } catch (err) {
-            console.error('Error during logout:', err);
+            console.error('Logout error:', err);
         }
     };
-    // Navigation configuration
+
+    const settings = ['Logout'];
+
     const NAVIGATION = [
         {
             kind: 'header',
@@ -159,39 +155,114 @@ export default function Home({ role }) {
                 title: 'Recommended Jobs',
                 icon: <WorkTwoToneIcon />,
             },
-        {
-            kind: 'divider',
-        },
-        {
-            kind: 'footer',
-            title: 'Logout',
-            icon: <LogoutIcon />,
-            onClick: logout,
-        },
     ];
 
+    const ChatButton = styled.button`
+    background: #E3E3E3FF;
+    border: none;
+    border-radius: 100%;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, background 0.2s ease;
+`;
 
+    const saveMessages = (messages) => {
+        localStorage.setItem('chat_messages', JSON.stringify(messages));
+    };
 
-    // Add the logout method to the footer navigation item
-    const navigationWithLogout = NAVIGATION.map((item) => {
-        if (item.kind === 'footer') {
-            return {
-                ...item,
-                onClick: logout, // Attach the logout method
-            };
-        }
-        return item;
-    });
-
+    const loadMessages = () => {
+        const messages = localStorage.getItem('chat_messages');
+        return messages ? JSON.parse(messages) : [];
+    };
     return (
-        <ReactRouterAppProvider
-            navigation={navigationWithLogout}
-            branding={BRANDING}
-            theme={Theme}
-            defaultColorScheme="dark"
-            colorSchemeStorageKey={null}
-        >
-            <Outlet />
-        </ReactRouterAppProvider>
+        <div style={{ position: 'relative', minHeight: '100vh' }}>
+            <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                zIndex: 0
+            }}>
+                <WavyBackground blur={6} waveWidth={40} waveOpacity={0.6} speed='slow' />
+            </div>
+            <ReactRouterAppProvider
+                navigation={NAVIGATION}
+                branding={BRANDING}
+                theme={Theme}
+            // defaultColorScheme="dark"
+            // colorSchemeStorageKey={null}
+            >
+                <Box sx={{
+                    position: 'absolute',
+                    right: 20,
+                    top: 16,
+                    zIndex: 9999
+                }}>
+                    <Tooltip title="Actions" >
+                        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                            <MoreVertTwoToneIcon fontSize={"medium"} />
+                        </IconButton>
+                    </Tooltip>
+
+                    <Menu
+                        sx={{ mt: '45px' }}
+                        anchorEl={anchorElUser}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        keepMounted
+                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        open={Boolean(anchorElUser)}
+                        onClose={handleCloseUserMenu}
+                    >
+                        {settings.map((setting) => (
+                            <MenuItem
+                                key={setting}
+                                onClick={setting === 'Logout' ? handleLogout : handleCloseUserMenu}
+                            >
+                                <Typography textAlign="center">
+                                    {setting}
+                                </Typography>
+                            </MenuItem>
+                        ))}
+                    </Menu>
+                </Box>
+                <div style={{
+                    position: 'fixed',
+                    bottom: '30px',
+                    right: '100px',
+                    zIndex: 99999,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    gap: '15px'
+                }}>
+                    {showChatbot && (
+                        <>
+                            <Chatbot
+                                config={config}
+                                messageParser={MessageParser}
+                                actionProvider={ActionProvider}
+                                placeholderText='Ask Daleel !'
+                                headerText='Chat with Daleel'
+                            // runInitialMessagesWithHistory={true}
+                            // saveMessages={saveMessages}
+                            // messageHistory={loadMessages()}
+                            />
+                        </>
+                    )}
+
+                    {/* Custom chat button */}
+                    <ChatButton onClick={toggleChatbot}>
+                        <SmartToyTwoToneIcon style={{ color: 'black', fontSize: '28px' }} />
+                    </ChatButton>
+                </div>
+                <Outlet />
+            </ReactRouterAppProvider>
+        </div>
     );
 }
