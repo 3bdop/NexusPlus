@@ -1,0 +1,85 @@
+await pdca.verifyCertificate("did:example:123");
+await pdca.revokeCertificate("did:example:123");
+await pdca.verifyCertificate("did:example:123");
+await pdca.issueCertificate("did:example:123", 86400); // valid for 1 day
+await pdca.admin();
+const pdca = await ethers.getContractAt("PDCA", contractAddress, signer);
+const signer = await ethers.provider.getSigner();
+const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const ethers = hre.ethers;
+const hre = require("hardhat")
+await pdcaNews.getCertificate("DID-12345");
+await pdcaNews.verifyCertificate("DID-12345");
+await pdcaNews.issueCertificate("DID-12345", 2592000);
+await pdcaNews.admin();
+console.log(formattedAddress)
+const pdcaNews = await ethers.getContractAt("PDCA", formattedAddress, await ethers.provider.getSigner());
+const pdcaNew = await ethers.getContractAt("PDCA", formattedAddress, await ethers.provider.getSigner());
+console.log(formattedAddress)
+const pdcaNew = await ethers.getContractAt("PDCA", formattedAddress, await ethers.provider.getSigner
+const formattedAddress = ethers.getAddress("0x5fbdb2315678afecb367f032d93f642f64180aa3");
+const correctAddress2 = ethers.getAddress("0x5FbDB2315678afecb367F032d93F642F64180aa3");
+const correctAddress = ethers.getAddress("0x5FbDB2315678afecb367F032d93F642F64180aa3");
+const correctAddress = ethers.utils.getAddress("0x5FbDB2315678afecb367F032d93F642F64180aa3")
+await pdcaNew.admin()
+const pdcaNew = await ethers.getContractAt("PDCA", "0x5FbDB2315678afecb367F032d93F642F64180aa3", signer);
+const pdca = await ethers.getContractAt("PDCA", "0x5FbDB2315678afecb367F032d93F642F64180aa3", signer);
+const signer = await ethers.provider.getSigner()
+ethers
+ethers.utils.getAddress("0x5FbDB2315678afecb367F032d93F642f64180aa3");
+await pdca.admin()
+await pdca.issueCertificate()
+const pdca = await ethers.getContractAt("PDCA", "0x5FbDB2315678afecb367F032d93F642f64180aa3", signer);
+const signer = await provider.getSigner();
+const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+const ethers = hre.ethers;
+const hre = require("hardhat");
+.exit
+const pdcaNew = await ethers.getContractAt("PDCA", "0X5FbDB2315678afecb367f032d93F642f64180aa3", await ethers.provider.getSigner());
+);
+  await ethers.provider.getSigner()
+  "0x5FbDB2315678afecb367F032d93F642f64180aa3",
+  "PDCA",
+const pdca = await ethers.getContractAt(
+const pdca = await ethers.getContractAt("PDCA", "0X5FbDB2315678afecb367f032d93F642f64180aa3", signer);
+const signer = await provider.getSigner();
+const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+const ethers = hre.ethers;
+const hre = require("hardhat");
+.exit
+const hre = require("hardhat");
+.exit
+const pdca = await ethers.getContractAt("PDCA", "0X5FbDB2315678afecb367f032d93F642f64180aa3")
+const ethers = hre.ethers;
+const hre = require("hardhat")
+.exit
+const signer = await provider.getSigner();
+const ethers = hre.ethers
+const hre = require("hardhat");
+.exit
+const pdca = await ethers.getContractAt("PDCA", "0x5FbDB2315678afecb367F032d93F642f64180aa3", signer);
+const signer = await provider.getSigner();
+const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+const pdca = await ethers.getContractAt("PDCA", "0X5FbDB2315678afecb367f032d93F642f64180aa3")
+const signer = await ethers.provider.getSigner();
+const ethers = hre.ethers
+const hre = require("hardhat");
+.exit
+const pdca = await ethers.getContractAt("PDCA", "0X5FbDB2315678afecb367f032d93F642f64180aa3")
+const signer = await ethers.provider.getSigner();
+const pdca = await ethers.getContractAt("PDCA", "0X5FbDB2315678afecb367f032d93F642f64180aa3")
+const ethers = hre.ethers
+const hre = require("hardhat");
+.exit
+const ethers = hre.ethers
+const hre = require("hardhat");
+const ethers = hre
+const hre = require("hardhat");
+const ethersNew = hre.ethers;
+const ethers = hre.ethers;
+const { ethers } = require("hardhat");
+exit
+const PDCA = await ethers.getContractAt("PDCA", "0X5FbDB2315678afecb367f032d93F642f64180aa3")
+clear
+console.log("✅ Contract is
+const PDCA = await ethers.getContractAt("PDCA", "YOUR_CONTRACT_ADDRESS");

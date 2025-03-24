@@ -1,3 +1,4 @@
+import pdcaContract from "../utils/contract.js";
 import express from "express"
 //? This will help us connect to the db
 
@@ -183,4 +184,62 @@ router.post("/api/logout", async (req, res) => {
         res.status(500).send("An error occurred during logout.");
     }
 });
+
+import { issueCertificate } from "../utils/pdcaContract.js";
+
+// ✅ New signup route
+router.post("/api/signup", async (req, res) => {
+    try {
+        const { username, password, metamask_id, user_id, user_role, gender } = req.body;
+
+        if (!username || !password || !metamask_id) {
+            return res.status(400).json({ message: "Missing required fields." });
+        }
+
+        const usersCollection = db.collection("usertest");
+
+        // Check if user already exists by wallet
+        const existingUser = await usersCollection.findOne({ metamask_id });
+        if (existingUser) {
+            return res.status(400).json({ message: "Wallet already registered." });
+        }
+
+        // ✅ Construct DID
+        const did = `wallet:${metamask_id}`;
+
+        // ✅ Issue certificate on blockchain
+        const success = await issueCertificate(did);
+        if (!success) {
+            return res.status(500).json({ message: "Failed to issue certificate on blockchain." });
+        }
+
+        const issuedAt = Math.floor(Date.now() / 1000);
+        const expiresAt = issuedAt + (86400 * 365); // 1 year
+
+        // ✅ Create user with certificate
+        const newUser = {
+            username,
+            password,
+            metamask_id,
+            user_id,
+            user_role,
+            gender,
+            certificate: {
+                did,
+                issuedBy: "UDST",
+                issuedAt,
+                expiresAt,
+                isValid: true
+            }
+        };
+
+        await usersCollection.insertOne(newUser);
+
+        res.status(201).json({ message: "User registered with certificate!", user: newUser });
+    } catch (err) {
+        console.error("Signup error:", err);
+        res.status(500).json({ message: "Signup failed." });
+    }
+});
+
 export default router;
