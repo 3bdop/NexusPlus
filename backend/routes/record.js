@@ -174,7 +174,7 @@ router.post('/api/register', async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: "Wallet is already registered." });
         }
-        const gAvatarurl = 'https://models.readyplayer.me/671fba5095f66d10f33251c6.glb'
+        const gAvatarurl = 'https://models.readyplayer.me/67e1544a7f65c63ac72f55d6.glb'
         if (gender == 'girl') {
             gAvatarurl = "https://models.readyplayer.me/67228d2ba754a4d51bc05336.glb"
         }
@@ -196,21 +196,26 @@ router.post('/api/register', async (req, res) => {
         res.status(500).json({ message: "Server error during registration." });
     }
 })
-
 router.get('/api/getUserByWallet/:id', async (req, res) => {
     try {
-        const wallet = req.params.id
-        const usersCollection = db.collection('users')
-        const walletExist = await usersCollection.findOne({ wallet })
+        const wallet = req.params.id;
+        const usersCollection = db.collection('users');
+        const walletExist = await usersCollection.findOne({ wallet });
 
-        if (!walletExist) {
-            return res.status(301).json({ message: "Wallet not found in db, please register first", exists: false })
-        }
-        return res.status(200).json({ message: "wallet found!", exists: true })
+        // Always return 200 with exists flag
+        return res.status(200).json({
+            exists: !!walletExist,
+            message: walletExist ? "Wallet found" : "Wallet not found"
+        });
+
     } catch (error) {
-        return res.status(404).json({ message: "some error happened while checking wallet" })
+        console.error("Error checking wallet:", error);
+        return res.status(500).json({
+            exists: false,
+            message: "Error checking wallet"
+        });
     }
-})
+});
 
 router.get("/api/check-auth", validateSession, (req, res) => {
     res.status(200).json({
