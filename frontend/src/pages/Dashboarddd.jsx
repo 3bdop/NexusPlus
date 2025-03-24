@@ -59,7 +59,7 @@ export default function Dashboarddd() {
     }
     return (
         <>
-            <div style={{
+            <span style={{
                 zIndex: 1, textAlign: 'center'
             }}>
                 <Typography variant="h4" style={{
@@ -85,7 +85,7 @@ export default function Dashboarddd() {
                     <TextGenerateEffect elements={[`This`, ` is your`, ` main`, ` digital-twin`]} duration={2} />
                 </Typography>
 
-            </div>
+            </span>
             <Avatar
                 modelSrc={localStorage.getItem("avatar_url") + "?morphTargets=ARKit,Eyes Extra"}
                 headMovement={true}

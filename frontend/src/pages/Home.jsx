@@ -195,8 +195,8 @@ export default function Home({ role }) {
                 navigation={NAVIGATION}
                 branding={BRANDING}
                 theme={Theme}
-                defaultColorScheme="dark"
-                colorSchemeStorageKey={null}
+            // defaultColorScheme="dark"
+            // colorSchemeStorageKey={null}
             >
                 <Box sx={{
                     position: 'absolute',
