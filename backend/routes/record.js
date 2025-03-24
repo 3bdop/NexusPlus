@@ -209,10 +209,10 @@ router.get('/api/getUserByWallet/:id', async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error checking wallet:", error);
+        console.error("Database error:", error);
         return res.status(500).json({
             exists: false,
-            message: "Error checking wallet"
+            message: "Server error"
         });
     }
 });
