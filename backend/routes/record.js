@@ -128,6 +128,14 @@ router.post("/api/login", async (req, res) => {
         const cert = user.certificate;
 
         if (!cert || !cert.isValid || cert.expiresAt < now) {
+            // Update the isValid flag in DB if it's expired
+            if (cert && cert.expiresAt < now) {
+                await usersCollection.updateOne(
+                    { wallet },
+                    { $set: { "certificate.isValid": false } }
+                );
+            }
+        
             return res.status(403).json({
                 message: "Your certificate is expired or invalid. Please contact support."
             });
@@ -182,6 +190,16 @@ router.post('/api/register', async (req, res) => {
         }
 
         const usersCollection = db.collection('users');
+        const udstCollection = db.collection('UDST');
+
+        // ✅ Check if the email exists in UDST
+        const authorizedEmail = await udstCollection.findOne({ email });
+        if (!authorizedEmail) {
+            return res.status(403).json({ message: "Email not authorized. You must be a UDST student." });
+        }
+
+        // ✅ Extract role from UDST record
+        const userRole = authorizedEmail.user_role;
 
         const existingUser = await usersCollection.findOne({ wallet });
         if (existingUser) {
@@ -205,10 +223,10 @@ router.post('/api/register', async (req, res) => {
 
         const newUser = {
             wallet,
-            username: username,
-            email: email,
+            username,
+            email,
             avatarUrl: gAvatarurl,
-            role: 'attendee',
+            role: userRole, // ✅ use role from UDST
             gender,
             certificate: {
                 did,
