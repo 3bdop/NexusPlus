@@ -9,6 +9,7 @@ import crypto from 'crypto'; // For generating session IDs
 import validateSession from "../middleware/validateSession.js"
 import multer from "multer";
 import fs from 'fs'
+import path from "path";
 
 // Configure multer for CV storage
 const storage = multer.diskStorage({
@@ -20,8 +21,28 @@ const storage = multer.diskStorage({
         }
         cb(null, uploadDir);
     },
-    filename: function (req, file, cb) {
-        cb(null, `${Date.now()}-${file.originalname}`);
+    filename: async function (req, file, cb) {
+        try {
+            // Get session ID from cookies
+            const sessionId = req.cookies.sessionId;
+            if (!sessionId) {
+                throw new Error('No session found');
+            }
+
+            // Get user ID from session
+            const session = await db.collection("session").findOne({ sessionId });
+            if (!session) {
+                throw new Error('Invalid session');
+            }
+
+            // Use userId as filename with PDF extension
+            const userId = session.userId;
+            const filename = `${userId}.pdf`;
+            cb(null, filename);
+
+        } catch (error) {
+            cb(error);
+        }
     }
 });
 
@@ -31,14 +52,13 @@ const upload = multer({
         if (file.mimetype === 'application/pdf') {
             cb(null, true);
         } else {
-            cb(new Error('Only PDF files are allowed'));
+            cb(new Error('Only PDF files are allowed'), false);
         }
     },
     limits: {
         fileSize: 3 * 1024 * 1024 // 3MB limit
     }
 });
-
 
 // The router will be added as a middleware and will take control of requests starting with path /record.
 const router = express.Router();
@@ -265,35 +285,23 @@ router.post("/api/upload-cv", upload.single('cv_file'), async (req, res) => {
         }
 
         const sessionId = req.cookies.sessionId;
-        if (!sessionId) {
-            return res.status(401).send("No session found.");
-        }
+        const session = await db.collection("session").findOne({ sessionId });
 
-        // Get user info from session
-        const sessionCollection = db.collection("session");
-        const session = await sessionCollection.findOne({ sessionId });
-        if (!session) {
-            return res.status(401).send("Invalid session.");
-        }
-
-        // Update user document with CV path
-        const usersCollection = db.collection("users");
-        const result = await usersCollection.updateOne(
+        // Update user document with CV metadata
+        await db.collection("users").updateOne(
             { _id: new ObjectId(session.userId) },
-            { $set: { cvPath: req.file.path } }
+            {
+                $set: { cvPath: req.file.path, }
+            }
         );
-
-        if (result.modifiedCount === 0) {
-            return res.status(404).send("User not found or CV not updated.");
-        }
 
         res.status(200).json({
             message: "CV uploaded successfully",
-            cvPath: req.file.path
+            cvPath: `/cv/${req.file.filename}` // Return web-accessible path
         });
     } catch (error) {
         console.error("Error uploading CV:", error);
-        res.status(500).send("Error uploading CV.");
+        res.status(500).send(error.message || "Error uploading CV.");
     }
 });
 
