@@ -403,20 +403,23 @@ export default function Login() {
             setWallet(walletAddress);
 
             // Check if user exists in database
-            const checkUser = await axios.get(
+            const { data } = await axios.get(
                 `http://localhost:5050/api/getUserByWallet/${walletAddress}`,
                 { withCredentials: true }
             );
 
-            console.log(checkUser.data.exists)
-
-            if (!checkUser.data.exists) {
+            if (!data.exists) {
                 setShowRegistrationForm(true);
-                // setMessage('New user detected. Please complete registration.');
+                setMessage('New user detected. Please complete registration.');
+            } else {
+                // Optional: Auto-login if exists
+                await loginUser();
             }
+
         } catch (err) {
-            setMessage('Failed to connect wallet or check registration status.');
-            console.error(err);
+            // Handle actual errors (network issues, etc.)
+            console.error("Connection error:", err);
+            setMessage(err.response?.data?.message || 'Failed to connect wallet');
         }
     };
 
@@ -498,13 +501,7 @@ export default function Login() {
                         />
                     </div> */}
                     {showRegistrationForm ? (
-                        <div style={{
-                            padding: '2rem',
-                            border: '1px solid #ccc',
-                            borderRadius: '8px',
-                            maxWidth: '400px',
-                            margin: '0 auto'
-                        }}>
+                        <div className='login-form-wrapper'>
                             <h2 style={{ fontFamily: 'system-ui' }}>Complete Registration</h2>
                             <form onSubmit={handleRegistration}>
                                 <div style={{ margin: '1rem 0' }}>
