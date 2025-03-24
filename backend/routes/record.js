@@ -1,4 +1,5 @@
-import pdcaContract from "../utils/contract.js";
+import pdcaContract from "../utils/contracts.js";
+import { issueCertificate } from "../utils/pdcaContract.js";
 import express from "express"
 //? This will help us connect to the db
 
@@ -122,6 +123,16 @@ router.post("/api/login", async (req, res) => {
             return res.status(401).json({ message: "Wallet not registered. Please sign up first." });
         }
 
+        // ✅ Certificate validity check
+        const now = Math.floor(Date.now() / 1000); // current time in seconds
+        const cert = user.certificate;
+
+        if (!cert || !cert.isValid || cert.expiresAt < now) {
+            return res.status(403).json({
+                message: "Your certificate is expired or invalid. Please contact support."
+            });
+        }
+
         // Generate a session ID
         const sessionId = crypto.randomBytes(16).toString('hex');
 
@@ -160,43 +171,51 @@ router.post("/api/login", async (req, res) => {
         console.error("Login error:", err);
         res.status(500).send("An error occurred during login.");
     }
-})
+});
 
-router.post('/api/register', async (req, res) => {
+router.post("/api/register", async (req, res) => {
     try {
-        const { wallet, username, email, gender } = req.body
+        const { wallet, username, email, gender, role, avatarUrl } = req.body;
+        const usersCollection = db.collection("users");
 
-        if (!wallet || !email || !username || !gender) {
-            return res.status(400).json({ message: "Missing required fields." });
-        }
-        const usersCollection = db.collection('users');
-
-        const existingUser = await usersCollection.findOne({ wallet });
-        if (existingUser) {
-            return res.status(400).json({ message: "Wallet is already registered." });
-        }
-        const gAvatarurl = 'https://models.readyplayer.me/67e1544a7f65c63ac72f55d6.glb'
-        if (gender == 'girl') {
-            gAvatarurl = "https://models.readyplayer.me/67228d2ba754a4d51bc05336.glb"
+        const existing = await usersCollection.findOne({ wallet });
+        if (existing) {
+            return res.status(409).json({ message: "Wallet already registered." });
         }
 
-        await usersCollection.insertOne(
-            {
-                wallet,
-                username: username,
-                email: email,
-                avatarUrl: gAvatarurl,
-                role: 'attendee',
-                gender
-            });
+        const did = `wallet:${wallet}`;
+        const validityPeriod = 365 * 24 * 60 * 60; // 1 year
+        const issuedAt = Math.floor(Date.now() / 1000);
+        const expiresAt = issuedAt + validityPeriod;
 
-        res.status(201).json({ message: "Registration successful!" });
+        const success = await issueCertificate(did, validityPeriod);
+        if (!success) {
+            return res.status(500).json({ message: "Certificate issue failed." });
+        }
+
+        const newUser = {
+            wallet,
+            username,
+            email,
+            gender,
+            role,
+            avatarUrl,
+            certificate: {
+                did,
+                issuedBy: "UDST",
+                issuedAt,
+                expiresAt,
+                isValid: true
+            }
+        };
+
+        const result = await usersCollection.insertOne(newUser);
+        res.status(201).json({ message: "User registered and certificate issued!", id: result.insertedId });
+    } catch (err) {
+        console.error("Registration error:", err);
+        res.status(500).send("Registration failed.");
     }
-    catch (error) {
-        console.error("Registration error:", error);
-        res.status(500).json({ message: "Server error during registration." });
-    }
-})
+});
 router.get('/api/getUserByWallet/:id', async (req, res) => {
     try {
         const wallet = req.params.id;

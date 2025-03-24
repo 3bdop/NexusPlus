@@ -30,5 +30,9 @@
     "path": "^0.12.7",
     "uuid": "^9.0.1",
     "vectra": "^0.7.6"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.19"
   }
 }
