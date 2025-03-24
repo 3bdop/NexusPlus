@@ -193,7 +193,7 @@ router.post('/api/register', async (req, res) => {
             gAvatarurl = "https://models.readyplayer.me/67228d2ba754a4d51bc05336.glb";
         }
 
-        const did = `wallet:${wallet}`;
+        const did = `${wallet}`;
         const validityPeriod = 365 * 24 * 60 * 60; // 1 year
         const issuedAt = Math.floor(Date.now() / 1000);
         const expiresAt = issuedAt + validityPeriod;
