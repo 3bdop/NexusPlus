@@ -482,10 +482,6 @@ export default function Login() {
                             must be installed
                         </span>
 
-                        //<ShinyText text={'Please install MetaMask extension first'} disabled={false} speed={3} className='custom-class' />
-                        //<p className="text-red-400 mt-2">
-                        //  Please install MetaMask extension first
-                        //</p>
                     )}
                 </div>
             ) : (
@@ -593,9 +589,9 @@ export default function Login() {
             )}
             <div align='center'>
                 {message && (
-                    <p style={{ fontFamily: 'system-ui', color: '#FF0000FF' }}>
+                    <span style={{ fontFamily: 'system-ui', color: '#FF0000FF' }}>
                         <TextGenerateEffect elements={[message]} duration={2} />
-                    </p>
+                    </span>
                 )}
             </div>
         </div>
