@@ -46,7 +46,7 @@ export class RAGHandler {
       console.log('Deleted existing vector-index directory');
     }
 
-    const dirPath = './vector-index'
+    const dirPath = '/tmp/vector-index'
     if (!fs.existsSync(dirPath)) {
       // Recreate the directory
       fs.mkdirSync(indexDir, { recursive: true });
