@@ -23,7 +23,7 @@ app.use(
             }
             return callback(null, true);
         },
-        credentials: true, // Important for cookies
+        credentials: true,
     })
 );
 
