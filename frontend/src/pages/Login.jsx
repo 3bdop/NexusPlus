@@ -373,7 +373,7 @@ import '../index.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
-import Button from '../components/ui/button';
+import Button from '../components/ui/Button';
 import { TextGenerateEffect } from '../components/ui/text-generate-effect';
 
 import { motion } from "motion/react";
