@@ -24,7 +24,7 @@
 //     const navigate = useNavigate();
 
 //     useEffect(() => {
-//         axios.get("http://localhost:5050/api/session", { withCredentials: true })
+//         axios.get("https://nexusplus-api.vercel.app/api/session", { withCredentials: true })
 //             .then((response) => {
 //                 if (response.data.loggedIn) {
 //                     setWallet(response.data.wallet);
@@ -59,7 +59,7 @@
 //         }
 
 //         try {
-//             const response = await axios.post("http://localhost:5050/api/register", {
+//             const response = await axios.post("https://nexusplus-api.vercel.app/api/register", {
 //                 wallet,
 //                 email,
 //                 username,
@@ -82,7 +82,7 @@
 
 //         try {
 //             const response = await axios.post(
-//                 "http://localhost:5050/api/login",
+//                 "https://nexusplus-api.vercel.app/api/login",
 //                 { wallet },
 //                 { withCredentials: true }
 //             );
@@ -100,7 +100,7 @@
 
 //     // const onSubmit = async (data) => {
 //     //     try {
-//     //         const response = await axios.post('http://localhost:5050/api/login', data, {
+//     //         const response = await axios.post('https://nexusplus-api.vercel.app/api/login', data, {
 //     //             withCredentials: true, // Important!
 //     //             headers: {
 //     //                 'Content-Type': 'application/json'
@@ -233,7 +233,7 @@
 //     const navigate = useNavigate();
 
 //     // useEffect(() => {
-//     //     axios.get('http://localhost:5050/api/session', { withCredentials: true })
+//     //     axios.get('https://nexusplus-api.vercel.app/api/session', { withCredentials: true })
 //     //         .then((response) => {
 //     //             if (response.data.loggedIn) {
 //     //                 setWallet(response.data.wallet);
@@ -257,7 +257,7 @@
 
 //             // Check if user exists
 //             const checkUser = await axios.get(
-//                 `http://localhost:5050/api/getUserByWallet/${walletAddress}`,
+//                 `https://nexusplus-api.vercel.app/api/getUserByWallet/${walletAddress}`,
 //                 { withCredentials: true }
 //             );
 
@@ -281,7 +281,7 @@
 
 //         try {
 //             const response = await axios.post(
-//                 'http://localhost:5050/api/register',
+//                 'https://nexusplus-api.vercel.app/api/register',
 //                 {
 //                     wallet,
 //                     email,
@@ -302,7 +302,7 @@
 //     const loginUser = async () => {
 //         try {
 //             const response = await axios.post(
-//                 'http://localhost:5050/api/login',
+//                 'https://nexusplus-api.vercel.app/api/login',
 //                 { wallet },
 //                 { withCredentials: true }
 //             );
@@ -404,7 +404,7 @@ export default function Login() {
 
             // Check if user exists in database
             const { data } = await axios.get(
-                `http://localhost:5050/api/getUserByWallet/${walletAddress}`,
+                `https://nexusplus-api.vercel.app/api/getUserByWallet/${walletAddress}`,
                 { withCredentials: true }
             );
 
@@ -429,7 +429,7 @@ export default function Login() {
 
         try {
             const response = await axios.post(
-                'http://localhost:5050/api/register',
+                'https://nexusplus-api.vercel.app/api/register',
                 {
                     wallet,
                     email,
@@ -450,7 +450,7 @@ export default function Login() {
     const loginUser = async () => {
         try {
             const response = await axios.post(
-                'http://localhost:5050/api/login',
+                'https://nexusplus-api.vercel.app/api/login',
                 { wallet },
                 { withCredentials: true }
             );

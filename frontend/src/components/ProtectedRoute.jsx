@@ -12,7 +12,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const response = await axios.get('http://localhost:5050/api/check-auth', {
+                const response = await axios.get('https://nexusplus-api.vercel.app/api/check-auth', {
                     withCredentials: true
                 });
                 setAuthState({

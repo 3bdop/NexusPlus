@@ -22,7 +22,7 @@ export default function Dashboarddd() {
             try {
                 // Step 1: Fetch session data to get userId
                 const sessionResponse = await axios.get(
-                    'http://localhost:5050/api/get-session',
+                    'https://nexusplus-api.vercel.app/api/get-session',
                     { withCredentials: true } // Include cookies in the request
                 );
                 capitalizeFirstLetter(sessionResponse.data.username)
@@ -33,7 +33,7 @@ export default function Dashboarddd() {
 
                 // Step 2: Fetch avatar URL using userId
                 const avatarResponse = await axios.get(
-                    `http://localhost:5050/api/get-avatarUrl/${userId}`,
+                    `https://nexusplus-api.vercel.app/api/get-avatarUrl/${userId}`,
                     { withCredentials: true }
                 );
                 localStorage.setItem("avatar_url", avatarResponse.data.avatarUrl)

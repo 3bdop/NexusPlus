@@ -21,7 +21,7 @@ function CareerFair() {
         async function fetchSession() {
             try {
                 const sessionResponse = await axios.get(
-                    'http://localhost:5050/api/get-session',
+                    'https://nexusplus-api.vercel.app/api/get-session',
                     { withCredentials: true } // Include cookies in the request
                 );
 
@@ -30,7 +30,7 @@ function CareerFair() {
 
                 // Step 2: Fetch avatar URL using userId
                 const avatarResponse = await axios.get(
-                    `http://localhost:5050/api/get-avatarUrl/${userId}`,
+                    `https://nexusplus-api.vercel.app/api/get-avatarUrl/${userId}`,
                     { withCredentials: true }
                 );
                 const fetchedAvatarUrl = avatarResponse.data.avatarUrl;

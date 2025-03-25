@@ -17,7 +17,7 @@ export default function Register() { // Changed function name to Register
 
     const onSubmit = async (data) => {
         try {
-            const response = await axios.post('http://localhost:5050/api/register', data, {
+            const response = await axios.post('https://nexusplus-api.vercel.app/api/register', data, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json'

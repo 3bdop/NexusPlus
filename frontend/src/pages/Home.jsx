@@ -110,7 +110,7 @@ export default function Home({ role }) {
     const handleLogout = async () => {
         handleCloseUserMenu(); // Close menu first
         try {
-            const res = await axios.post('http://localhost:5050/api/logout', {}, {
+            const res = await axios.post(`https://nexusplus-api.vercel.app/api/logout`, {}, {
                 withCredentials: true
             });
             if (res.status === 200) {

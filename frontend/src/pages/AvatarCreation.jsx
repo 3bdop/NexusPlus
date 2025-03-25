@@ -24,7 +24,7 @@ export default function AvatarCreation() {
 
             // Step 1: Fetch the user's session data to get the userId
             const sessionResponse = await axios.get(
-                'http://localhost:5050/api/get-session',
+                'https://nexusplus-api.vercel.app/api/get-session',
                 { withCredentials: true } // Include cookies for session authentication
             );
 
@@ -35,7 +35,7 @@ export default function AvatarCreation() {
 
             // Step 2: Update the avatar URL for the user
             const updateResponse = await axios.patch(
-                'http://localhost:5050/api/add-avatarId',
+                'https://nexusplus-api.vercel.app/api/add-avatarId',
                 { userId, avatarUrl }, // Send userId and avatarUrl in the request body
                 {
                     withCredentials: true,
@@ -121,7 +121,7 @@ export default function AvatarCreation() {
 //             try {
 //                 // Step 1: Fetch the user's session data to get the userId
 //                 const sessionResponse = await axios.get(
-//                     'http://localhost:5050/api/get-session',
+//                     'https://nexusplus-api.vercel.app/api/get-session',
 //                     { withCredentials: true } // Include cookies for session authentication
 //                 );
 
@@ -132,7 +132,7 @@ export default function AvatarCreation() {
 
 //                 // Step 2: Fetch the user's existing avatar URL
 //                 const avatarResponse = await axios.get(
-//                     `http://localhost:5050/api/get-avatarUrl/${userId}`,
+//                     `https://nexusplus-api.vercel.app/api/get-avatarUrl/${userId}`,
 //                     { withCredentials: true }
 //                 );
 
@@ -155,7 +155,7 @@ export default function AvatarCreation() {
 
 //             // Step 1: Fetch the user's session data to get the userId
 //             const sessionResponse = await axios.get(
-//                 'http://localhost:5050/api/get-session',
+//                 'https://nexusplus-api.vercel.app/api/get-session',
 //                 { withCredentials: true } // Include cookies for session authentication
 //             );
 
@@ -166,7 +166,7 @@ export default function AvatarCreation() {
 
 //             // Step 2: Update the avatar URL for the user
 //             const updateResponse = await axios.patch(
-//                 'http://localhost:5050/api/add-avatarId',
+//                 'https://nexusplus-api.vercel.app/api/add-avatarId',
 //                 { userId, avatarUrl: newAvatarUrl }, // Send userId and newAvatarUrl in the request body
 //                 {
 //                     withCredentials: true,

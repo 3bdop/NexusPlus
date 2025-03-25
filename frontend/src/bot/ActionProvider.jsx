@@ -11,7 +11,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }) => {
         }));
 
         try {
-            const response = await axios.post('http://localhost:5050/query', {
+            const response = await axios.post('https://nexusplus-api.vercel.app/query', {
                 query
             }, {
                 headers: {
