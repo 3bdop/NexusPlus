@@ -14,7 +14,7 @@ if (!process.env.GEMINI_API_KEY) {
 }
 
 // Initialize RAG system with Gemini
-const ragHandler = new RAGHandler(process.env.GEMINI_API_KEY, './bot/KnowledgeBase');
+const ragHandler = new RAGHandler(process.env.GEMINI_API_KEY, '../bot/KnowledgeBase'); //!changed route from ./ to ../
 ragHandler.initialize();
 
 
