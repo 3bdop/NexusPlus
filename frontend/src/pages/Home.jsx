@@ -110,7 +110,7 @@ export default function Home({ role }) {
     const handleLogout = async () => {
         handleCloseUserMenu(); // Close menu first
         try {
-            const res = await apClient.post(`/api/logout`, {}, {
+            const res = await apiClient.post(`/api/logout`, {}, {
                 withCredentials: true
             });
             if (res.status === 200) {

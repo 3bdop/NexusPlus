@@ -21,7 +21,7 @@ export default function Dashboarddd() {
         const fetchUserData = async () => {
             try {
                 // Step 1: Fetch session data to get userId
-                const sessionResponse = await apClient.get(
+                const sessionResponse = await apiClient.get(
                     '/api/get-session',
                     { withCredentials: true } // Include cookies in the request
                 );
@@ -32,7 +32,7 @@ export default function Dashboarddd() {
                 }
 
                 // Step 2: Fetch avatar URL using userId
-                const avatarResponse = await apClient.get(
+                const avatarResponse = await apiClient.get(
                     `/api/get-avatarUrl/${userId}`,
                     { withCredentials: true }
                 );

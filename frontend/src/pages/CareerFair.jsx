@@ -20,7 +20,7 @@ function CareerFair() {
     useEffect(() => {
         async function fetchSession() {
             try {
-                const sessionResponse = await apClient.get(
+                const sessionResponse = await apiClient.get(
                     '/api/get-session',
                     { withCredentials: true } // Include cookies in the request
                 );
@@ -29,7 +29,7 @@ function CareerFair() {
                 const userId = sessionResponse.data.userId
 
                 // Step 2: Fetch avatar URL using userId
-                const avatarResponse = await apClient.get(
+                const avatarResponse = await apiClient.get(
                     `/api/get-avatarUrl/${userId}`,
                     { withCredentials: true }
                 );

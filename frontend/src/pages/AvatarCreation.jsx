@@ -23,7 +23,7 @@ export default function AvatarCreation() {
             console.log(`Avatar URL is: ${avatarUrl}`);
 
             // Step 1: Fetch the user's session data to get the userId
-            const sessionResponse = await apClient.get(
+            const sessionResponse = await apiClient.get(
                 '/api/get-session',
                 { withCredentials: true } // Include cookies for session authentication
             );
@@ -34,7 +34,7 @@ export default function AvatarCreation() {
             }
 
             // Step 2: Update the avatar URL for the user
-            const updateResponse = await apClient.patch(
+            const updateResponse = await apiClient.patch(
                 '/api/add-avatarId',
                 { userId, avatarUrl }, // Send userId and avatarUrl in the request body
                 {
@@ -100,7 +100,7 @@ export default function AvatarCreation() {
 // import React, { useEffect, useState } from 'react';
 // import { AvatarCreator } from '@readyplayerme/react-avatar-creator';
 // import { useNavigate } from 'react-router-dom';
-// import apClient from 'apClient';
+// import apiClient from 'apiClient';
 
 // const config = {
 //     clearCache: true,
@@ -120,7 +120,7 @@ export default function AvatarCreation() {
 //         const fetchAvatarUrl = async () => {
 //             try {
 //                 // Step 1: Fetch the user's session data to get the userId
-//                 const sessionResponse = await apClient.get(
+//                 const sessionResponse = await apiClient.get(
 //                     '/api/get-session',
 //                     { withCredentials: true } // Include cookies for session authentication
 //                 );
@@ -131,7 +131,7 @@ export default function AvatarCreation() {
 //                 }
 
 //                 // Step 2: Fetch the user's existing avatar URL
-//                 const avatarResponse = await apClient.get(
+//                 const avatarResponse = await apiClient.get(
 //                     `/api/get-avatarUrl/${userId}`,
 //                     { withCredentials: true }
 //                 );
@@ -154,7 +154,7 @@ export default function AvatarCreation() {
 //             console.log(`New Avatar URL is: ${newAvatarUrl}`);
 
 //             // Step 1: Fetch the user's session data to get the userId
-//             const sessionResponse = await apClient.get(
+//             const sessionResponse = await apiClient.get(
 //                 '/api/get-session',
 //                 { withCredentials: true } // Include cookies for session authentication
 //             );
@@ -165,7 +165,7 @@ export default function AvatarCreation() {
 //             }
 
 //             // Step 2: Update the avatar URL for the user
-//             const updateResponse = await apClient.patch(
+//             const updateResponse = await apiClient.patch(
 //                 '/api/add-avatarId',
 //                 { userId, avatarUrl: newAvatarUrl }, // Send userId and newAvatarUrl in the request body
 //                 {

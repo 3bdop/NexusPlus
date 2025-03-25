@@ -17,7 +17,7 @@ export default function Register() { // Changed function name to Register
 
     const onSubmit = async (data) => {
         try {
-            const response = await apClient.post('/api/register', data, {
+            const response = await apiClient.post('/api/register', data, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json'

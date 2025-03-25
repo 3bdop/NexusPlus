@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import '../index.css';
-import apClient from 'apClient';
 import { useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import Button from '../components/ui/Button';
@@ -9,7 +8,6 @@ import { TextGenerateEffect } from '../components/ui/text-generate-effect';
 import { motion } from "motion/react";
 import { LinkPreview } from "../components/ui/link-preview";
 import ShinyText from '../components/ui/ShinyText';
-
 import { apiClient } from '../api/client';
 
 export default function Login() {
@@ -35,7 +33,7 @@ export default function Login() {
             setWallet(walletAddress);
 
             // Check if user exists in database
-            const { data } = await apClient.get(
+            const { data } = await apiClient.get(
                 `/api/getUserByWallet/${walletAddress}`,
                 { withCredentials: true }
             );
@@ -60,7 +58,7 @@ export default function Login() {
         }
 
         try {
-            const response = await apClient.post(
+            const response = await apiClient.post(
                 `/api/register`,
                 {
                     wallet,
@@ -81,7 +79,7 @@ export default function Login() {
 
     const loginUser = async () => {
         try {
-            const response = await apClient.post(
+            const response = await apiClient.post(
                 `/api/login`,
                 { wallet },
                 { withCredentials: true }
