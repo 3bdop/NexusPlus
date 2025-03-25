@@ -42,19 +42,18 @@
 
 // export default app;
 
-
 import express from "express";
-import corsConfig from "./middleware/cors.js";  // Changed import
+import corsMiddleware from "./middleware/cors.js";
 import records from "./routes/record.js";
 import cookieParser from "cookie-parser";
 import botRoute from "./routes/botRoute.js";
 
 const app = express();
 
-// Middleware order matters!
+// Middleware order is crucial
 app.use(cookieParser());
 app.use(express.json());
-app.use(corsConfig);  // Use the new CORS config
+app.use(corsMiddleware); // Now using proper middleware
 
 // Routes
 app.use("/", records);
@@ -62,20 +61,8 @@ app.use("/query", botRoute);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-    res.status(200).json({
-        status: 'OK',
-        timestamp: new Date().toISOString(),
-        nodeEnv: process.env.NODE_ENV
-    });
+    res.status(200).json({ status: 'OK' });
 });
 
-// For local development
-if (!process.env.VERCEL) {
-    const PORT = process.env.PORT || 5050;
-    app.listen(PORT, "0.0.0.0", () => {
-        console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode`);
-        console.log(`Listening on port ${PORT}`);
-    });
-}
-
+// Vercel deployment
 export default app;
