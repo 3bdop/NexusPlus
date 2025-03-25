@@ -143,10 +143,11 @@ router.post("/api/login", async (req, res) => {
         // Set a cookie with the session ID
         res.cookie('sessionId', sessionId, {
             httpOnly: true,
-            // secure: process.env.NODE_ENV !== 'production',
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             maxAge: 50 * 60 * 1000,  //!Change the session duration latter
-            sameSite: 'lax', // Add this
-            path: '/' // Add this
+            path: '/', // Add this
+            domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined
         });
 
         // If login is successful
