@@ -411,9 +411,6 @@ export default function Login() {
             if (!data.exists) {
                 setShowRegistrationForm(true);
                 setMessage('New user detected. Please complete registration.');
-            } else {
-                // Optional: Auto-login if exists
-                await loginUser();
             }
 
         } catch (err) {
