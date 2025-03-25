@@ -4,7 +4,6 @@ import path from 'path';
 import { LocalIndex } from 'vectra'
 import { v4 as uuidv4 } from 'uuid';
 import { fileURLToPath } from 'url';
-// const { v4: uuidv4 } = require('uuid');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,9 +46,12 @@ export class RAGHandler {
       console.log('Deleted existing vector-index directory');
     }
 
-    // Recreate the directory
-    fs.mkdirSync(indexDir, { recursive: true });
-    console.log('Created new vector-index directory');
+    const dirPath = './vector-index'
+    if (!fs.existsSync(dirPath)) {
+      // Recreate the directory
+      fs.mkdirSync(indexDir, { recursive: true });
+      console.log('Created new vector-index directory');
+    }
 
     // Create the index.json file with the desired structure
     const indexFilePath = path.join(indexDir, 'index.json');
