@@ -1,8 +1,12 @@
 import 'dotenv/config.js'
 import express from 'express'
 import bodyParser from 'body-parser';
+import { fileURLToPath } from 'url';
+import path from 'path';
 import { RAGHandler } from '../bot/ragHandler.js'
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const query = express();
 
 query.use(bodyParser.json());
