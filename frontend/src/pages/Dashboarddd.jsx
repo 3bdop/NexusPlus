@@ -59,12 +59,12 @@ export default function Dashboarddd() {
     }
     return (
         <>
-            <div style={{
+            <span style={{
                 zIndex: 1, textAlign: 'center'
             }}>
-                <Typography variant="h4" style={{
-                    color: 'white', zIndex: 1, fontFamily: "system-ui"
-                }}>
+                <h1 variant="h4" style={{
+                    color: 'white', zIndex: 1, fontFamily: "system-ui",
+                }} >
                     <TextGenerateEffect elements={[
                         'Welcome ',
                         username || '', // Ensure username exists
@@ -80,12 +80,12 @@ export default function Dashboarddd() {
                             }}
                         />
                     ]} duration={1.5} />
-                </Typography>
-                <Typography variant="body1" style={{ color: 'whitesmoke', fontFamily: 'system-ui' }}>
+                </h1>
+                <span variant="body1" style={{ color: 'whitesmoke', fontFamily: 'system-ui' }}>
                     <TextGenerateEffect elements={[`This`, ` is your`, ` main`, ` digital-twin`]} duration={2} />
-                </Typography>
+                </span>
 
-            </div>
+            </span>
             <Avatar
                 modelSrc={localStorage.getItem("avatar_url") + "?morphTargets=ARKit,Eyes Extra"}
                 headMovement={true}
