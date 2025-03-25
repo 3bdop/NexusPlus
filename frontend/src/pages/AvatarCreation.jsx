@@ -1,7 +1,7 @@
 import React from 'react';
 import { AvatarCreator } from '@readyplayerme/react-avatar-creator';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { apiClient } from '../api/client';
 import { Box, height, width } from '@mui/system';
 import Typography from '@mui/material/Typography';
 
@@ -23,8 +23,8 @@ export default function AvatarCreation() {
             console.log(`Avatar URL is: ${avatarUrl}`);
 
             // Step 1: Fetch the user's session data to get the userId
-            const sessionResponse = await axios.get(
-                'https://nexusplus-api.vercel.app/api/get-session',
+            const sessionResponse = await apClient.get(
+                '/api/get-session',
                 { withCredentials: true } // Include cookies for session authentication
             );
 
@@ -34,8 +34,8 @@ export default function AvatarCreation() {
             }
 
             // Step 2: Update the avatar URL for the user
-            const updateResponse = await axios.patch(
-                'https://nexusplus-api.vercel.app/api/add-avatarId',
+            const updateResponse = await apClient.patch(
+                '/api/add-avatarId',
                 { userId, avatarUrl }, // Send userId and avatarUrl in the request body
                 {
                     withCredentials: true,
@@ -100,7 +100,7 @@ export default function AvatarCreation() {
 // import React, { useEffect, useState } from 'react';
 // import { AvatarCreator } from '@readyplayerme/react-avatar-creator';
 // import { useNavigate } from 'react-router-dom';
-// import axios from 'axios';
+// import apClient from 'apClient';
 
 // const config = {
 //     clearCache: true,
@@ -120,8 +120,8 @@ export default function AvatarCreation() {
 //         const fetchAvatarUrl = async () => {
 //             try {
 //                 // Step 1: Fetch the user's session data to get the userId
-//                 const sessionResponse = await axios.get(
-//                     'https://nexusplus-api.vercel.app/api/get-session',
+//                 const sessionResponse = await apClient.get(
+//                     '/api/get-session',
 //                     { withCredentials: true } // Include cookies for session authentication
 //                 );
 
@@ -131,8 +131,8 @@ export default function AvatarCreation() {
 //                 }
 
 //                 // Step 2: Fetch the user's existing avatar URL
-//                 const avatarResponse = await axios.get(
-//                     `https://nexusplus-api.vercel.app/api/get-avatarUrl/${userId}`,
+//                 const avatarResponse = await apClient.get(
+//                     `/api/get-avatarUrl/${userId}`,
 //                     { withCredentials: true }
 //                 );
 
@@ -154,8 +154,8 @@ export default function AvatarCreation() {
 //             console.log(`New Avatar URL is: ${newAvatarUrl}`);
 
 //             // Step 1: Fetch the user's session data to get the userId
-//             const sessionResponse = await axios.get(
-//                 'https://nexusplus-api.vercel.app/api/get-session',
+//             const sessionResponse = await apClient.get(
+//                 '/api/get-session',
 //                 { withCredentials: true } // Include cookies for session authentication
 //             );
 
@@ -165,8 +165,8 @@ export default function AvatarCreation() {
 //             }
 
 //             // Step 2: Update the avatar URL for the user
-//             const updateResponse = await axios.patch(
-//                 'https://nexusplus-api.vercel.app/api/add-avatarId',
+//             const updateResponse = await apClient.patch(
+//                 '/api/add-avatarId',
 //                 { userId, avatarUrl: newAvatarUrl }, // Send userId and newAvatarUrl in the request body
 //                 {
 //                     withCredentials: true,

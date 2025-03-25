@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { apiClient } from '../api/client';
 
 const ProtectedRoute = ({ children, requiredRole }) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -12,7 +12,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const response = await axios.get('https://nexusplus-api.vercel.app/api/check-auth', {
+                const response = await apiClient.get('/api/check-auth', {
                     withCredentials: true
                 });
                 setAuthState({

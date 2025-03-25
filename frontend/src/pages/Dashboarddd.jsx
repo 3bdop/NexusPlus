@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Avatar } from "@readyplayerme/visage";
 import { Sparkles } from '@react-three/drei';
-import axios from 'axios';
+import { apiClient } from '../api/client';
 import styled, { keyframes } from 'styled-components';
 import { TextGenerateEffect } from '../components/ui/text-generate-effect';
 import { TextHoverEffect } from '../components/ui/text-hover-effect';
@@ -21,8 +21,8 @@ export default function Dashboarddd() {
         const fetchUserData = async () => {
             try {
                 // Step 1: Fetch session data to get userId
-                const sessionResponse = await axios.get(
-                    'https://nexusplus-api.vercel.app/api/get-session',
+                const sessionResponse = await apClient.get(
+                    '/api/get-session',
                     { withCredentials: true } // Include cookies in the request
                 );
                 capitalizeFirstLetter(sessionResponse.data.username)
@@ -32,8 +32,8 @@ export default function Dashboarddd() {
                 }
 
                 // Step 2: Fetch avatar URL using userId
-                const avatarResponse = await axios.get(
-                    `https://nexusplus-api.vercel.app/api/get-avatarUrl/${userId}`,
+                const avatarResponse = await apClient.get(
+                    `/api/get-avatarUrl/${userId}`,
                     { withCredentials: true }
                 );
                 localStorage.setItem("avatar_url", avatarResponse.data.avatarUrl)

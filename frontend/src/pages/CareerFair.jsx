@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
-import axios from 'axios';
+import { apiClient } from "../api/client";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useNavigate } from 'react-router-dom';
@@ -20,8 +20,8 @@ function CareerFair() {
     useEffect(() => {
         async function fetchSession() {
             try {
-                const sessionResponse = await axios.get(
-                    'https://nexusplus-api.vercel.app/api/get-session',
+                const sessionResponse = await apClient.get(
+                    '/api/get-session',
                     { withCredentials: true } // Include cookies in the request
                 );
 
@@ -29,8 +29,8 @@ function CareerFair() {
                 const userId = sessionResponse.data.userId
 
                 // Step 2: Fetch avatar URL using userId
-                const avatarResponse = await axios.get(
-                    `https://nexusplus-api.vercel.app/api/get-avatarUrl/${userId}`,
+                const avatarResponse = await apClient.get(
+                    `/api/get-avatarUrl/${userId}`,
                     { withCredentials: true }
                 );
                 const fetchedAvatarUrl = avatarResponse.data.avatarUrl;

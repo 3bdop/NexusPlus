@@ -1,5 +1,6 @@
 import React from 'react';
-import axios from 'axios';
+import { apiClient } from '../api/client';
+
 import formatMessage from '../utils/formatMessage';
 
 const ActionProvider = ({ createChatBotMessage, setState, children }) => {
@@ -11,7 +12,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }) => {
         }));
 
         try {
-            const response = await axios.post('https://nexusplus-api.vercel.app/query', {
+            const response = await apiClient.post('/query', {
                 query
             }, {
                 headers: {

@@ -17,7 +17,7 @@ import ActionProvider from '../bot/ActionProvider';
 import MessageParser from '../bot/MessageParser';
 import '../bot/ChatbotStyle.css'
 
-import axios from 'axios';
+import { apiClient } from '../api/client';
 import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
 import WavyBackground from '../components/ui/wavy-background';
 
@@ -110,7 +110,7 @@ export default function Home({ role }) {
     const handleLogout = async () => {
         handleCloseUserMenu(); // Close menu first
         try {
-            const res = await axios.post(`https://nexusplus-api.vercel.app/api/logout`, {}, {
+            const res = await apClient.post(`/api/logout`, {}, {
                 withCredentials: true
             });
             if (res.status === 200) {
