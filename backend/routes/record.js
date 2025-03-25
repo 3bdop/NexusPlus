@@ -147,8 +147,6 @@ router.post("/api/login", async (req, res) => {
             sameSite: none,
             maxAge: 50 * 60 * 1000,  //!Change the session duration latter
             path: '/', // Add this
-            domain: '.vercel.app',
-            partitioned: true
         });
 
         // If login is successful
