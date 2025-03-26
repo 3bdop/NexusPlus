@@ -3,7 +3,7 @@ import cors from 'cors';
 const allowedOrigins = [
     "https://nexusplus.vercel.app",
     /https:\/\/nexusplus-.*-3bdop\.vercel\.app/,
-    "https://oneuni.readyplayer.me",
+    /https:\/\/.*\.readyplayer\.me$/,
     "http://localhost:3000",
     "http://localhost:5050"
 ];
