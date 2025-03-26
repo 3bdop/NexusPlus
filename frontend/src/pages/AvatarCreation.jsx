@@ -36,7 +36,7 @@ export default function AvatarCreation() {
             // Step 2: Update the avatar URL for the user
             const updateResponse = await apiClient.patch(
                 '/api/add-avatarId',
-                { userId, avatarUrl }, // Send userId and avatarUrl in the request body
+                { avatarUrl }, //? Sending the new avatar Id only, and getting the userId from session
                 {
                     withCredentials: true,
                     headers: {
@@ -51,7 +51,7 @@ export default function AvatarCreation() {
             }
         } catch (error) {
             console.error('Error saving avatar:', error);
-            alert('Failed to save avatar. Please try again.'); // Show error message to the user
+            alert('Failed to save avatar. Please try again.');
         }
     };
 
