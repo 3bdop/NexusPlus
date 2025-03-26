@@ -144,7 +144,7 @@ router.post("/api/login", async (req, res) => {
         res.cookie('sessionId', sessionId, {
             httpOnly: true,
             secure: true,
-            sameSite: none,
+            sameSite: "none",
             maxAge: 50 * 60 * 1000,  //!Change the session duration latter
             path: '/', // Add this
         });
