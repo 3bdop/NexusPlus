@@ -11,10 +11,10 @@ function CareerFair() {
     const { unityProvider, sendMessage,
         loadingProgression, isLoaded,
         addEventListener, removeEventListener } = useUnityContext({
-            loaderUrl: "bt/webGL.loader.js",
-            dataUrl: "bt/webGL.data",
-            frameworkUrl: "bt/webGL.framework.js",
-            codeUrl: "bt/webGL.wasm",
+            loaderUrl: "build/webGL.loader.js",
+            dataUrl: "build/webGL.data",
+            frameworkUrl: "build/webGL.framework.js",
+            codeUrl: "build/webGL.wasm",
         });
     const navigate = useNavigate();
     useEffect(() => {
