@@ -226,9 +226,10 @@ router.get("/api/check-auth", validateSession, (req, res) => {
     });
 });
 
-router.patch("/api/add-avatarId", async (req, res) => {
+router.patch("/api/add-avatarId", validateSession, async (req, res) => {
     try {
-        const { userId, avatarUrl } = req.body;
+        const { avatarUrl } = req.body;
+        const userId = req.user.id;
 
         if (!userId || !avatarUrl) {
             return res.status(400).json({ message: "User ID and avatar URL are required." });
