@@ -15,6 +15,9 @@ function CareerFair() {
             dataUrl: "build/webGL.data",
             frameworkUrl: "build/webGL.framework.js",
             codeUrl: "build/webGL.wasm",
+            webglContextAttributes: {
+                preserveDrawingBuffer: true
+            }
         });
     const navigate = useNavigate();
     useEffect(() => {
