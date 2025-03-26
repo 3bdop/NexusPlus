@@ -17,7 +17,10 @@ function CareerFair() {
             codeUrl: "build/webGL.wasm",
             webglContextAttributes: {
                 preserveDrawingBuffer: true
-            }
+            },
+            companyName: "NexusPlus",
+            productName: "NexusPlus",
+            productVersion: "1.0",
         });
     const navigate = useNavigate();
     useEffect(() => {
