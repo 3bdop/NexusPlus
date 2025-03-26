@@ -102,7 +102,7 @@ Follow these steps to get the project up and running:
 2. **Download the WebGL build:**
 
 - You can find it [here](https://drive.google.com/file/d/1L4ULqhGlk11bPRumg6TibCMJKbgTXIbE/view?usp=drive_link).
-- After installing the build, drag and drop the files in `/frontend/src/public/bt/`
+- After installing the build, drag and drop the files in `/frontend/public/build/`
   
   > **__Note__:** The reason this is not included in the repo is because simply github doesn't accept large files, and build files are usually big.
 
