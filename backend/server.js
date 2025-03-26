@@ -51,9 +51,11 @@ import botRoute from "./routes/botRoute.js";
 const app = express();
 
 // Middleware order is crucial
+app.use(corsMiddleware);
+
 app.use(cookieParser());
+
 app.use(express.json());
-app.use(corsMiddleware); // Now using proper middleware
 
 // Routes
 app.use("/", records);
