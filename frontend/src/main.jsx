@@ -1,68 +1,3 @@
-// import React from "react";
-// import ReactDOM from "react-dom/client";
-// import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-// import App from "./App";
-// import { PlayProvider } from "./contexts/Play";
-// import "./index.css";
-// import AnimatedCursor from "react-animated-cursor"
-
-// import NotFoundPage from "./pages/NotFoundPage.jsx"
-// import Home from "./pages/Home.jsx";
-// import Login from "./pages/Login.jsx";
-// import ProtectedRoute from "./elements/ProtectedRoute.jsx";
-// import AvatarCreation from "./pages/AvatarCreation.jsx";
-// import CareerFair from "./pages/CareerFair.jsx";
-// import DashboardLayoutBasic from "./pages/DashboardLayoutBasic.jsx"
-
-// const router = createBrowserRouter([
-//   {
-//     path: '/',
-//     element: (
-//       <PlayProvider>
-//         <App />
-//       </PlayProvider>
-//     ),
-//     errorElement: <NotFoundPage />,
-//   },
-//   {
-//     path: '/home',
-//     element: (
-//       <ProtectedRoute>
-//         <Home />
-//       </ProtectedRoute>
-//     ),
-//     errorElement: <NotFoundPage />
-//   },
-//   {
-//     path: '/avatar-creation',
-//     element: (
-//       <ProtectedRoute>
-//         <AvatarCreation />
-//       </ProtectedRoute>
-//     ),
-//     errorElement: <NotFoundPage />
-//   },
-//   {
-//     path: '/career-fair',
-//     element: (
-//       <ProtectedRoute>
-//         <CareerFair />
-//       </ProtectedRoute>
-//     ),
-//     errorElement: <NotFoundPage />
-//   },
-//   {
-//     path: '/test',
-//     element: <DashboardLayoutBasic />
-//   }
-// ]);
-
-// ReactDOM.createRoot(document.getElementById("root")).render(
-//   <React.StrictMode>
-//     <RouterProvider router={router} />
-//   </React.StrictMode>
-// );
-
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -80,6 +15,44 @@ import Layout from "./layout/Dashboard.jsx";
 import JobApplications from "./pages/JobApplications.jsx";
 
 import { pdfjs } from 'react-pdf';
+
+
+const preloadWebGLAssets = () => {
+  if (typeof window !== 'undefined') {
+    // Preload critical WebGL assets
+    const preloadAssets = async () => {
+      try {
+        await Promise.all([
+          fetch('/build/webGL.loader.js'),
+          fetch('/build/webGL.framework.js'),
+          fetch('/build/webGL.data'),
+          fetch('/build/webGL.wasm')
+        ]);
+        console.log('WebGL assets preloaded');
+      } catch (error) {
+        console.error('Preloading failed:', error);
+      }
+    };
+
+    // Start preloading immediately
+    preloadAssets();
+
+    // Additional optimization: Preconnect to origins
+    const preconnect = (url) => {
+      const link = document.createElement('link');
+      link.rel = 'preconnect';
+      link.href = url;
+      document.head.appendChild(link);
+    };
+
+    preconnect('https://nexusplus-api.vercel.app');
+    preconnect('https://*.readyplayer.me');
+  }
+};
+
+// Execute before ReactDOM render
+preloadWebGLAssets();
+
 
 // Set the worker source using a CDN (recommended for simplicity)
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
