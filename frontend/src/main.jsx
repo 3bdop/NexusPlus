@@ -13,6 +13,9 @@ import NotFoundPage from "./pages/NotFoundPage.jsx";
 import Dashboarddd from "./pages/Dashboarddd.jsx";
 import Layout from "./layout/Dashboard.jsx";
 import JobApplications from "./pages/JobApplications.jsx";
+import Events from "./pages/Events.jsx";
+import './styles/input.css'
+
 
 import { pdfjs } from 'react-pdf';
 
@@ -108,7 +111,15 @@ const router = createBrowserRouter([
                 <AvatarCreation />
               </ProtectedRoute>
             )
-          }
+          },
+          {
+            path: 'events',
+            element: (
+              <ProtectedRoute>
+                <Events />
+              </ProtectedRoute>
+            ),
+          },
         ]
       }
     ]
