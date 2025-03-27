@@ -175,7 +175,7 @@ router.post('/api/register', async (req, res) => {
             return res.status(400).json({ message: "Wallet is already registered." });
         }
         const gAvatarurl = 'https://models.readyplayer.me/67e1544a7f65c63ac72f55d6.glb'
-        if (gender == 'girl') {
+        if (gender == 'female') {
             gAvatarurl = "https://models.readyplayer.me/67228d2ba754a4d51bc05336.glb"
         }
 
