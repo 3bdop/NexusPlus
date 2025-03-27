@@ -62,8 +62,8 @@ export default function Dashboarddd() {
             <span style={{
                 zIndex: 1, textAlign: 'center'
             }}>
-                <h1 variant="h4" style={{
-                    color: 'white', zIndex: 1, fontFamily: "system-ui",
+                <h1 style={{
+                    color: 'white', zIndex: 1, fontFamily: "system-ui", fontSize: 60
                 }} >
                     <TextGenerateEffect elements={[
                         'Welcome ',
