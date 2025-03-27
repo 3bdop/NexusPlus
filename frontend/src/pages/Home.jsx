@@ -17,9 +17,11 @@ import ActionProvider from '../bot/ActionProvider';
 import MessageParser from '../bot/MessageParser';
 import '../bot/ChatbotStyle.css'
 
-import { apiClient } from '../api/client';
+import axios from 'axios';
 import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
 import WavyBackground from '../components/ui/wavy-background';
+import { MenuOpen } from '@mui/icons-material';
+import { apiClient } from '../api/client';
 
 
 const BRANDING = {
@@ -84,9 +86,10 @@ const Theme = createTheme({
             styleOverrides: {
                 paper: {
                     backgroundColor: '#1A1A1AFF',
-                },
-            },
-        },
+
+                }
+            }
+        }
     },
 });
 
@@ -110,7 +113,7 @@ export default function Home({ role }) {
     const handleLogout = async () => {
         handleCloseUserMenu(); // Close menu first
         try {
-            const res = await apiClient.post(`/api/logout`, {}, {
+            const res = await apiClient.post('/api/logout', {}, {
                 withCredentials: true
             });
             if (res.status === 200) {
@@ -135,10 +138,22 @@ export default function Home({ role }) {
             icon: <DashboardIcon />,
         },
         {
-            segment: 'career-fair',
-            title: 'Join Event',
+            segment: 'dashboard/events',
+            title: 'Events',
             icon: <StadiumTwoToneIcon />,
+            children: [
+                {
+                    segment: '../../career-fair',
+                    title: 'Career Fair',
+                }
+            ]
         },
+
+        // {
+        //     segment: 'career-fair',
+        //     title: 'Join Event',
+        //     icon: <StadiumTwoToneIcon />,
+        // },
         {
             segment: 'dashboard/avatar-creation',
             title: 'Avatar Customization',
