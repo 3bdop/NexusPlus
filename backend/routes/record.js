@@ -174,9 +174,9 @@ router.post('/api/register', async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: "Wallet is already registered." });
         }
-        let avatarurl = 'https://models.readyplayer.me/67e1544a7f65c63ac72f55d6.glb'
+        let avatarUrl = 'https://models.readyplayer.me/67e1544a7f65c63ac72f55d6.glb'
         if (gender.toLowerCase() == 'female') {
-            avatarurl = "https://models.readyplayer.me/67228d2ba754a4d51bc05336.glb"
+            avatarUrl = "https://models.readyplayer.me/67228d2ba754a4d51bc05336.glb"
         }
 
         await usersCollection.insertOne(
