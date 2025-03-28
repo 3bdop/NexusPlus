@@ -71,7 +71,7 @@ export default function JobApplications() {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom>
-        Most Recommended Applicants
+        Best Recommended Candidates
       </Typography>
       <TableContainer sx={{ border: 1, borderRadius: 3 }}>
         <Table >
@@ -81,7 +81,7 @@ export default function JobApplications() {
               {/* <TableCell align='center'>Position</TableCell> */}
               <TableCell align='center'>Resume</TableCell>
               <TableCell align='center'>Job Position</TableCell>
-              <TableCell align='center'>Approve</TableCell>
+              <TableCell align='center'>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
