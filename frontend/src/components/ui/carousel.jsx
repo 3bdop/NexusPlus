@@ -58,7 +58,7 @@ const Slide = ({
     const { src, button, title } = slide;
 
     return (
-        <div className="[perspective:1200px] [transform-style:preserve-3d]">
+        <div className="[perspective:tw-1200px] [transform-style:tw-preserve-3d]">
             <li
                 ref={slideRef}
                 className="tw-flex tw-flex-1 tw-flex-col tw-items-center tw-justify-center tw-relative tw-text-center tw-text-white tw-opacity-100 tw-transition-all tw-duration-300 tw-ease-in-out tw-w-[70vmin] tw-h-[70vmin] tw-mx-[4vmin] tw-z-10 "
@@ -74,7 +74,7 @@ const Slide = ({
                     transformOrigin: "bottom",
                 }}>
                 <div
-                    className="tw-absolute tw-top-0 tw-left-0 tw-w-full tw-h-full tw-bg-[#1D1F2F] tw-rounded-[5%] tw-overflow-hidden tw-transition-all tw-duration-150 tw-ease-out"
+                    className="tw-absolute tw-top-0 tw-left-0 tw-w-full tw-h-full tw-bg-[#1D1F2F] tw-rounded-[3%] tw-overflow-hidden tw-transition-all tw-duration-150 tw-ease-out"
                     style={{
                         transform:
                             current === index
@@ -97,14 +97,14 @@ const Slide = ({
                 </div>
 
                 <article
-                    className={`tw-relative tw-p-[4vmin] tw-transition-opacity tw-duration-1000 tw-ease-in-out ${current === index ? "tw-opacity-100 visible" : "tw-opacity-0 invisible"
+                    className={`tw-relative tw-p-[4vmin] tw-transition-opacity tw-duration-1000 tw-ease-in-out ${current === index ? "tw-opacity-100 tw-visible" : "tw-opacity-0 tw-invisible"
                         }`}>
-                    <h2 className="tw-text-lg tw-md:text-2xl tw-lg:text-4xl tw-font-semibold  tw-relative">
+                    <h2 className="tw-text-lg md:tw-text-2xl lg:tw-text-4xl tw-font-semibold  tw-relative">
                         {title}
                     </h2>
                     <div className="tw-flex tw-justify-center">
                         <button
-                            className="tw-mt-6  tw-px-4 tw-py-2 tw-w-fit tw-mx-auto tw-sm:text-sm tw-text-black tw-bg-white tw-h-12 tw-border tw-border-transparent tw-text-xs tw-flex tw-justify-center tw-items-center tw-rounded-2xl tw-hover:shadow-lg tw-transition tw-duration-200 tw-shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]"
+                            className="tw-mt-6  tw-px-4 tw-py-2 tw-w-fit tw-mx-auto sm:tw-text-sm tw-text-black tw-bg-white tw-h-12 tw-border tw-border-transparent tw-text-xs tw-flex tw-justify-center tw-items-center tw-rounded-2xl hover:tw-shadow-lg tw-transition tw-duration-200 tw-shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]"
                             onClick={() => onButtonClick(slide.path)}
                         >
                             {/* {button} */}
@@ -124,11 +124,11 @@ const CarouselControl = ({
 }) => {
     return (
         <button
-            className={`tw-w-10 h-10 tw-flex tw-items-center tw-mx-2 tw-justify-center tw-bg-neutral-200 tw-dark:bg-neutral-800 tw-border-3 tw-border-transparent tw-rounded-full tw-focus:border-[#6D64F7] tw-focus:outline-none tw-hover:-translate-y-0.5 tw-active:translate-y-0.5 tw-transition tw-duration-200 ${type === "previous" ? "rotate-180" : ""
+            className={`tw-w-10 tw-h-10 tw-flex tw-items-center tw-mx-2 tw-justify-center tw-bg-neutral-200 dark:tw-bg-neutral-800 tw-border-3 tw-border-transparent tw-rounded-full focus:tw-border-[#6D64F7] focus:tw-outline-none hover:tw--translate-y-0.5 active:tw-translate-y-0.5 tw-transition tw-duration-200 ${type === "previous" ? "rotate-180" : ""
                 }`}
             title={title}
             onClick={handleClick}>
-            <IconArrowNarrowRight className="tw-text-neutral-600 tw-dark:text-neutral-200" />
+            <IconArrowNarrowRight className="tw-text-neutral-600 dark:tw-text-neutral-200" />
         </button>
     );
 };
