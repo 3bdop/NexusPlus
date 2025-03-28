@@ -8,6 +8,7 @@ import { apiClient } from '../api/client';
 import styled, { keyframes } from 'styled-components';
 import { TextGenerateEffect } from '../components/ui/text-generate-effect';
 import { TextHoverEffect } from '../components/ui/text-hover-effect';
+import { FlipWords } from '../components/ui/flip-words';
 
 export default function Dashboarddd() {
     const [avatarUrl, setAvatarUrl] = useState(null);
@@ -57,16 +58,18 @@ export default function Dashboarddd() {
         // return String(val).charAt(0).toUpperCase() + String(val).slice(1);
         setUsername(String(val).charAt(0).toUpperCase() + String(val).slice(1));
     }
+    const words = ['Hello', 'مرحباً ', 'Hola', 'Bonjour', 'Hallo', 'Ciao', 'こんにちは', '你好', '안녕하세요', 'Привет']
+
     return (
         <>
             <span style={{
                 zIndex: 1, textAlign: 'center'
             }}>
                 <h1 style={{
-                    color: 'white', zIndex: 1, fontFamily: "system-ui", fontSize: 60
+                    color: 'white', zIndex: 1, fontFamily: "sans-serif", fontSize: 60
                 }} >
                     <TextGenerateEffect elements={[
-                        'Welcome ',
+                        <FlipWords words={words} />,
                         username || '', // Ensure username exists
                         <img
                             key="wave-emoji"
