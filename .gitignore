@@ -1,0 +1,48 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+#Ignore env variables
+# .env
+
+#Ignore WebGL build
+frontend/public/build/*
+frontend/public/bt
+frontend/public/CV/*
+
+#ChatBot ignored files
+backend/bot/vector-index/*
+
+#recommendation ignored files/folders
+.venv/
+__pycache__/
+
+#ignoring uploads
+uploads/
+
+#ignoring data
+data/
+
+#ignoring csv files
+*csv
