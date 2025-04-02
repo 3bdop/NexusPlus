@@ -60,6 +60,18 @@ export default function Dashboarddd() {
     }
     const words = ['Hello', 'مرحباً ', 'Hola', 'Bonjour', 'Hallo', 'Ciao', 'こんにちは', '你好', '안녕하세요', 'Привет']
 
+    // const words = [
+    //     ` مرحباً ${username}`,
+    //     ` Hello ${username}`,
+    //     `Hola ${username}`,
+    //     `Bonjour ${username}`,
+    //     `Hallo ${username}`,
+    //     `Ciao ${username}`,
+    //     `こんにちは ${username}`,
+    //     `你好 ${username}`,
+    //     `안녕하세요 ${username}`,
+    //     `Привет ${username}`
+    // ];
     return (
         <>
             <span style={{
@@ -70,7 +82,7 @@ export default function Dashboarddd() {
                 }} >
                     <TextGenerateEffect elements={[
                         <FlipWords words={words} />,
-                        username || '', // Ensure username exists
+                        username || '',
                         <img
                             key="wave-emoji"
                             src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f44b/512.gif"
