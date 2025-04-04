@@ -9,7 +9,7 @@ import { createTheme } from '@mui/material/styles';
 import { Box, Tooltip, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import SmartToyTwoToneIcon from '@mui/icons-material/SmartToyTwoTone';
 import styled from 'styled-components'
-
+import AnalyticsTwoToneIcon from '@mui/icons-material/AnalyticsTwoTone';
 import Chatbot from 'react-chatbot-kit';
 import 'react-chatbot-kit/build/main.css';
 import config from '../bot/config'
@@ -149,27 +149,28 @@ export default function Home({ role }) {
             ]
         },
 
-        // {
-        //     segment: 'career-fair',
-        //     title: 'Join Event',
-        //     icon: <StadiumTwoToneIcon />,
-        // },
         {
             segment: 'dashboard/avatar-creation',
             title: 'Avatar Customization',
             icon: <AutoAwesomeTwoToneIcon />,
         },
-        role === 'employer'
+        role === 'admin'
             ? {
-                segment: 'dashboard/job-applications',
-                title: 'Job Applications',
-                icon: <WorkTwoToneIcon />,
+                segment: 'dashboard/insights',
+                title: 'Admin Insights',
+                icon: <AnalyticsTwoToneIcon />, // Make sure to import this icon
             }
-            : {
-                segment: 'dashboard/recommended-jobs',
-                title: 'Recommended Jobs',
-                icon: <WorkTwoToneIcon />,
-            },
+            : role === 'employer'
+                ? {
+                    segment: 'dashboard/job-applications',
+                    title: 'Job Applications',
+                    icon: <WorkTwoToneIcon />,
+                }
+                : {
+                    segment: 'dashboard/recommended-jobs',
+                    title: 'Recommended Jobs',
+                    icon: <WorkTwoToneIcon />,
+                }
     ];
 
     const ChatButton = styled.button`
