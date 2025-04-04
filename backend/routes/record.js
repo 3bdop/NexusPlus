@@ -310,4 +310,54 @@ router.post("/api/upload-cv", upload.single('cv_file'), async (req, res) => {
     }
 });
 
+// Get all jobs offered by the employer's company
+router.get("/api/company/jobs/applications", async (req, res) => {
+    try {
+        const userId = req.query.user_id;
+        if (!userId) {
+            return res.status(400).json({ message: "User ID is required" });
+        }
+
+        // 1. Get the employer's company_id from the users collection
+        const usersCollection = db.collection("users");
+        const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+        if (!user) {
+            return res.status(404).json({ detail: "User not found" });
+        }
+
+        // Check if user is an employer
+        if (user.role !== "employer") {
+            return res.status(403).json({ detail: "Only employers can access company jobs" });
+        }
+
+        if (!user.company_id) {
+            return res.status(400).json({ detail: "User is not associated with any company" });
+        }
+
+        const company_id = user.company_id;
+
+        // 2. Get all jobs from this company
+        const jobsCollection = db.collection("job");
+        const company_jobs = await jobsCollection.find({ company_id: company_id }).toArray();
+
+        // 3. Format the jobs data
+        const jobs = company_jobs.map(job => {
+            return {
+                job_id: job._id.toString(),
+                title: job.title || "N/A",
+                description: job.description || "N/A",
+                experience: job.experience || "N/A",
+                company: job.company || "N/A",
+                applicants_count: (job.applicants || []).length
+            };
+        });
+
+        res.status(200).json({ status: "success", jobs: jobs });
+    } catch (error) {
+        console.error("Error fetching company jobs:", error);
+        res.status(500).json({ detail: error.message || "Internal server error" });
+    }
+});
+
 export default router;

@@ -2,63 +2,67 @@ import {
   Box, Typography, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow, Link,
   Dialog, DialogTitle, DialogContent, IconButton,
-  TextField, Select, MenuItem, InputAdornment, Button
+  TextField, Select, MenuItem, InputAdornment, Button,
+  CircularProgress, Alert, Card, CardContent, CardActions, Chip
 } from '@mui/material';
 import {
   Close, ZoomIn, ZoomOut,
   ChevronLeft, ChevronRight, CheckCircle,
-  Cancel
+  Cancel, Work, People
 } from '@mui/icons-material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Document, Page } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import { border } from '@mui/system';
+import api from '../services/api';
 
-export default function JobApplications() {
-  // const [applications, setApplications] = React.useState([]);
-  const applications = [
-    {
-      name: "mehdi",
-      // position: "Data analyst",
-      cv: '/CV/1mb.pdf',
-      job: 'AI Engineer',
-    },
-    {
-      name: "abood",
-      // position: "Data analyst",
-      cv: '../../public/CV/Abdulrahman Muhanna 60101806.pdf',
-      job: 'Software Developer',
-    },
-    {
-      name: "ali",
-      // position: "Data analyst",
-      cv: '/CV/1mb.pdf',
-      job: 'Media and production',
-    },
-  ]
-  // React.useEffect(() => {
-  //   // Fetch employer-specific data
-  //   axios.get('/api/applications')
-  //     .then(res => setApplications(res.data))
-  //     .catch(console.error);
-  // }, []);
+export default function CompanyJobs() {
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedPdf, setSelectedPdf] = useState(null);
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [scale, setScale] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [pdfLoading, setPdfLoading] = useState(true);
+  const [pdfError, setPdfError] = useState(null);
+
+  useEffect(() => {
+    // Get the current user ID from localStorage
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      setError('User not logged in');
+      setLoading(false);
+      return;
+    }
+
+    // Fetch employer-specific jobs
+    api.get(`/api/company/jobs/applications?user_id=${userId}`)
+      .then(res => {
+        if (res.data.status === 'success') {
+          setJobs(res.data.jobs);
+        } else {
+          setError('Error fetching company jobs');
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching company jobs:', err);
+        setError(err.response?.data?.detail || 'Failed to fetch company jobs');
+        setLoading(false);
+      });
+  }, []);
 
   function onDocumentLoadSuccess({ numPages }) {
-    setLoading(false);
+    setPdfLoading(false);
     setNumPages(numPages);
     setPageNumber(1);
   }
 
   function onDocumentLoadError(error) {
-    setLoading(false);
-    setError(error);
+    setPdfLoading(false);
+    setPdfError(error);
   }
 
   function changePage(offset) {
@@ -68,66 +72,78 @@ export default function JobApplications() {
   function changeScale(newScale) {
     setScale(Math.min(Math.max(newScale, 0.5), 3));
   }
+
+  const handleApprove = (applicationId) => {
+    // Placeholder for approval logic
+    console.log(`Approved application: ${applicationId}`);
+    // You would typically call an API here to update the application status
+  };
+
+  const handleReject = (applicationId) => {
+    // Placeholder for rejection logic
+    console.log(`Rejected application: ${applicationId}`);
+    // You would typically call an API here to update the application status
+  };
+
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom>
-        Most Recommended Applicants
+        Jobs Posted by Your Company
       </Typography>
-      <TableContainer sx={{ border: 1, borderRadius: 3 }}>
-        <Table >
-          <TableHead >
-            <TableRow sx={{ background: '#63636363' }}>
-              <TableCell align='center'>Name</TableCell>
-              {/* <TableCell align='center'>Position</TableCell> */}
-              <TableCell align='center'>Resume</TableCell>
-              <TableCell align='center'>Job Position</TableCell>
-              <TableCell align='center'>Approve</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {applications.map((application) => (
-              <TableRow key={application.id}>
-                <TableCell align='center'>{application.name}</TableCell>
-                {/* <TableCell align='center'>{application.position}</TableCell> */}
-                <TableCell align='center'>
-                  <Link
-                    component="button"
-                    onClick={() => setSelectedPdf(application.cv)}
-                    sx={{ cursor: 'pointer', color: 'lightgreen' }}
-                  >
-                    View Resume
-                  </Link>
-                </TableCell>
-                <TableCell align='center'>{application.job}</TableCell>
-                <TableCell align='center'>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    startIcon={<CheckCircle />}
-                    sx={{ borderRadius: '8px', marginRight: '8px' }}
-                  >
-                    Approve
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    startIcon={<Cancel />}
-                    sx={{ borderRadius: '8px' }}
-                  >
-                    Reject
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+          <CircularProgress />
+        </Box>
+      ) : error ? (
+        <Alert severity="error" sx={{ my: 2 }}>{error}</Alert>
+      ) : jobs.length === 0 ? (
+        <Alert severity="info" sx={{ my: 2 }}>No jobs found for your company</Alert>
+      ) : (
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 3 }}>
+          {jobs.map((job, index) => (
+            <Card key={index} sx={{ height: '100%', display: 'flex', flexDirection: 'column', boxShadow: 3 }}>
+              <CardContent sx={{ flexGrow: 1 }}>
+                <Typography variant="h5" component="div" gutterBottom>
+                  {job.title}
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                  <Work sx={{ mr: 1, color: 'text.secondary' }} />
+                  <Typography variant="body2" color="text.secondary">
+                    Experience: {job.experience}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <People sx={{ mr: 1, color: 'text.secondary' }} />
+                  <Typography variant="body2" color="text.secondary">
+                    Applicants: {job.applicants_count}
+                  </Typography>
+                </Box>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  {job.description.length > 150 ? `${job.description.substring(0, 150)}...` : job.description}
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                  sx={{ borderRadius: '8px', ml: 1, mb: 1 }}
+                  onClick={() => console.log(`View applications for job: ${job.job_id}`)}
+                >
+                  View Applications ({job.applicants_count})
+                </Button>
+              </CardActions>
+            </Card>
+          ))}
+        </Box>
+      )}
+
       {/* PDF Viewer Modal */}
       <Dialog
         open={Boolean(selectedPdf)}
         onClose={() => setSelectedPdf(null)}
         maxWidth="lg"
-
         sx={{ '& .MuiDialog-paper': { height: '100vh' } }}
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -187,8 +203,8 @@ export default function JobApplications() {
             display: 'flex',
             justifyContent: 'center'
           }}>
-            {loading && <Typography>Loading PDF...</Typography>}
-            {error && <Typography color="error">Failed to load PDF</Typography>}
+            {pdfLoading && <Typography>Loading PDF...</Typography>}
+            {pdfError && <Typography color="error">Failed to load PDF</Typography>}
 
             <Document
               file={selectedPdf}
@@ -199,8 +215,6 @@ export default function JobApplications() {
               <Page
                 pageNumber={pageNumber}
                 width={500 * scale}
-                renderAnnotationLayer={false}
-                renderTextLayer={false}
               />
             </Document>
           </Box>

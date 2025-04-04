@@ -121,14 +121,22 @@ export default function RecommendedJobs() {
             }
             const sessionData = await sessionResponse.json();
             const userId = sessionData.userId;
+            
             const formData = new FormData();
             formData.append('cv_file', cvFile);
             formData.append('experience_level', experienceLevel);
             formData.append('user_id', userId);
+
             const response = await fetch('http://localhost:8000/api/recommendations', {
                 method: 'POST',
                 body: formData,
+                // Add these headers and credentials
+                credentials: 'include',
+                headers: {
+                    'Accept': 'application/json',
+                },
             });
+
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(errorText || 'Error fetching recommendations');
@@ -142,6 +150,7 @@ export default function RecommendedJobs() {
             }
         } catch (error) {
             setErrorMessage(error.message);
+            console.error('Submission error:', error);
         } finally {
             setSubmitting(false);
         }

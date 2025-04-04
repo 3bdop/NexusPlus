@@ -21,7 +21,7 @@ app = FastAPI(title="Job Recommendation API")
 # Configure CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change this in production
+    allow_origins=["*"],  # Replace * with your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -41,11 +41,15 @@ async def get_recommendations(
     cv_path: Optional[str] = Form(None)
 ):
     try:
+        # Add some basic validation
+        if not cv_file.filename.endswith('.pdf'):
+            raise HTTPException(status_code=400, detail="Only PDF files are allowed")
+
         # Process the CV
         cv_bytes = await cv_file.read()
         cv_text = extract_text_from_pdf(cv_bytes)
         processed_cv_text = process_cv_text(cv_text)
-        
+
         # Extract skills and create embedding
         cv_skills = extract_skills_with_gemini(cv_text, GEMINI_API_KEY)
         cv_embedding = recommender.create_cv_embedding(processed_cv_text)
@@ -62,7 +66,8 @@ async def get_recommendations(
             min_similarity=0.3,
             content_weight=0.7,
             experience_weight=0.2,
-            skills_weight=0.1
+            skills_weight=0.1,
+            db=db
         )
 
         # Extract job IDs from recommendations and save them for the user
@@ -79,6 +84,7 @@ async def get_recommendations(
         return response_data
 
     except Exception as e:
+        print(f"Error processing recommendation request: {str(e)}")  # Add logging
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/recommendations")
@@ -95,15 +101,16 @@ async def get_existing_recommendations(user_id: str):
         recommended_job_ids = user_doc.get("recommended_jobs", [])
         if not recommended_job_ids:
             return {"status": "no recommendations", "recommendations": []}
-        
+
         # Retrieve job details with applied flag using current user id
-        job_details_dict = get_job_details_by_ids(jobs_collection, recommended_job_ids, current_user_id=user_id)
+        # Pass the db object to look up company names from the company collection
+        job_details_dict = get_job_details_by_ids(jobs_collection, recommended_job_ids, current_user_id=user_id, db=db)
         recommendations = [
             job_details_dict[job_id]
             for job_id in recommended_job_ids
             if job_id in job_details_dict
         ]
-        
+
         return {"status": "success", "recommendations": recommendations}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -125,3 +132,7 @@ async def apply_to_job_endpoint(job_id: str, user_id: str):
 @app.get("/api/health")
 async def health_check():
     return {"status": "healthy"}
+
+
+
+

@@ -21,18 +21,18 @@ class JobRecommender:
         self.jobs_collection = jobs_collection
         self.job_embeddings = get_all_job_embeddings(jobs_collection)
         print(f"Loaded {len(self.job_embeddings)} jobs from database")
-        
+
     def create_cv_embedding(self, cv_text: str) -> np.ndarray:
         """Create embedding from CV text using the same model as jobs."""
         return get_cv_embedding(cv_text)
-    
+
     def calculate_experience_match_score(self, user_experience: str, job_experience: str) -> float:
         """
         Calculate a match score between user experience level and job required experience.
         """
         user_exp = user_experience.lower().strip()
         job_exp = job_experience.lower().strip()
-        
+
         # Levels for consistent comparisons
         experience_levels = {
             "entry level": 1,
@@ -41,10 +41,10 @@ class JobRecommender:
             "senior": 4,
             "executive": 5
         }
-        
+
         user_level = experience_levels.get(user_exp, 0)
         job_level = experience_levels.get(job_exp, 0)
-        
+
         if user_level == 0 or job_level == 0:
             return 0.5  # Neutral if unknown
         diff = abs(user_level - job_level)
@@ -56,18 +56,18 @@ class JobRecommender:
             return 0.2
         else:
             return 0.1
-    
+
     def calculate_skills_match_score(self, user_skills: list, job_skills: list) -> float:
         """
         Calculate similarity score between user skills and job required skills.
         """
         if not user_skills or not job_skills:
             return 0.5
-        
+
         user_skills_norm = [s.lower().strip() for s in user_skills]
         job_skills_norm = [s.lower().strip() for s in job_skills]
         matching_skills = set(user_skills_norm) & set(job_skills_norm)
-        
+
         job_coverage = len(matching_skills) / len(job_skills_norm)
         user_coverage = len(matching_skills) / len(user_skills_norm)
 
@@ -82,14 +82,15 @@ class JobRecommender:
         min_similarity: float = 0.5,
         content_weight: float = 0.7,
         experience_weight: float = 0.2,
-        skills_weight: float = 0.1
+        skills_weight: float = 0.1,
+        db = None
     ) -> List[Dict]:
         """
         Get job recommendations based on CV embedding, experience level, and skills.
         """
         if not self.job_embeddings or self.jobs_collection is None:
             return []
-        
+
         job_vectors = np.array([job['embedding'] for job in self.job_embeddings])
         content_similarities = cosine_similarity([cv_embedding], job_vectors)[0]
 
@@ -98,7 +99,7 @@ class JobRecommender:
             job = self.job_embeddings[idx]
             # Experience
             experience_score = self.calculate_experience_match_score(
-                user_experience, 
+                user_experience,
                 job.get('experience', 'entry level')
             )
             # Skills
@@ -111,7 +112,7 @@ class JobRecommender:
                 (skills_score * skills_weight)
             )
             final_scores.append(final_score)
-        
+
         final_scores = np.array(final_scores)
         top_indices = np.argsort(final_scores)[-top_k:][::-1]
 
@@ -127,7 +128,7 @@ class JobRecommender:
 
             # Re-fetch the job skills for matching
             job_skills = get_job_skills_by_ids(self.jobs_collection, [job_id]).get(job_id, [])
-            
+
             recommendations.append({
                 'job_id': job_id,
                 'content_similarity': float(content_similarities[idx]),
@@ -148,7 +149,7 @@ class JobRecommender:
         # Add job details
         if recommendations:
             try:
-                details = get_job_details_by_ids(self.jobs_collection, job_ids_to_fetch)
+                details = get_job_details_by_ids(self.jobs_collection, job_ids_to_fetch, db=db)
                 for rec in recommendations:
                     job_id = rec['job_id']
                     if job_id in details:
@@ -160,5 +161,5 @@ class JobRecommender:
                         })
             except Exception as e:
                 print(f"Warning: Could not fetch job details: {e}")
-        
+
         return recommendations
