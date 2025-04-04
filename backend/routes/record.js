@@ -310,6 +310,136 @@ router.post("/api/upload-cv", upload.single('cv_file'), async (req, res) => {
     }
 });
 
+// Serve CV files
+router.get("/api/cv/:userId", async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        if (!userId) {
+            return res.status(400).send("User ID is required.");
+        }
+
+        // Get the user to check if they have a CV
+        const usersCollection = db.collection("users");
+        const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+        if (!user) {
+            return res.status(404).send("User not found.");
+        }
+
+        if (!user.cvPath) {
+            return res.status(404).send("CV not found for this user.");
+        }
+
+        // Send the CV file
+        res.sendFile(path.resolve(user.cvPath));
+    } catch (err) {
+        console.error("Error serving CV file:", err);
+        res.status(500).send("An error occurred while serving the CV file.");
+    }
+});
+
+// Get job applicants
+router.get("/api/job/:jobId/applicants", async (req, res) => {
+    try {
+        const jobId = req.params.jobId;
+        if (!jobId) {
+            return res.status(400).json({ message: "Job ID is required" });
+        }
+
+        // Get the job to check if it exists and get applicants
+        const jobsCollection = db.collection("job");
+        const job = await jobsCollection.findOne({ _id: new ObjectId(jobId) });
+
+        if (!job) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        const applicants = job.applicants || [];
+        if (applicants.length === 0) {
+            return res.status(200).json({
+                job_id: jobId,
+                job_title: job.title || "Unknown Job",
+                applicant_count: 0,
+                applicants: []
+            });
+        }
+
+        // Get applicant details
+        const usersCollection = db.collection("users");
+        const applicantDetails = [];
+
+        for (const applicantId of applicants) {
+            const user = await usersCollection.findOne(
+                { _id: applicantId },
+                { projection: { _id: 1, username: 1, email: 1, experience: 1, skills: 1, cvPath: 1 } }
+            );
+
+            if (user) {
+                applicantDetails.push({
+                    id: user._id.toString(),
+                    name: user.username || "Unknown",
+                    email: user.email || "No email",
+                    experience: user.experience || "Not specified",
+                    skills: user.skills || [],
+                    has_cv: !!user.cvPath
+                });
+            }
+        }
+
+        return res.status(200).json({
+            job_id: jobId,
+            job_title: job.title || "Unknown Job",
+            applicant_count: applicantDetails.length,
+            applicants: applicantDetails
+        });
+    } catch (error) {
+        console.error("Error fetching job applicants:", error);
+        res.status(500).json({ message: error.message || "Internal server error" });
+    }
+});
+
+// Update application status
+router.post("/api/job/:jobId/applicant/:applicantId/status", async (req, res) => {
+    try {
+        const { jobId, applicantId } = req.params;
+        const { status } = req.body; // 'accepted' or 'rejected'
+
+        if (!jobId || !applicantId || !status) {
+            return res.status(400).json({ message: "Job ID, applicant ID, and status are required" });
+        }
+
+        if (status !== 'accepted' && status !== 'rejected') {
+            return res.status(400).json({ message: "Status must be 'accepted' or 'rejected'" });
+        }
+
+        // Update the application status in the job document
+        const jobsCollection = db.collection("job");
+        const result = await jobsCollection.updateOne(
+            {
+                _id: new ObjectId(jobId),
+                applicants: new ObjectId(applicantId)
+            },
+            {
+                $set: { [`application_status.${applicantId}`]: status }
+            }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ message: "Job or applicant not found" });
+        }
+
+        res.status(200).json({
+            message: `Application ${status} successfully`,
+            job_id: jobId,
+            applicant_id: applicantId,
+            status: status
+        });
+    } catch (error) {
+        console.error(`Error updating application status:`, error);
+        res.status(500).json({ message: error.message || "Internal server error" });
+    }
+});
+
 // Get all jobs offered by the employer's company
 router.get("/api/company/jobs/applications", async (req, res) => {
     try {

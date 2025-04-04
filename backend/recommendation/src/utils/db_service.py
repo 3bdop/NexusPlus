@@ -55,26 +55,71 @@ def get_job_details_by_ids(jobs_collection, job_ids: list, current_user_id: str 
 
     # Create a dictionary to store company names by company_id
     company_names = {}
-    if db:
+    if db is not None:
         # Get all unique company_ids from the jobs
         company_ids = set()
         jobs_list = list(cursor)
+        print(f"Found {len(jobs_list)} jobs to process")
         for job in jobs_list:
             if "company_id" in job and job["company_id"]:
                 company_ids.add(job["company_id"])
+                print(f"Added company_id: {job['company_id']}")
 
         # Look up company names if there are any company_ids
         if company_ids:
             try:
                 company_collection = db["company"]
+                print(f"Looking up company names for {len(company_ids)} companies")
+                company_ids_list = list(company_ids)
+                print(f"Company IDs to look up: {company_ids_list}")
+
+                # Convert string IDs to ObjectId if needed
+                object_company_ids = []
+                for company_id in company_ids_list:
+                    if isinstance(company_id, str):
+                        try:
+                            object_company_ids.append(ObjectId(company_id))
+                        except Exception as e:
+                            print(f"Error converting company_id {company_id} to ObjectId: {e}")
+                            object_company_ids.append(company_id)
+                    else:
+                        object_company_ids.append(company_id)
+
+                print(f"Converted company IDs: {object_company_ids}")
+
+                # First try with ObjectId
                 company_cursor = company_collection.find(
-                    {"_id": {"$in": list(company_ids)}},
+                    {"_id": {"$in": object_company_ids}},
                     {"_id": 1, "company_name": 1}
                 )
-                for company in company_cursor:
+
+                companies_list = list(company_cursor)
+                print(f"Found {len(companies_list)} companies with ObjectId lookup")
+
+                if not companies_list:
+                    # Try with string IDs as fallback
+                    print("Trying string ID lookup as fallback")
+                    company_cursor = company_collection.find(
+                        {"_id": {"$in": company_ids_list}},
+                        {"_id": 1, "company_name": 1}
+                    )
+                    companies_list = list(company_cursor)
+                    print(f"Found {len(companies_list)} companies with string ID lookup")
+
+                # Print all companies in the collection for debugging
+                all_companies = list(company_collection.find({}, {"_id": 1, "company_name": 1}))
+                print(f"Total companies in collection: {len(all_companies)}")
+                for company in all_companies:
+                    print(f"Company in DB: {company['_id']} -> {company.get('company_name', 'N/A')}")
+
+                for company in companies_list:
                     company_names[str(company["_id"])] = company.get("company_name", "N/A")
+                    print(f"Found company: {company['_id']} -> {company.get('company_name', 'N/A')}")
+
+                print(f"Loaded {len(company_names)} company names")
             except Exception as e:
                 logging.error(f"Error fetching company names: {e}")
+                print(f"Error fetching company names: {e}")
 
         # Reset cursor for job processing
         cursor = jobs_list
@@ -82,6 +127,7 @@ def get_job_details_by_ids(jobs_collection, job_ids: list, current_user_id: str 
     job_details = {}
     for doc in cursor:
         job_id = str(doc["_id"])
+        print(f"Processing job: {job_id}")
         applied = False
         if current_user_id:
             try:
@@ -91,10 +137,44 @@ def get_job_details_by_ids(jobs_collection, job_ids: list, current_user_id: str 
 
         # Get company name from company_names dictionary if available
         company_name = "N/A"
-        if "company_id" in doc and doc["company_id"] and str(doc["company_id"]) in company_names:
-            company_name = company_names[str(doc["company_id"])]
+        if "company_id" in doc and doc["company_id"]:
+            company_id_str = str(doc["company_id"])
+            company_id_obj = doc["company_id"]
+            print(f"Job {job_id} has company_id: {company_id_str}")
+
+            # Try to get from pre-loaded company names
+            if company_id_str in company_names:
+                company_name = company_names[company_id_str]
+                print(f"Found company name: {company_name} for job {job_id}")
+            else:
+                print(f"Company ID {company_id_str} not found in company_names dictionary")
+
+                # Try direct lookup if db is available
+                if db is not None:
+                    try:
+                        print(f"Trying direct lookup for company ID: {company_id_str}")
+                        company_collection = db["company"]
+
+                        # Try with ObjectId
+                        company = company_collection.find_one({"_id": company_id_obj})
+                        if company and "company_name" in company:
+                            company_name = company["company_name"]
+                            print(f"Direct lookup found company name: {company_name}")
+                        else:
+                            # Try with string ID
+                            company = company_collection.find_one({"_id": company_id_str})
+                            if company and "company_name" in company:
+                                company_name = company["company_name"]
+                                print(f"Direct string lookup found company name: {company_name}")
+                            else:
+                                print(f"Direct lookup failed for company ID: {company_id_str}")
+                    except Exception as e:
+                        print(f"Error in direct company lookup: {e}")
         elif "company" in doc and doc["company"]:
             company_name = doc["company"]
+            print(f"Using company field directly: {company_name} for job {job_id}")
+        else:
+            print(f"No company information found for job {job_id}")
 
         job_details[job_id] = {
             "_id": job_id,
@@ -104,6 +184,7 @@ def get_job_details_by_ids(jobs_collection, job_ids: list, current_user_id: str 
             "company": company_name,
             "applied": applied
         }
+        print(f"Added job details: {job_details[job_id]}")
     return job_details
 
 def get_job_skills_by_ids(jobs_collection, job_ids: list) -> dict:

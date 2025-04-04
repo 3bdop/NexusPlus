@@ -149,7 +149,8 @@ class JobRecommender:
         # Add job details
         if recommendations:
             try:
-                details = get_job_details_by_ids(self.jobs_collection, job_ids_to_fetch, db=db)
+                details = get_job_details_by_ids(self.jobs_collection, job_ids_to_fetch, db=db if db is not None else None)
+                print(f"Job details fetched: {details}")
                 for rec in recommendations:
                     job_id = rec['job_id']
                     if job_id in details:
@@ -159,6 +160,9 @@ class JobRecommender:
                             'company': details[job_id].get('company', 'N/A'),
                             'location': details[job_id].get('location', 'N/A')
                         })
+                        print(f"Updated recommendation for job {job_id}: {rec}")
+                    else:
+                        print(f"Warning: Job ID {job_id} not found in details")
             except Exception as e:
                 print(f"Warning: Could not fetch job details: {e}")
 

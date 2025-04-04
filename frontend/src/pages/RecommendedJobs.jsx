@@ -121,7 +121,7 @@ export default function RecommendedJobs() {
             }
             const sessionData = await sessionResponse.json();
             const userId = sessionData.userId;
-            
+
             const formData = new FormData();
             formData.append('cv_file', cvFile);
             formData.append('experience_level', experienceLevel);
@@ -142,7 +142,9 @@ export default function RecommendedJobs() {
                 throw new Error(errorText || 'Error fetching recommendations');
             }
             const data = await response.json();
+            console.log('API Response:', data);
             if (data.status === "success") {
+                console.log('Recommendations received:', data.recommendations);
                 setRecommendations(data.recommendations);
                 setActiveStep(3);
             } else {
@@ -298,43 +300,51 @@ export default function RecommendedJobs() {
             {activeStep === 3 && (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <Typography variant="h6" align="center">Recommended Jobs</Typography>
-                    {recommendations.map((job, index) => (
-                        <Accordion key={index}>
-                            <AccordionSummary
-                                expandIcon={<ArrowDownwardIcon />}
-                                aria-controls={`panel${index}-content`}
-                                id={`panel${index}-header`}
-                                style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: 2 }}
-                            >
-                                <img
-                                    src='https://upload.wikimedia.org/wikipedia/commons/b/b6/Ooredoo.svg'
-                                    alt='wikimedia.org'
-                                    style={{ width: 40 }}
-                                />
-                                <Typography component="span">
-                                    {job.title} - {job.company}
-                                </Typography>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <Typography>{job.description}</Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={() => handleApply(job._id)}
-                                        disabled={job.applied}
+                    {console.log('Rendering recommendations:', recommendations)}
+                    {recommendations.length === 0 ? (
+                        <Typography variant="body1" align="center">No recommendations found</Typography>
+                    ) : (
+                        recommendations.map((job, index) => {
+                            console.log('Rendering job:', job);
+                            return (
+                                <Accordion key={index}>
+                                    <AccordionSummary
+                                        expandIcon={<ArrowDownwardIcon />}
+                                        aria-controls={`panel${index}-content`}
+                                        id={`panel${index}-header`}
+                                        style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: 2 }}
                                     >
-                                        Apply
-                                    </Button>
-                                    {job.applied && (
-                                        <Typography sx={{ ml: 2 }} variant="subtitle2">
-                                            Applied
+                                        <img
+                                            src='https://upload.wikimedia.org/wikipedia/commons/b/b6/Ooredoo.svg'
+                                            alt='wikimedia.org'
+                                            style={{ width: 40 }}
+                                        />
+                                        <Typography component="span">
+                                            {job.title || 'No Title'} - {job.company || 'No Company'}
                                         </Typography>
-                                    )}
-                                </Box>
-                            </AccordionDetails>
-                        </Accordion>
-                    ))}
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <Typography>{job.description || 'No description available'}</Typography>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={() => handleApply(job._id)}
+                                                disabled={job.applied}
+                                            >
+                                                Apply
+                                            </Button>
+                                            {job.applied && (
+                                                <Typography sx={{ ml: 2 }} variant="subtitle2">
+                                                    Applied
+                                                </Typography>
+                                            )}
+                                        </Box>
+                                    </AccordionDetails>
+                                </Accordion>
+                            );
+                        })
+                    )}
                     <Button
                         variant="outlined"
                         color="secondary"

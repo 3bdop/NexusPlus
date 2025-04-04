@@ -67,16 +67,29 @@ async def get_recommendations(
             content_weight=0.7,
             experience_weight=0.2,
             skills_weight=0.1,
-            db=db
+            db=db if db is not None else None
         )
+
+        # Debug: Print recommendations
+        print(f"Recommendations before saving: {recommendations}")
 
         # Extract job IDs from recommendations and save them for the user
         job_ids = [rec['job_id'] for rec in recommendations]
         save_user_recommendations(db, user_id, job_ids)
 
+        # Get job details in the same format as the GET endpoint
+        job_details_dict = get_job_details_by_ids(jobs_collection, job_ids, current_user_id=user_id, db=db if db is not None else None)
+        formatted_recommendations = [
+            job_details_dict[job_id]
+            for job_id in job_ids
+            if job_id in job_details_dict
+        ]
+
+        print(f"Formatted recommendations: {formatted_recommendations}")
+
         response_data = {
             "status": "success",
-            "recommendations": recommendations
+            "recommendations": formatted_recommendations
         }
         if cv_path:
             response_data["cv_path"] = cv_path
@@ -103,13 +116,15 @@ async def get_existing_recommendations(user_id: str):
             return {"status": "no recommendations", "recommendations": []}
 
         # Retrieve job details with applied flag using current user id
-        # Pass the db object to look up company names from the company collection
-        job_details_dict = get_job_details_by_ids(jobs_collection, recommended_job_ids, current_user_id=user_id, db=db)
+        print(f"Getting job details for IDs: {recommended_job_ids}")
+        job_details_dict = get_job_details_by_ids(jobs_collection, recommended_job_ids, current_user_id=user_id, db=db if db is not None else None)
+        print(f"Job details retrieved: {job_details_dict}")
         recommendations = [
             job_details_dict[job_id]
             for job_id in recommended_job_ids
             if job_id in job_details_dict
         ]
+        print(f"Final recommendations: {recommendations}")
 
         return {"status": "success", "recommendations": recommendations}
     except Exception as e:
@@ -132,6 +147,24 @@ async def apply_to_job_endpoint(job_id: str, user_id: str):
 @app.get("/api/health")
 async def health_check():
     return {"status": "healthy"}
+
+@app.get("/api/debug/companies")
+async def debug_companies():
+    """Debug endpoint to check the company collection structure."""
+    try:
+        company_collection = db["company"]
+        companies = list(company_collection.find({}))
+
+        # Convert ObjectId to string for JSON serialization
+        formatted_companies = []
+        for company in companies:
+            company["_id"] = str(company["_id"])
+            formatted_companies.append(company)
+
+        return {"status": "success", "companies": formatted_companies, "count": len(formatted_companies)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 
