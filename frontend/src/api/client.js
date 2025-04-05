@@ -9,6 +9,7 @@ console.log(`using: ${backendUrl}`)
 
 export const apiClient = axios.create({
     baseURL: backendUrl,
+    withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
     }
