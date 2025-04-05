@@ -73,34 +73,27 @@ import bcrypt from 'bcrypt';
 
 
 router.post("/api/register", async (req, res) => {
-
-  const { wallet, username, email, gender } = req.body;
-
-  if (!wallet || !email) {
-    return res.status(400).json({ message: "Wallet and email are required." });
-  }
-
-//   // cheacks if wallet already exist
-
-//   const existingUser = await usersCollection.findOne({ wallet });
-//   if (existingUser) {
-//       return res.status(400).json({ message: "Wallet is already registered." });
-//   }
-
-
-  try {
-    // 1️⃣ Check if email exists in UDST
-    const universityUser = await db.collection("UDST").findOne({ email });
-    if (!universityUser) {
-      return res.status(403).json({ message: "Email not found in university database." });
+    const { wallet, username, email, gender } = req.body;
+  
+    if (!wallet || !email) {
+      return res.status(400).json({ message: "Wallet and email are required." });
     }
-
-    // 2️⃣ Generate OTP & expiration time
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-    const salt = await bcrypt.genSalt(10);
-    const hashedOtp = await bcrypt.hash(otp, salt);
-    
+  
+    try {
+      // 1️⃣ Check if email exists in UDST
+      const universityUser = await db.collection("UDST").findOne({ email });
+      if (!universityUser) {
+        return res.status(403).json({ message: "Email not found in university database." });
+      }
+  
+      // 2️⃣ Generate OTP & expiration time
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  
+      const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+      const salt = await bcrypt.genSalt(10);
+      const hashedOtp = await bcrypt.hash(otp, salt);
+      
+  
      // ✅ Extract role from UDST record
      const userRole = universityUser.user_role;
     
@@ -159,8 +152,6 @@ router.post("/api/verify-otp", async (req, res) => {
         return res.status(409).json({ message: "User already verified." });
       }
 
-      console.log(user.hashedOtp, user.otpExpiresAt, user)
-
       if (!user.hashedOtp || !user.otpExpiresAt) {
         return res.status(400).json({ message: "No OTP found for this user." });
       }
@@ -170,7 +161,8 @@ router.post("/api/verify-otp", async (req, res) => {
         return res.status(410).json({ message: "OTP expired. Please request a new one." });
       }
   
-      const isMatch = await bcrypt.compare(otp, user.hashedOtp);
+      const isMatch = await bcrypt.compare(otp.toString(), user.hashedOtp);
+
       if (!isMatch) {
         return res.status(401).json({ message: "Invalid OTP. Please try again." });
       }

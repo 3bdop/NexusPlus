@@ -80,17 +80,21 @@ export default function Login() {
             setMessage('Please enter the OTP.');
             return;
         }
-
+    
         try {
-            const response = await axios.post(
-                'http://localhost:5050/api/verify-otp',
-                { wallet, otp },
+            const response = await apiClient.post(
+                '/api/verify-otp',
+                { 
+                    wallet: wallet,
+                    otp: otp.toString() // Ensure OTP is string
+                },
                 { withCredentials: true }
             );
-
+    
             setMessage(response.data.message);
             await loginUser();
         } catch (err) {
+            console.error('Verification error:', err.response?.data || err);
             setMessage(err.response?.data?.message || 'OTP verification failed.');
         }
     };
