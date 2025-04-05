@@ -65,6 +65,131 @@ const upload = multer({
 // The router will be added as a middleware and will take control of requests starting with path /record.
 const router = express.Router();
 
+///AKH code
+
+// import db from "../connection.js";
+import { sendOtpEmail } from "../utils/sendEmail.js";
+import bcrypt from 'bcrypt';
+
+
+router.post("/api/register", async (req, res) => {
+  const { wallet, email } = req.body;
+
+  if (!wallet || !email) {
+    return res.status(400).json({ message: "Wallet and email are required." });
+  }
+
+  try {
+    // 1️⃣ Check if email exists in UDST
+    const universityUser = await db.collection("UDST").findOne({ email });
+    if (!universityUser) {
+      return res.status(403).json({ message: "Email not found in university database." });
+    }
+
+    // 2️⃣ Generate OTP & expiration time
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const salt = await bcrypt.genSalt(10);
+    const hashedOtp = await bcrypt.hash(otp, salt);
+
+    // 3️⃣ Store or update user in DB
+    await db.collection("users").updateOne(
+      { wallet },
+      {
+        $set: {
+          email,
+          hashedOtp,
+          otpExpiresAt,
+          isVerified: false,
+        },
+      },
+      { upsert: true }
+    );
+
+    // 4️⃣ Send the OTP via email
+    await sendOtpEmail(email, otp);
+
+    res.status(200).json({ message: "OTP sent to your email. Please verify to complete registration." });
+  } catch (err) {
+    console.error("Registration error:", err);
+    res.status(500).json({ message: "Registration failed. Please try again." });
+  }
+});
+
+
+router.post("/api/verify-otp", async (req, res) => {
+    const { wallet, otp } = req.body;
+  
+    if (!wallet || !otp) {
+      return res.status(400).json({ message: "Wallet and OTP are required." });
+    }
+  
+    try {
+      const user = await db.collection("users").findOne({ wallet });
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found." });
+      }
+  
+      if (user.isVerified) {
+        return res.status(409).json({ message: "User already verified." });
+      }
+
+      console.log(user.hashedOtp, user.otpExpiresAt, user)
+
+      if (!user.hashedOtp || !user.otpExpiresAt) {
+        return res.status(400).json({ message: "No OTP found for this user." });
+      }
+  
+      const now = new Date();
+      if (now > new Date(user.otpExpiresAt)) {
+        return res.status(410).json({ message: "OTP expired. Please request a new one." });
+      }
+  
+      const isMatch = await bcrypt.compare(otp, user.hashedOtp);
+      if (!isMatch) {
+        return res.status(401).json({ message: "Invalid OTP. Please try again." });
+      }
+  
+      // ✅ Generate a Decentralized Identifier (DID) using wallet address
+      const did = `${wallet}`;
+  
+      // ✅ Call the PDCA smart contract to issue the certificate
+      const txSuccess = await issueCertificate(did);
+      if (!txSuccess) {
+        return res.status(500).json({ message: "Certificate issuance on blockchain failed." });
+      }
+  
+      // ✅ Update MongoDB to reflect verification + cert status
+      await db.collection("users").updateOne(
+        { wallet },
+        {
+          $set: {
+            isVerified: true,
+            certificate: {
+              did,
+              issuedBy: "PDCA Authority",
+              issuedAt: Date.now(),
+              expiresAt: Date.now() + 365 * 24 * 60 * 60 * 1000, // 1 year
+              isValid: true
+            }
+          },
+          $unset: { otp: "", otpExpiresAt: "" }
+        }
+      );
+  
+      res.status(200).json({ message: "OTP verified. Certificate issued successfully." });
+  
+    } catch (err) {
+      console.error("OTP verification error:", err);
+      res.status(500).json({ message: "Verification failed. Please try again." });
+    }
+  });
+
+
+
+//AKH code
+
 
 //* This section will help you get a single record by id
 router.get("/api/get-avatarUrl/:id", async (req, res) => {
