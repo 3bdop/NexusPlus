@@ -28,9 +28,9 @@ const preloadWebGLAssets = () => {
       try {
         await Promise.all([
           fetch('/build/webGL.loader.js'),
-          fetch('/build/webGL.framework.js'),
-          fetch('/build/webGL.data'),
-          fetch('/build/webGL.wasm')
+          fetch('/build/webGL.framework.js.unityweb'),
+          fetch('/build/webGL.data.unityweb'),
+          fetch('/build/webGL.wasm.unityweb')
         ]);
         console.log('WebGL assets preloaded');
       } catch (error) {
