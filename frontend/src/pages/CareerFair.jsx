@@ -1,27 +1,34 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
-import axios from 'axios';
+import { apiClient } from "../api/client";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 function CareerFair() {
+
     // Initialize the Unity context using the hook
     const { unityProvider, sendMessage,
         loadingProgression, isLoaded,
         addEventListener, removeEventListener } = useUnityContext({
-            loaderUrl: "bt/webGL.loader.js",
-            dataUrl: "bt/webGL.data",
-            frameworkUrl: "bt/webGL.framework.js",
-            codeUrl: "bt/webGL.wasm",
+            loaderUrl: "build/webGL.loader.js",
+            dataUrl: "build/webGL.data.unityweb",
+            frameworkUrl: "build/webGL.framework.js.unityweb",
+            codeUrl: "build/webGL.wasm.unityweb",
+            webglContextAttributes: {
+                preserveDrawingBuffer: true
+            },
+            companyName: "NexusPlus",
+            productName: "NexusPlus",
+            productVersion: "1.0",
         });
     const navigate = useNavigate();
     useEffect(() => {
         async function fetchSession() {
             try {
-                const sessionResponse = await axios.get(
-                    'http://localhost:5050/api/get-session',
+                const sessionResponse = await apiClient.get(
+                    '/api/get-session',
                     { withCredentials: true } // Include cookies in the request
                 );
 
@@ -29,8 +36,8 @@ function CareerFair() {
                 const userId = sessionResponse.data.userId
 
                 // Step 2: Fetch avatar URL using userId
-                const avatarResponse = await axios.get(
-                    `http://localhost:5050/api/get-avatarUrl/${userId}`,
+                const avatarResponse = await apiClient.get(
+                    `/api/get-avatarUrl/${userId}`,
                     { withCredentials: true }
                 );
                 const fetchedAvatarUrl = avatarResponse.data.avatarUrl;
@@ -60,6 +67,21 @@ function CareerFair() {
             removeEventListener("BackToDash", handleDisconnect)
         }
     }, [addEventListener, removeEventListener, handleDisconnect])
+
+    const handlePlayerCountUpdate = useCallback((count) => {
+        // Send update to backend
+        apiClient.post('/api/addNewPlayer', { count })
+            .catch(error => console.error('Error updating player count:', error));
+    }, []);
+
+    useEffect(() => {
+        // Add event listener for player count updates
+        addEventListener("PlayerCountUpdated", handlePlayerCountUpdate);
+
+        return () => {
+            removeEventListener("PlayerCountUpdated", handlePlayerCountUpdate);
+        };
+    }, [addEventListener, removeEventListener, handlePlayerCountUpdate]);
 
     return (
         <FullScreenContainer>

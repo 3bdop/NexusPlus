@@ -4,10 +4,11 @@ import React, { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Avatar } from "@readyplayerme/visage";
 import { Sparkles } from '@react-three/drei';
-import axios from 'axios';
+import { apiClient } from '../api/client';
 import styled, { keyframes } from 'styled-components';
 import { TextGenerateEffect } from '../components/ui/text-generate-effect';
 import { TextHoverEffect } from '../components/ui/text-hover-effect';
+import { FlipWords } from '../components/ui/flip-words';
 
 export default function Dashboarddd() {
     const [avatarUrl, setAvatarUrl] = useState(null);
@@ -21,8 +22,8 @@ export default function Dashboarddd() {
         const fetchUserData = async () => {
             try {
                 // Step 1: Fetch session data to get userId
-                const sessionResponse = await axios.get(
-                    'http://localhost:5050/api/get-session',
+                const sessionResponse = await apiClient.get(
+                    '/api/get-session',
                     { withCredentials: true } // Include cookies in the request
                 );
                 capitalizeFirstLetter(sessionResponse.data.username)
@@ -32,8 +33,8 @@ export default function Dashboarddd() {
                 }
 
                 // Step 2: Fetch avatar URL using userId
-                const avatarResponse = await axios.get(
-                    `http://localhost:5050/api/get-avatarUrl/${userId}`,
+                const avatarResponse = await apiClient.get(
+                    `/api/get-avatarUrl/${userId}`,
                     { withCredentials: true }
                 );
                 localStorage.setItem("avatar_url", avatarResponse.data.avatarUrl)
@@ -57,17 +58,31 @@ export default function Dashboarddd() {
         // return String(val).charAt(0).toUpperCase() + String(val).slice(1);
         setUsername(String(val).charAt(0).toUpperCase() + String(val).slice(1));
     }
+    const words = ['Hello', 'مرحباً ', 'Hola', 'Bonjour', 'Hallo', 'Ciao', 'こんにちは', '你好', '안녕하세요', 'Привет']
+
+    // const words = [
+    //     ` مرحباً ${username}`,
+    //     ` Hello ${username}`,
+    //     `Hola ${username}`,
+    //     `Bonjour ${username}`,
+    //     `Hallo ${username}`,
+    //     `Ciao ${username}`,
+    //     `こんにちは ${username}`,
+    //     `你好 ${username}`,
+    //     `안녕하세요 ${username}`,
+    //     `Привет ${username}`
+    // ];
     return (
         <>
             <span style={{
                 zIndex: 1, textAlign: 'center'
             }}>
-                <Typography variant="h4" style={{
-                    color: 'white', zIndex: 1, fontFamily: "system-ui"
-                }}>
+                <h1 style={{
+                    color: 'white', zIndex: 1, fontFamily: "sans-serif", fontSize: 60
+                }} >
                     <TextGenerateEffect elements={[
-                        'Welcome ',
-                        username || '', // Ensure username exists
+                        <FlipWords words={words} />,
+                        username || '',
                         <img
                             key="wave-emoji"
                             src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f44b/512.gif"
@@ -80,10 +95,10 @@ export default function Dashboarddd() {
                             }}
                         />
                     ]} duration={1.5} />
-                </Typography>
-                <Typography variant="body1" style={{ color: 'whitesmoke', fontFamily: 'system-ui' }}>
+                </h1>
+                <span variant="body1" style={{ color: 'whitesmoke', fontFamily: 'system-ui' }}>
                     <TextGenerateEffect elements={[`This`, ` is your`, ` main`, ` digital-twin`]} duration={2} />
-                </Typography>
+                </span>
 
             </span>
             <Avatar

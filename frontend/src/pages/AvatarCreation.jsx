@@ -1,7 +1,7 @@
 import React from 'react';
 import { AvatarCreator } from '@readyplayerme/react-avatar-creator';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { apiClient } from '../api/client';
 import { Box, height, width } from '@mui/system';
 import Typography from '@mui/material/Typography';
 
@@ -23,8 +23,8 @@ export default function AvatarCreation() {
             console.log(`Avatar URL is: ${avatarUrl}`);
 
             // Step 1: Fetch the user's session data to get the userId
-            const sessionResponse = await axios.get(
-                'http://localhost:5050/api/get-session',
+            const sessionResponse = await apiClient.get(
+                '/api/get-session',
                 { withCredentials: true } // Include cookies for session authentication
             );
 
@@ -34,9 +34,9 @@ export default function AvatarCreation() {
             }
 
             // Step 2: Update the avatar URL for the user
-            const updateResponse = await axios.patch(
-                'http://localhost:5050/api/add-avatarId',
-                { userId, avatarUrl }, // Send userId and avatarUrl in the request body
+            const updateResponse = await apiClient.patch(
+                '/api/add-avatarId',
+                { avatarUrl }, //? Sending the new avatar Id only, and getting the userId from session
                 {
                     withCredentials: true,
                     headers: {
@@ -51,7 +51,7 @@ export default function AvatarCreation() {
             }
         } catch (error) {
             console.error('Error saving avatar:', error);
-            alert('Failed to save avatar. Please try again.'); // Show error message to the user
+            alert('Failed to save avatar. Please try again.');
         }
     };
 
@@ -100,7 +100,7 @@ export default function AvatarCreation() {
 // import React, { useEffect, useState } from 'react';
 // import { AvatarCreator } from '@readyplayerme/react-avatar-creator';
 // import { useNavigate } from 'react-router-dom';
-// import axios from 'axios';
+// import apiClient from 'apiClient';
 
 // const config = {
 //     clearCache: true,
@@ -120,8 +120,8 @@ export default function AvatarCreation() {
 //         const fetchAvatarUrl = async () => {
 //             try {
 //                 // Step 1: Fetch the user's session data to get the userId
-//                 const sessionResponse = await axios.get(
-//                     'http://localhost:5050/api/get-session',
+//                 const sessionResponse = await apiClient.get(
+//                     '/api/get-session',
 //                     { withCredentials: true } // Include cookies for session authentication
 //                 );
 
@@ -131,8 +131,8 @@ export default function AvatarCreation() {
 //                 }
 
 //                 // Step 2: Fetch the user's existing avatar URL
-//                 const avatarResponse = await axios.get(
-//                     `http://localhost:5050/api/get-avatarUrl/${userId}`,
+//                 const avatarResponse = await apiClient.get(
+//                     `/api/get-avatarUrl/${userId}`,
 //                     { withCredentials: true }
 //                 );
 
@@ -154,8 +154,8 @@ export default function AvatarCreation() {
 //             console.log(`New Avatar URL is: ${newAvatarUrl}`);
 
 //             // Step 1: Fetch the user's session data to get the userId
-//             const sessionResponse = await axios.get(
-//                 'http://localhost:5050/api/get-session',
+//             const sessionResponse = await apiClient.get(
+//                 '/api/get-session',
 //                 { withCredentials: true } // Include cookies for session authentication
 //             );
 
@@ -165,8 +165,8 @@ export default function AvatarCreation() {
 //             }
 
 //             // Step 2: Update the avatar URL for the user
-//             const updateResponse = await axios.patch(
-//                 'http://localhost:5050/api/add-avatarId',
+//             const updateResponse = await apiClient.patch(
+//                 '/api/add-avatarId',
 //                 { userId, avatarUrl: newAvatarUrl }, // Send userId and newAvatarUrl in the request body
 //                 {
 //                     withCredentials: true,

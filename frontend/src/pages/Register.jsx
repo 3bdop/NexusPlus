@@ -1,7 +1,7 @@
 import React from 'react'
 import '../index.css';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
+import { apiClient } from '../api/client';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Register() { // Changed function name to Register
@@ -17,7 +17,7 @@ export default function Register() { // Changed function name to Register
 
     const onSubmit = async (data) => {
         try {
-            const response = await axios.post('http://localhost:5050/api/register', data, {
+            const response = await apiClient.post('/api/register', data, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json'
