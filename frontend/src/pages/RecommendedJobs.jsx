@@ -18,6 +18,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 import SendIcon from '@mui/icons-material/Send';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import { apiClient } from '../api/client';
 
 const EXPERIENCE_LEVELS = {
     "Entry Level": "0-1",
@@ -47,7 +48,7 @@ export default function RecommendedJobs() {
     useEffect(() => {
         const fetchExistingRecommendations = async () => {
             try {
-                const sessionResponse = await fetch('/api/get-session', {
+                const sessionResponse = await fetch('http://localhost:5050/api/get-session', {
                     credentials: 'include'
                 });
                 if (!sessionResponse.ok) {
@@ -85,7 +86,7 @@ export default function RecommendedJobs() {
             try {
                 const formData = new FormData();
                 formData.append('cv_file', file);
-                const uploadResponse = await fetch('/api/upload-cv', {
+                const uploadResponse = await fetch('http://localhost:5050/api/upload-cv', {
                     method: 'POST',
                     credentials: 'include',
                     body: formData,
@@ -113,7 +114,7 @@ export default function RecommendedJobs() {
         setSubmitting(true);
         setErrorMessage('');
         try {
-            const sessionResponse = await fetch('/api/get-session', {
+            const sessionResponse = await fetch('http://localhost:5050/api/get-session', {
                 credentials: 'include'
             });
             if (!sessionResponse.ok) {
@@ -151,7 +152,7 @@ export default function RecommendedJobs() {
     // After a successful apply call, we update the recommendations state accordingly.
     const handleApply = async (jobId) => {
         try {
-            const sessionResponse = await fetch('/api/get-session', {
+            const sessionResponse = await fetch('http://localhost:5050/api/get-session', {
                 credentials: 'include'
             });
             if (!sessionResponse.ok) {
