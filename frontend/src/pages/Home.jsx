@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import WorkTwoToneIcon from '@mui/icons-material/WorkTwoTone';
 import StadiumTwoToneIcon from '@mui/icons-material/StadiumTwoTone';
@@ -17,12 +17,10 @@ import ActionProvider from '../bot/ActionProvider';
 import MessageParser from '../bot/MessageParser';
 import '../bot/ChatbotStyle.css'
 
-import axios from 'axios';
 import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
 import WavyBackground from '../components/ui/wavy-background';
 import { MenuOpen } from '@mui/icons-material';
 import { apiClient } from '../api/client';
-
 
 const BRANDING = {
     title: 'PLUS',
@@ -97,6 +95,27 @@ export default function Home({ role }) {
     const navigate = useNavigate();
     const [anchorElUser, setAnchorElUser] = useState(null);
 
+    const [playerCount, setPlayerCount] = useState(0);
+
+    useEffect(() => {
+        const fetchPlayerCount = async () => {
+            try {
+                const response = await apiClient.get('/api/getCurrentPlayers');
+                setPlayerCount(response.data.currentPlayers);
+            } catch (error) {
+                console.error('Error fetching player count:', error);
+            }
+        };
+
+        // Initial fetch
+        fetchPlayerCount();
+
+        // Set up polling every 5 seconds
+        const interval = setInterval(fetchPlayerCount, 5000);
+
+        return () => clearInterval(interval);
+    }, []);
+
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
@@ -143,9 +162,10 @@ export default function Home({ role }) {
             icon: <StadiumTwoToneIcon />,
             children: [
                 {
-                    segment: '../../career-fair',
-                    title: 'Career Fair',
+                    segment: playerCount >= 20 ? '..' : '../../career-fair', //? condition if room is full then not allowed to join
+                    title: `Career Fair ${playerCount}/20`,
                 }
+
             ]
         },
 
