@@ -57,36 +57,78 @@ async def health_check():
 @app.get("/api/recommendations/{job_id}", response_model=RecommendationResponse)
 async def get_candidate_recommendations(
     job_id: str,
-    top_k: Optional[int] = 5,
-    min_similarity: Optional[float] = 0.5
+    top_k: Optional[int] = 1,  # Changed default to 1 to only return the top candidate
+    min_similarity: Optional[float] = 0.3  # Lowered default threshold
 ):
     """
     Get top candidate recommendations for a specific job.
     """
+    print(f"\n\n==== API Request: Get recommendations for job {job_id} ====\n")
+    print(f"Parameters: top_k={top_k}, min_similarity={min_similarity}")
+
     try:
         # Validate job ID
         job = jobs_collection.find_one({"_id": ObjectId(job_id)})
         if not job:
+            print(f"Job with ID {job_id} not found")
             raise HTTPException(status_code=404, detail=f"Job with ID {job_id} not found")
-        
+
+        print(f"Found job: {job.get('title', 'Unknown Job')}")
+
+        # Check if job has applicants
+        applicants = job.get('applicants', [])
+        print(f"Job has {len(applicants)} applicants")
+
+        if not applicants:
+            print("No applicants found for this job. Returning empty response.")
+            return {
+                "job_id": job_id,
+                "job_title": job.get("title", "Unknown Job"),
+                "job_experience": job.get("experience", "Not specified"),
+                "job_skills": job.get("skills", []),
+                "candidates": []
+            }
+
         # Get candidate recommendations
-        recommendations = candidate_recommender.recommend_candidates(
-            job_id=job_id,
-            top_k=top_k,
-            min_similarity=min_similarity
-        )
-        
+        try:
+            recommendations = candidate_recommender.recommend_candidates(
+                job_id=job_id,
+                top_k=top_k,
+                min_similarity=min_similarity
+            )
+            print(f"Got {len(recommendations)} recommendations from recommender")
+        except ValueError as val_error:
+            # Handle specific value errors (like missing embeddings)
+            print(f"Value error in recommendation process: {val_error}")
+            print("Returning empty recommendations list with error message")
+            return {
+                "job_id": job_id,
+                "job_title": job.get("title", "Unknown Job"),
+                "job_experience": job.get("experience", "Not specified"),
+                "job_skills": job.get("skills", []),
+                "candidates": [],
+                "error": str(val_error)
+            }
+        except Exception as rec_error:
+            print(f"Error getting recommendations: {rec_error}")
+            print("Returning empty recommendations list")
+            recommendations = []
+
         # Return formatted response
-        return {
+        response = {
             "job_id": job_id,
             "job_title": job.get("title", "Unknown Job"),
             "job_experience": job.get("experience", "Not specified"),
             "job_skills": job.get("skills", []),
             "candidates": recommendations
         }
+        print(f"Returning response with {len(recommendations)} candidates")
+        return response
     except ValueError as e:
+        print(f"ValueError: {e}")
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
+        print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 @app.get("/api/job/{job_id}/applicants")
@@ -102,7 +144,7 @@ async def get_job_applicants(job_id: str):
         )
         if not job:
             raise HTTPException(status_code=404, detail=f"Job with ID {job_id} not found")
-        
+
         applicants = job.get("applicants", [])
         if not applicants:
             return {
@@ -111,7 +153,7 @@ async def get_job_applicants(job_id: str):
                 "applicant_count": 0,
                 "applicants": []
             }
-        
+
         # Get applicant details
         applicant_details = []
         for applicant_id in applicants:
@@ -127,7 +169,7 @@ async def get_job_applicants(job_id: str):
                     "experience": user.get("experience", "Not specified"),
                     "skills": user.get("skills", [])
                 })
-        
+
         return {
             "job_id": job_id,
             "job_title": job.get("title", "Unknown Job"),
@@ -150,16 +192,16 @@ async def get_candidate_job_matches(
         user = users_collection.find_one({"_id": ObjectId(candidate_id)})
         if not user:
             raise HTTPException(status_code=404, detail=f"User with ID {candidate_id} not found")
-        
+
         if "cv_embedding" not in user:
             raise HTTPException(status_code=400, detail="This user does not have a CV embedding")
-        
+
         # Get all jobs that this candidate has applied to
         applied_jobs = list(jobs_collection.find(
             {"applicants": ObjectId(candidate_id)},
             {"_id": 1, "title": 1, "experience": 1, "skills": 1, "embedding": 1}
         ))
-        
+
         if not applied_jobs:
             return {
                 "candidate_id": candidate_id,
@@ -167,33 +209,33 @@ async def get_candidate_job_matches(
                 "job_count": 0,
                 "jobs": []
             }
-        
+
         # Get candidate's CV embedding and details
         cv_embedding = user.get("cv_embedding")
         user_skills = user.get("skills", [])
         user_experience = user.get("experience", "entry level")
-        
+
         # Calculate match scores for each job
         job_matches = []
         for job in applied_jobs:
             # Skip jobs without embeddings
             if "embedding" not in job:
                 continue
-                
+
             job_id = str(job["_id"])
             job_embedding = job["embedding"]
             job_skills = job.get("skills", [])
             job_experience = job.get("experience", "entry level")
-            
+
             # Calculate similarity scores
             import numpy as np
             from sklearn.metrics.pairwise import cosine_similarity
-            
+
             # Content similarity
             job_embedding_array = np.array(job_embedding)
             cv_embedding_array = np.array(cv_embedding)
             content_similarity = float(cosine_similarity([cv_embedding_array], [job_embedding_array])[0][0])
-            
+
             # Experience and skills match
             experience_match = candidate_recommender.calculate_experience_match_score(
                 user_experience, job_experience
@@ -201,15 +243,15 @@ async def get_candidate_job_matches(
             skills_match = candidate_recommender.calculate_skills_match_score(
                 user_skills, job_skills
             )
-            
+
             # Overall score (using default weights)
             final_score = (content_similarity * 0.6) + (experience_match * 0.2) + (skills_match * 0.2)
-            
+
             # Get matching skills
             user_skills_norm = [s.lower().strip() for s in user_skills]
             job_skills_norm = [s.lower().strip() for s in job_skills]
             matching_skills = list(set(user_skills_norm) & set(job_skills_norm))
-            
+
             job_matches.append({
                 "job_id": job_id,
                 "title": job.get("title", "Unknown Job"),
@@ -221,10 +263,10 @@ async def get_candidate_job_matches(
                 "matching_skills": matching_skills,
                 "required_skills": job_skills
             })
-        
+
         # Sort by final score
         job_matches.sort(key=lambda x: x["final_score"], reverse=True)
-        
+
         # Return top matches
         return {
             "candidate_id": candidate_id,

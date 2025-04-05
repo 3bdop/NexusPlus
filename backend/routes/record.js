@@ -360,7 +360,9 @@ router.get("/api/job/:jobId/applicants", async (req, res) => {
                 job_id: jobId,
                 job_title: job.title || "Unknown Job",
                 applicant_count: 0,
-                applicants: []
+                applicants: [],
+                recommended_candidates: [],
+                top_recommended_candidate: null
             });
         }
 
@@ -375,22 +377,186 @@ router.get("/api/job/:jobId/applicants", async (req, res) => {
             );
 
             if (user) {
+                // Check if CV file exists
+                let hasCv = false;
+                if (user.cvPath) {
+                    try {
+                        // Check if the file exists
+                        const fs = await import('fs');
+                        hasCv = fs.existsSync(user.cvPath);
+                        if (!hasCv) {
+                            console.log(`CV file not found at path: ${user.cvPath}`);
+                        }
+                    } catch (fsError) {
+                        console.error(`Error checking CV file: ${fsError.message}`);
+                        hasCv = false;
+                    }
+                }
+
                 applicantDetails.push({
                     id: user._id.toString(),
                     name: user.username || "Unknown",
                     email: user.email || "No email",
                     experience: user.experience || "Not specified",
                     skills: user.skills || [],
-                    has_cv: !!user.cvPath
+                    has_cv: hasCv
                 });
             }
+        }
+
+        // Fetch recommended candidates from the recommendation API
+        let recommendedCandidates = [];
+        let topRecommendedCandidate = null;
+        try {
+            // Only attempt to get recommendations if there are applicants
+            if (applicantDetails.length > 0) {
+                console.log(`Fetching recommendations for job ${jobId} with ${applicantDetails.length} applicants`);
+
+                // Make a request to the candidate recommendation API (running on port 8001)
+                // Request only the top 1 candidate
+                const axios = (await import('axios')).default;
+                const recommendationResponse = await axios.get(
+                    `http://localhost:8001/api/recommendations/${jobId}?top_k=1`
+                );
+
+                // Log the recommendation response for debugging
+                console.log('Recommendation API response:', JSON.stringify(recommendationResponse.data, null, 2));
+
+                // Check if there's an error in the response
+                if (recommendationResponse.data && recommendationResponse.data.error) {
+                    console.log(`Recommendation API returned an error: ${recommendationResponse.data.error}`);
+                    // Continue without recommendations
+                }
+                // Check if we have any candidates in the response
+                else if (recommendationResponse.data &&
+                    recommendationResponse.data.candidates &&
+                    recommendationResponse.data.candidates.length > 0) {
+
+                    console.log(`Received ${recommendationResponse.data.candidates.length} recommended candidates`);
+
+                    // Process all recommended candidates
+                    const candidates = recommendationResponse.data.candidates;
+                    const processedCandidates = [];
+                    const recommendedIds = new Set(); // Track IDs of recommended candidates
+
+                    for (const candidate of candidates) {
+                        console.log(`Processing candidate: ${candidate.candidate_id} (${candidate.name})`);
+
+                        // Find this candidate in our applicant details
+                        let matchingApplicant = applicantDetails.find(
+                            applicant => applicant.id === candidate.candidate_id
+                        );
+
+                        // If no direct match, try normalized IDs
+                        if (!matchingApplicant) {
+                            console.log(`No direct match for ${candidate.candidate_id}, trying normalized IDs`);
+                            matchingApplicant = applicantDetails.find(applicant => {
+                                const normalizedApplicantId = applicant.id.replace(/[^a-f0-9]/gi, '');
+                                const normalizedCandidateId = candidate.candidate_id.toString().replace(/[^a-f0-9]/gi, '');
+                                return normalizedApplicantId === normalizedCandidateId;
+                            });
+                        }
+
+                        // If still no match, try by name or email
+                        if (!matchingApplicant) {
+                            console.log(`No ID match for ${candidate.candidate_id}, trying by name/email`);
+                            matchingApplicant = applicantDetails.find(applicant => {
+                                return (applicant.name && candidate.name &&
+                                       applicant.name.toLowerCase() === candidate.name.toLowerCase()) ||
+                                       (applicant.email && candidate.email &&
+                                       applicant.email.toLowerCase() === candidate.email.toLowerCase());
+                            });
+                        }
+
+                        if (matchingApplicant) {
+                            console.log(`Found matching applicant: ${matchingApplicant.id} (${matchingApplicant.name})`);
+                            const enhancedCandidate = {
+                                ...matchingApplicant,
+                                content_similarity: candidate.content_similarity,
+                                experience_match: candidate.experience_match,
+                                skills_match: candidate.skills_match,
+                                final_score: candidate.final_score,
+                                matching_skills: candidate.matching_skills || [],
+                                all_skills: candidate.all_skills || []
+                            };
+                            processedCandidates.push(enhancedCandidate);
+                            recommendedIds.add(matchingApplicant.id);
+                        } else {
+                            console.log(`No matching applicant found for ${candidate.candidate_id} (${candidate.name})`);
+                            // Add the candidate directly if we can't find a match
+                            // This ensures we don't lose recommendations
+                            const candidateId = candidate.candidate_id;
+                            processedCandidates.push({
+                                id: candidateId,
+                                name: candidate.name,
+                                email: candidate.email,
+                                experience: candidate.experience,
+                                skills: candidate.all_skills || [],
+                                has_cv: false, // Assume no CV since we couldn't match
+                                content_similarity: candidate.content_similarity,
+                                experience_match: candidate.experience_match,
+                                skills_match: candidate.skills_match,
+                                final_score: candidate.final_score,
+                                matching_skills: candidate.matching_skills || [],
+                                all_skills: candidate.all_skills || []
+                            });
+                            // Add to recommendedIds to ensure it's filtered out from the main list
+                            recommendedIds.add(candidateId);
+                        }
+                    }
+
+                    // Set the recommended candidates
+                    recommendedCandidates = processedCandidates;
+                    console.log(`Processed ${recommendedCandidates.length} recommended candidates`);
+
+                    // Set the top recommended candidate (first in the list)
+                    if (recommendedCandidates.length > 0) {
+                        topRecommendedCandidate = recommendedCandidates[0];
+                        console.log(`Set top recommended candidate: ${topRecommendedCandidate.id} (${topRecommendedCandidate.name})`);
+                    }
+
+                    // Filter out recommended candidates from the main applicants list
+                    const originalCount = applicantDetails.length;
+                    console.log(`Recommended IDs to filter out: ${Array.from(recommendedIds).join(', ')}`);
+                    console.log(`Applicant IDs before filtering: ${applicantDetails.map(a => a.id).join(', ')}`);
+
+                    applicantDetails = applicantDetails.filter(applicant => !recommendedIds.has(applicant.id));
+
+                    console.log(`Applicant IDs after filtering: ${applicantDetails.map(a => a.id).join(', ')}`);
+                    console.log(`Filtered out ${originalCount - applicantDetails.length} applicants that are in recommendations`);
+                } else {
+                    console.log('No recommended candidates returned from API');
+                }
+            } else {
+                console.log('No applicants to get recommendations for');
+            }
+        } catch (recommendationError) {
+            console.error("Error fetching candidate recommendations:", recommendationError);
+            // Log more details about the error for debugging
+            if (recommendationError.response) {
+                console.error("Response data:", recommendationError.response.data);
+                console.error("Response status:", recommendationError.response.status);
+            } else if (recommendationError.request) {
+                console.error("No response received from recommendation API");
+            } else {
+                console.error("Error setting up recommendation request:", recommendationError.message);
+            }
+            // Continue without recommendation if there's an error
+        }
+
+        // Log the final counts for debugging
+        console.log(`Final counts: ${recommendedCandidates.length} recommended candidates, ${applicantDetails.length} other applicants`);
+        if (topRecommendedCandidate) {
+            console.log(`Top recommended candidate: ${topRecommendedCandidate.name} (${topRecommendedCandidate.id})`);
         }
 
         return res.status(200).json({
             job_id: jobId,
             job_title: job.title || "Unknown Job",
-            applicant_count: applicantDetails.length,
-            applicants: applicantDetails
+            applicant_count: applicantDetails.length + recommendedCandidates.length,
+            applicants: applicantDetails,
+            recommended_candidates: recommendedCandidates,
+            top_recommended_candidate: topRecommendedCandidate
         });
     } catch (error) {
         console.error("Error fetching job applicants:", error);
