@@ -73,11 +73,20 @@ import bcrypt from 'bcrypt';
 
 
 router.post("/api/register", async (req, res) => {
-  const { wallet, email } = req.body;
+
+  const { wallet, username, email, gender } = req.body;
 
   if (!wallet || !email) {
     return res.status(400).json({ message: "Wallet and email are required." });
   }
+
+//   // cheacks if wallet already exist
+
+//   const existingUser = await usersCollection.findOne({ wallet });
+//   if (existingUser) {
+//       return res.status(400).json({ message: "Wallet is already registered." });
+//   }
+
 
   try {
     // 1️⃣ Check if email exists in UDST
@@ -91,13 +100,28 @@ router.post("/api/register", async (req, res) => {
     const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
     const salt = await bcrypt.genSalt(10);
     const hashedOtp = await bcrypt.hash(otp, salt);
+    
+     // ✅ Extract role from UDST record
+     const userRole = universityUser.user_role;
+    
+     // default avatar
 
+     let gAvatarurl = 'https://models.readyplayer.me/67e1544a7f65c63ac72f55d6.glb';
+     if (gender == 'girl') {
+         gAvatarurl = "https://models.readyplayer.me/67228d2ba754a4d51bc05336.glb";
+     }
+
+     
     // 3️⃣ Store or update user in DB
     await db.collection("users").updateOne(
       { wallet },
       {
         $set: {
+          username,
           email,
+          avatarUrl: gAvatarurl,
+          role: userRole, // ✅ use role from UDST
+          gender,
           hashedOtp,
           otpExpiresAt,
           isVerified: false,
@@ -168,7 +192,7 @@ router.post("/api/verify-otp", async (req, res) => {
             isVerified: true,
             certificate: {
               did,
-              issuedBy: "PDCA Authority",
+              issuedBy: "UDST",
               issuedAt: Date.now(),
               expiresAt: Date.now() + 365 * 24 * 60 * 60 * 1000, // 1 year
               isValid: true
@@ -306,71 +330,71 @@ router.post("/api/login", async (req, res) => {
     }
 });
 
-router.post('/api/register', async (req, res) => {
-    try {
-        const { wallet, username, email, gender } = req.body;
+// router.post('/api/register', async (req, res) => {
+//     try {
+//         const { wallet, username, email, gender } = req.body;
 
-        if (!wallet || !email || !username || !gender) {
-            return res.status(400).json({ message: "Missing required fields." });
-        }
+//         if (!wallet || !email || !username || !gender) {
+//             return res.status(400).json({ message: "Missing required fields." });
+//         }
 
-        const usersCollection = db.collection('users');
-        const udstCollection = db.collection('UDST');
+//         const usersCollection = db.collection('users');
+//         const udstCollection = db.collection('UDST');
 
-        // ✅ Check if the email exists in UDST
-        const authorizedEmail = await udstCollection.findOne({ email });
-        if (!authorizedEmail) {
-            return res.status(403).json({ message: "Email not authorized. You must be a UDST student." });
-        }
+//         // ✅ Check if the email exists in UDST
+//         const authorizedEmail = await udstCollection.findOne({ email });
+//         if (!authorizedEmail) {
+//             return res.status(403).json({ message: "Email not authorized. You must be a UDST student." });
+//         }
 
-        // ✅ Extract role from UDST record
-        const userRole = authorizedEmail.user_role;
+//         // ✅ Extract role from UDST record
+//         const userRole = authorizedEmail.user_role;
 
-        const existingUser = await usersCollection.findOne({ wallet });
-        if (existingUser) {
-            return res.status(400).json({ message: "Wallet is already registered." });
-        }
+//         const existingUser = await usersCollection.findOne({ wallet });
+//         if (existingUser) {
+//             return res.status(400).json({ message: "Wallet is already registered." });
+//         }
 
-        let gAvatarurl = 'https://models.readyplayer.me/67e1544a7f65c63ac72f55d6.glb';
-        if (gender == 'girl') {
-            gAvatarurl = "https://models.readyplayer.me/67228d2ba754a4d51bc05336.glb";
-        }
+//         let gAvatarurl = 'https://models.readyplayer.me/67e1544a7f65c63ac72f55d6.glb';
+//         if (gender == 'girl') {
+//             gAvatarurl = "https://models.readyplayer.me/67228d2ba754a4d51bc05336.glb";
+//         }
 
-        const did = `${wallet}`;
-        const validityPeriod = 365 * 24 * 60 * 60; // 1 year
-        const issuedAt = Math.floor(Date.now() / 1000);
-        const expiresAt = issuedAt + validityPeriod;
+//         const did = `${wallet}`;
+//         const validityPeriod = 365 * 24 * 60 * 60; // 1 year
+//         const issuedAt = Math.floor(Date.now() / 1000);
+//         const expiresAt = issuedAt + validityPeriod;
 
-        const success = await issueCertificate(did, validityPeriod);
-        if (!success) {
-            return res.status(500).json({ message: "Certificate issue failed." });
-        }
+//         const success = await issueCertificate(did, validityPeriod);
+//         if (!success) {
+//             return res.status(500).json({ message: "Certificate issue failed." });
+//         }
 
-        const newUser = {
-            wallet,
-            username,
-            email,
-            avatarUrl: gAvatarurl,
-            role: userRole, // ✅ use role from UDST
-            gender,
-            certificate: {
-                did,
-                issuedBy: "UDST",
-                issuedAt,
-                expiresAt,
-                isValid: true
-            }
-        };
+//         const newUser = {
+//             wallet,
+//             username,
+//             email,
+//             avatarUrl: gAvatarurl,
+//             role: userRole, // ✅ use role from UDST
+//             gender,
+//             certificate: {
+//                 did,
+//                 issuedBy: "UDST",
+//                 issuedAt,
+//                 expiresAt,
+//                 isValid: true
+//             }
+//         };
 
-        await usersCollection.insertOne(newUser);
+//         await usersCollection.insertOne(newUser);
 
-        res.status(201).json({ message: "Registration successful and certificate issued!" });
-    }
-    catch (error) {
-        console.error("Registration error:", error);
-        res.status(500).json({ message: "Server error during registration." });
-    }
-});
+//         res.status(201).json({ message: "Registration successful and certificate issued!" });
+//     }
+//     catch (error) {
+//         console.error("Registration error:", error);
+//         res.status(500).json({ message: "Server error during registration." });
+//     }
+// });
 
 router.get('/api/getUserByWallet/:id', async (req, res) => {
     try {
