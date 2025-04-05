@@ -310,4 +310,36 @@ router.post("/api/upload-cv", upload.single('cv_file'), async (req, res) => {
     }
 });
 
+router.post('/api/addNewPlayer', async (req, res) => {
+    try {
+        const { count } = req.body
+        const result = await db.collection("store").updateOne(
+            { identifier: 'playerCount' }, // Filter
+            {
+                $set: { currentPlayers: count }, // Update document
+
+            },
+            { upsert: true } // Create if doesn't exist
+        );
+
+        // Get the updated document
+        const updatedStore = await db.collection("store").findOne({ identifier: 'playerCount' });
+        res.status(200).json({ success: true, currentPlayers: updatedStore.currentPlayers });
+
+    } catch (error) {
+        console.error('Error updating player count:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+})
+
+router.get('/api/getCurrentPlayers', async (req, res) => {
+    try {
+        const allPlayers = await db.collection("store").findOne({ identifier: 'playerCount' })
+        res.status(200).json({ currentPlayers: allPlayers?.currentPlayers || 0 });
+    } catch (error) {
+        console.error('Error fetching player count:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+})
+
 export default router;
