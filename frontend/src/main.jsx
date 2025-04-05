@@ -18,6 +18,7 @@ import './styles/input.css'
 
 
 import { pdfjs } from 'react-pdf';
+import AdminDashboard from "./pages/AdminDashboard.jsx";
 
 
 const preloadWebGLAssets = () => {
@@ -71,6 +72,7 @@ const router = createBrowserRouter([
     ),
     errorElement: <NotFoundPage />,
   },
+
   {
     path: '/dashboard',
     element: (
@@ -105,6 +107,14 @@ const router = createBrowserRouter([
             )
           },
           {
+            path: 'insights',
+            element: (
+              <ProtectedRoute requiredRole="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            )
+          },
+          {
             path: 'avatar-creation',
             element: (
               <ProtectedRoute>
@@ -127,7 +137,7 @@ const router = createBrowserRouter([
   {
     path: '/career-fair',
     element: <ProtectedRoute><CareerFair /></ProtectedRoute>,
-  },
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(

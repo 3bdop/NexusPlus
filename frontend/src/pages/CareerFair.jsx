@@ -7,14 +7,15 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 function CareerFair() {
+
     // Initialize the Unity context using the hook
     const { unityProvider, sendMessage,
         loadingProgression, isLoaded,
         addEventListener, removeEventListener } = useUnityContext({
             loaderUrl: "build/webGL.loader.js",
-            dataUrl: "build/webGL.data",
-            frameworkUrl: "build/webGL.framework.js",
-            codeUrl: "build/webGL.wasm",
+            dataUrl: "build/webGL.data.unityweb",
+            frameworkUrl: "build/webGL.framework.js.unityweb",
+            codeUrl: "build/webGL.wasm.unityweb",
             webglContextAttributes: {
                 preserveDrawingBuffer: true
             },
@@ -66,6 +67,21 @@ function CareerFair() {
             removeEventListener("BackToDash", handleDisconnect)
         }
     }, [addEventListener, removeEventListener, handleDisconnect])
+
+    const handlePlayerCountUpdate = useCallback((count) => {
+        // Send update to backend
+        apiClient.post('/api/addNewPlayer', { count })
+            .catch(error => console.error('Error updating player count:', error));
+    }, []);
+
+    useEffect(() => {
+        // Add event listener for player count updates
+        addEventListener("PlayerCountUpdated", handlePlayerCountUpdate);
+
+        return () => {
+            removeEventListener("PlayerCountUpdated", handlePlayerCountUpdate);
+        };
+    }, [addEventListener, removeEventListener, handlePlayerCountUpdate]);
 
     return (
         <FullScreenContainer>

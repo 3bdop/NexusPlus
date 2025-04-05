@@ -3,6 +3,7 @@ import cors from "cors";
 import records from "./routes/record.js";
 import cookieParser from "cookie-parser";
 import botRoute from "./routes/botRoute.js";
+import adminStat from './routes/adminStats.js'
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use(express.json());
 
 app.use("/", records);
 app.use("/query", botRoute);
+app.use("/api", adminStat);
 
 // For local development, start the server if not on Vercel
 if (!process.env.VERCEL) {
