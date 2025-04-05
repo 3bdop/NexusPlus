@@ -116,17 +116,6 @@ export default function Login() {
                 </div>
             ) : (
                 <div>
-                    {/* <h2 style={{ fontFamily: 'system-ui' }}>Wallet ID is collected🦊</h2><br />
-                    <ShinyText text={wallet} disabled={false} speed={3} className='custom-class' />
-
-                    <div align='center'>
-                        <br />
-                        <Button
-                            onClick={loginUser}
-                            val={'Continue to Dashboard'}
-                            color={'#0DFF008F'}
-                        />
-                    </div> */}
                     {showRegistrationForm ? (
                         <div className='login-form-wrapper'>
                             <h2 style={{ fontFamily: 'system-ui' }}>Complete Registration</h2>
