@@ -30,7 +30,7 @@ export default function Events() {
         {
             title: "UDST Career Fair",
             button: "Join Event",
-            src: "/images/events/career-fair.png",
+            src: "/images/events/CF.png",
             path: playerCount >= 20 ? '' : '/career-fair'
         },
         {
