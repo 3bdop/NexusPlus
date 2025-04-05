@@ -368,6 +368,7 @@
 //     );
 // }
 
+
 import React, { useState } from 'react';
 import '../index.css';
 import axios from 'axios';
@@ -375,7 +376,6 @@ import { useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import Button from '../components/ui/button';
 import { TextGenerateEffect } from '../components/ui/text-generate-effect';
-
 import { motion } from "motion/react";
 import { LinkPreview } from "../components/ui/link-preview";
 import ShinyText from '../components/ui/ShinyText';
@@ -388,6 +388,8 @@ export default function Login() {
     const [role] = useState('attendee');
     const [message, setMessage] = useState('');
     const [showRegistrationForm, setShowRegistrationForm] = useState(false);
+    const [otp, setOtp] = useState('');
+    const [showOtpInput, setShowOtpInput] = useState(false);
     const navigate = useNavigate();
 
     const connectWallet = async () => {
@@ -402,7 +404,6 @@ export default function Login() {
             const walletAddress = await signer.getAddress();
             setWallet(walletAddress);
 
-            // Check if user exists in database
             const { data } = await axios.get(
                 `http://localhost:5050/api/getUserByWallet/${walletAddress}`,
                 { withCredentials: true }
@@ -412,12 +413,10 @@ export default function Login() {
                 setShowRegistrationForm(true);
                 setMessage('New user detected. Please complete registration.');
             } else {
-                // Optional: Auto-login if exists
                 await loginUser();
             }
 
         } catch (err) {
-            // Handle actual errors (network issues, etc.)
             console.error("Connection error:", err);
             setMessage(err.response?.data?.message || 'Failed to connect wallet');
         }
@@ -433,20 +432,36 @@ export default function Login() {
         try {
             const response = await axios.post(
                 'http://localhost:5050/api/register',
-                {
-                    wallet,
-                    email,
-                    username,
-                    gender,
+                { wallet, email, username, gender },
+                { withCredentials: true }
+            );
 
-                },
+            setMessage(response.data.message);
+            setShowRegistrationForm(false);
+            setShowOtpInput(true);
+        } catch (err) {
+            setMessage(err.response?.data?.message || 'Registration failed.');
+        }
+    };
+
+    const handleVerifyOtp = async (e) => {
+        e.preventDefault();
+        if (!otp) {
+            setMessage('Please enter the OTP.');
+            return;
+        }
+
+        try {
+            const response = await axios.post(
+                'http://localhost:5050/api/verify-otp',
+                { wallet, otp },
                 { withCredentials: true }
             );
 
             setMessage(response.data.message);
             await loginUser();
         } catch (err) {
-            setMessage(err.response?.data?.message || 'Registration failed.');
+            setMessage(err.response?.data?.message || 'OTP verification failed.');
         }
     };
 
@@ -461,7 +476,11 @@ export default function Login() {
             setMessage(response.data.message);
             navigate('/dashboard');
         } catch (err) {
-            setMessage(err.response?.data?.message || 'Login failed.');
+            const errorMessage = err.response?.data?.message || 'Login failed.';
+            setMessage(errorMessage);
+            if (err.response?.status === 401 && errorMessage.includes('verified')) {
+                setShowOtpInput(true);
+            }
         }
     };
 
@@ -472,11 +491,10 @@ export default function Login() {
                     <Button
                         onClick={connectWallet}
                         val={'Connect with MetaMask 🦊'}
-                        disabled={!window.ethereum ? true : false}
+                        disabled={!window.ethereum}
                         color={'#9900FF8F'}
                     />
-
-                    {/* </button> */}
+    
                     {!window.ethereum && (
                         <span style={{ fontFamily: 'DM Serif Display, sans-serif', fontSize: '25px' }}>
                             <LinkPreview url="https://metamask.io/download" quality={50}>
@@ -484,23 +502,39 @@ export default function Login() {
                             </LinkPreview>{" "}
                             must be installed
                         </span>
-
                     )}
                 </div>
             ) : (
                 <div>
-                    {/* <h2 style={{ fontFamily: 'system-ui' }}>Wallet ID is collected🦊</h2><br />
-                    <ShinyText text={wallet} disabled={false} speed={3} className='custom-class' />
-
-                    <div align='center'>
-                        <br />
-                        <Button
-                            onClick={loginUser}
-                            val={'Continue to Dashboard'}
-                            color={'#0DFF008F'}
-                        />
-                    </div> */}
-                    {showRegistrationForm ? (
+                    {showOtpInput ? (
+                        <div className='otp-form-wrapper'>
+                            <h2 style={{ fontFamily: 'system-ui' }}>Verify OTP</h2>
+                            <form onSubmit={handleVerifyOtp}>
+                                <div style={{ margin: '1rem 0' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>
+                                        OTP:
+                                        <input
+                                            type="text"
+                                            value={otp}
+                                            onChange={(e) => setOtp(e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.5rem',
+                                                borderRadius: '4px',
+                                                border: '1px solid #ccc'
+                                            }}
+                                            required
+                                        />
+                                    </label>
+                                </div>
+                                <Button
+                                    type="submit"
+                                    val="Verify OTP"
+                                    color="#0DFF008F"
+                                />
+                            </form>
+                        </div>
+                    ) : showRegistrationForm ? (
                         <div className='login-form-wrapper'>
                             <h2 style={{ fontFamily: 'system-ui' }}>Complete Registration</h2>
                             <form onSubmit={handleRegistration}>
@@ -521,7 +555,7 @@ export default function Login() {
                                         />
                                     </label>
                                 </div>
-
+    
                                 <div style={{ margin: '1rem 0' }}>
                                     <label style={{ display: 'block', marginBottom: '0.5rem' }}>
                                         Email:
@@ -539,7 +573,7 @@ export default function Login() {
                                         />
                                     </label>
                                 </div>
-
+    
                                 <div style={{ margin: '1rem 0' }}>
                                     <label style={{ display: 'block', marginBottom: '0.5rem' }}>
                                         Gender:
@@ -559,7 +593,7 @@ export default function Login() {
                                         </select>
                                     </label>
                                 </div>
-
+    
                                 <Button
                                     type="submit"
                                     val="Complete Registration"
@@ -569,21 +603,20 @@ export default function Login() {
                         </div>
                     ) : (
                         <div>
-                            <h2 style={{ fontFamily: 'system-ui' }}>Wallet ID is collected🦊</h2><br />
+                            <h2 style={{ fontFamily: 'system-ui' }}>Wallet ID is collected🦊</h2>
                             <ShinyText text={wallet} disabled={false} speed={3} className='custom-class' />
                             <div align='center'>
-                                <br />
                                 <Button
                                     onClick={loginUser}
                                     val={'Continue to Dashboard'}
                                     color={'#0DFF008F'}
-                                    disabled={showRegistrationForm}
                                 />
                             </div>
                         </div>
                     )}
                 </div>
             )}
+    
             <div align='center'>
                 {message && (
                     <span style={{ fontFamily: 'system-ui', color: '#FF0000FF' }}>
@@ -592,5 +625,4 @@ export default function Login() {
                 )}
             </div>
         </div>
-    );
-}
+    )};
