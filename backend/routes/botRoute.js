@@ -1,8 +1,13 @@
 import 'dotenv/config.js'
 import express from 'express'
 import bodyParser from 'body-parser';
+import { fileURLToPath } from 'url';
+import path from 'path';
 import { RAGHandler } from '../bot/ragHandler.js'
+import fs from 'fs'
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const query = express();
 
 query.use(bodyParser.json());
@@ -13,9 +18,32 @@ if (!process.env.GEMINI_API_KEY) {
     process.exit(1);
 }
 
-// Initialize RAG system with Gemini
-const ragHandler = new RAGHandler(process.env.GEMINI_API_KEY, './bot/KnowledgeBase');
-ragHandler.initialize();
+const knowledgeBasePath = path.join(__dirname, '../bot/KnowledgeBase');
+
+// Verify paths exist
+if (!fs.existsSync(knowledgeBasePath)) {
+    throw new Error(`KnowledgeBase directory not found at: ${knowledgeBasePath}`);
+}
+
+
+// Initialize RAG system
+const ragHandler = new RAGHandler(
+    process.env.GEMINI_API_KEY,
+    knowledgeBasePath // Use absolute path
+);
+
+// Add async initialization
+const initializeRAG = async () => {
+    try {
+        await ragHandler.initialize();
+        console.log('RAG system initialized successfully');
+    } catch (error) {
+        console.error('Failed to initialize RAG:', error);
+        process.exit(1);
+    }
+};
+
+initializeRAG();
 
 
 // Routing endpoint

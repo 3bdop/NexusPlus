@@ -4,7 +4,6 @@ import path from 'path';
 import { LocalIndex } from 'vectra'
 import { v4 as uuidv4 } from 'uuid';
 import { fileURLToPath } from 'url';
-// const { v4: uuidv4 } = require('uuid');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,7 +15,7 @@ export class RAGHandler {
     }
     this.gemini = new GoogleGenerativeAI(apiKey);
     this.dataPath = dataPath;
-    this.index = new LocalIndex(path.join(__dirname, 'vector-index'));
+    this.index = new LocalIndex(path.join('/tmp', 'vector-index')); //! Changed path
     this.chunks = [];
     this.summaryCache = new Map();
   }
@@ -39,31 +38,29 @@ export class RAGHandler {
   }
 
   resetIndex() {
-    const indexDir = path.join(__dirname, 'vector-index');
+    const indexDir = path.join('/tmp', 'vector-index'); //! Use tmp directory
 
     // Delete the directory if it exists
     if (fs.existsSync(indexDir)) {
       fs.rmSync(indexDir, { recursive: true, force: true });
-      console.log('Deleted existing vector-index directory');
+      // console.log('Deleted existing vector-index directory');
     }
 
-    // Recreate the directory
+    // Create fresh directory
     fs.mkdirSync(indexDir, { recursive: true });
-    console.log('Created new vector-index directory');
 
     // Create the index.json file with the desired structure
     const indexFilePath = path.join(indexDir, 'index.json');
-    const initialIndexData = {
+    fs.writeFileSync(indexFilePath, JSON.stringify({
       version: 1,
       metadata_config: {},
       items: []
-    };
-    fs.writeFileSync(indexFilePath, JSON.stringify(initialIndexData, null, 2));
-    console.log('Initialized index.json with default structure');
+    }, null, 2))
+    // console.log('Initialized index.json with default structure');
 
     // Reinitialize the LocalIndex
     this.index = new LocalIndex(indexDir);
-    console.log('Reinitialized LocalIndex');
+    // console.log('Reinitialized LocalIndex');
 
     // Add a small delay to ensure the index is ready
     return new Promise(resolve => setTimeout(resolve, 1000));

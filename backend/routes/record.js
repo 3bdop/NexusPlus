@@ -305,10 +305,10 @@ router.post("/api/login", async (req, res) => {
         // Set a cookie with the session ID
         res.cookie('sessionId', sessionId, {
             httpOnly: true,
-            // secure: process.env.NODE_ENV !== 'production',
+            secure: true,
+            sameSite: "none",
             maxAge: 50 * 60 * 1000,  //!Change the session duration latter
-            sameSite: 'lax', // Add this
-            path: '/' // Add this
+            path: '/', // Add this
         });
 
         // If login is successful
@@ -419,9 +419,10 @@ router.get("/api/check-auth", validateSession, (req, res) => {
     });
 });
 
-router.patch("/api/add-avatarId", async (req, res) => {
+router.patch("/api/add-avatarId", validateSession, async (req, res) => {
     try {
-        const { userId, avatarUrl } = req.body;
+        const { avatarUrl } = req.body;
+        const userId = req.user.id;
 
         if (!userId || !avatarUrl) {
             return res.status(400).json({ message: "User ID and avatar URL are required." });
