@@ -12,54 +12,6 @@ import path from "path";
 import { put } from '@vercel/blob';
 import multer from 'multer';
 
-// Configure multer for CV storage
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const uploadDir = './uploads/cv';
-        // Create directory if it doesn't exist
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
-        cb(null, uploadDir);
-    },
-    filename: async function (req, file, cb) {
-        try {
-            // Get session ID from cookies
-            const sessionId = req.cookies.sessionId;
-            if (!sessionId) {
-                throw new Error('No session found');
-            }
-
-            // Get user ID from session
-            const session = await db.collection("session").findOne({ sessionId });
-            if (!session) {
-                throw new Error('Invalid session');
-            }
-
-            // Use userId as filename with PDF extension
-            const userId = session.userId;
-            const filename = `${userId}.pdf`;
-            cb(null, filename);
-
-        } catch (error) {
-            cb(error);
-        }
-    }
-});
-
-// const upload = multer({
-//     storage: storage,
-//     fileFilter: (req, file, cb) => {
-//         if (file.mimetype === 'application/pdf') {
-//             cb(null, true);                                      //! OLD
-//         } else {
-//             cb(new Error('Only PDF files are allowed'), false);
-//         }
-//     },
-//     limits: {
-//         fileSize: 3 * 1024 * 1024 // 3MB limit
-//     }
-// });
 const upload = multer({
     storage: multer.memoryStorage(), // Store file in memory
     fileFilter: (req, file, cb) => {
@@ -331,23 +283,6 @@ router.post("/api/upload-cv", upload.single('cv_file'), async (req, res) => {
 });
 
 
-// router.get("/api/get-cv/:userId", async (req, res) => {
-//     try {
-//         const user = await db.collection("users").findOne({
-//             _id: new ObjectId(req.params.userId)
-//         });
-
-//         if (!user?.cvPath) {
-//             return res.status(404).json({ message: "CV not found" });
-//         }
-
-//         res.status(200).json({ cvUrl: user.cvPath });
-//     } catch (error) {
-//         console.error("Error fetching CV:", error);
-//         res.status(500).json({ message: "Server error" });
-//     }
-// });
-
 router.post('/api/addNewPlayer', async (req, res) => {
     try {
         const { count } = req.body
@@ -440,17 +375,7 @@ router.get("/api/job/:jobId/applicants", async (req, res) => {
                 // Check if CV file exists
                 let hasCv = false;
                 if (user.cvPath) {
-                    try {
-                        // Check if the file exists
-                        const fs = await import('fs');
-                        hasCv = fs.existsSync(user.cvPath);
-                        if (!hasCv) {
-                            console.log(`CV file not found at path: ${user.cvPath}`);
-                        }
-                    } catch (fsError) {
-                        console.error(`Error checking CV file: ${fsError.message}`);
-                        hasCv = false;
-                    }
+                    hasCv = true
                 }
 
                 applicantDetails.push({
@@ -459,7 +384,8 @@ router.get("/api/job/:jobId/applicants", async (req, res) => {
                     email: user.email || "No email",
                     experience: user.experience || "Not specified",
                     skills: user.skills || [],
-                    has_cv: hasCv
+                    has_cv: hasCv,
+                    cvPath: user.cvPath
                 });
             }
         }
