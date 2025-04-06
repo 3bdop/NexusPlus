@@ -1260,14 +1260,14 @@ export default function CompanyJobs() {
                   setPdfLoading(false);
                 }}
                 loading={<CircularProgress />}
-                options={{
-                  cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
-                  cMapPacked: true,
-                }}
+              // options={{
+              //   cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
+              //   cMapPacked: true,
+              // }}
               >
                 <Page
                   pageNumber={pageNumber}
-                  width={Math.min(650 * scale, window.innerWidth - 100)}
+                  width={500 * scale}
                   renderAnnotationLayer={false}
                   renderTextLayer={false}
                 />
