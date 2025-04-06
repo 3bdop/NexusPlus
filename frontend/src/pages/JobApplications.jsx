@@ -17,8 +17,7 @@ import { useState, useEffect } from 'react';
 import { Document, Page } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
-import { border } from '@mui/system';
-import { api } from '../api/fastapi';
+import { pdfjs } from 'react-pdf';
 import { apiClient } from '../api/client';
 
 export default function CompanyJobs() {
@@ -1252,18 +1251,17 @@ export default function CompanyJobs() {
 
             {selectedPdf && !pdfLoading && !pdfError && (
               <Document
-                file={{
-                  url: selectedPdf,
-                  httpHeaders: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Cache-Control': 'no-cache'
-                  }
-                }}
+                file={selectedPdf}
                 onLoadSuccess={onDocumentLoadSuccess}
-                onLoadError={onDocumentLoadError}
+                onLoadError={(error) => {
+                  // Convert error to string
+                  console.error('PDF Load Error:', error);
+                  setPdfError(error.message || 'Failed to load PDF');
+                  setPdfLoading(false);
+                }}
                 loading={<CircularProgress />}
                 options={{
-                  cMapUrl: 'cmaps/',
+                  cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
                   cMapPacked: true,
                 }}
               >
