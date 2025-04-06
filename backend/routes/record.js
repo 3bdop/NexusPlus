@@ -310,7 +310,8 @@ router.post("/api/upload-cv", upload.single('cv_file'), async (req, res) => {
         const filename = `${session.userId}.pdf`;
         const blob = await put(filename, req.file.buffer, {
             access: 'public',
-            contentType: 'application/pdf'
+            contentType: 'application/pdf',
+            addRandomSuffix: false //* new: for preventing auto random string after the file
         });
 
         // Update user with Blob URL
