@@ -35,27 +35,39 @@ export default function CompanyJobs() {
   const [applicants, setApplicants] = useState([]);
   const [applicantsLoading, setApplicantsLoading] = useState(false);
   const [applicantsError, setApplicantsError] = useState(null);
-  const [userId, setUserId] = useState('')
-  useEffect(() => {
-    const fetchUserData = async () => {
-      // Step 1: Fetch session data to get userId
-      const sessionResponse = await apiClient.get(
-        '/api/get-session',
-        { withCredentials: true } // Include cookies in the request
-      );
-      if (!sessionResponse.data.userId) {
-        throw new Error('No user ID found in session data.');
-      }
+  // const [userId, setUserId] = useState('')
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     // Step 1: Fetch session data to get userId
+  //     const sessionResponse = await apiClient.get(
+  //       '/api/get-session',
+  //       { withCredentials: true }
+  //     );
+  //     if (!sessionResponse.data.userId) {
+  //       throw new Error('No user ID found in session data.');
+  //     }
 
-      setUserId(userId)
-    };
+  //     setUserId(userId)
+  //   };
 
-    fetchUserData();
-  }, []);
+  //   fetchUserData();
+  // }, []);
 
-  useEffect(() => {
+  useEffect(async () => {
+    // Step 1: Fetch session data to get userId
+    const sessionResponse = await apiClient.get(
+      '/api/get-session',
+      { withCredentials: true }
+    );
+    if (!sessionResponse.data.userId) {
+      throw new Error('No user ID found in session data.');
+    }
+    const userId = sessionResponse.data.userId
     // Fetch employer-specific jobs
-    apiClient.get(`/api/company/jobs/applications?user_id=${userId}`)
+    // Step 2: Fetch company jobs using the retrieved user ID
+    const jobsResponse = await apiClient.get(`/api/company/jobs/applications`, {
+      params: { user_id: userId } // Proper way to send query params with axios
+    })
       .then(res => {
         if (res.data.status === 'success') {
           setJobs(res.data.jobs);
