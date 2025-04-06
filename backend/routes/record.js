@@ -363,7 +363,7 @@ router.get("/api/job/:jobId/applicants", async (req, res) => {
 
         // Get applicant details
         const usersCollection = db.collection("users");
-        const applicantDetails = [];
+        let applicantDetails = [];
 
         for (const applicantId of applicants) {
             const user = await usersCollection.findOne(
