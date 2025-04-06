@@ -35,23 +35,6 @@ export default function CompanyJobs() {
   const [applicants, setApplicants] = useState([]);
   const [applicantsLoading, setApplicantsLoading] = useState(false);
   const [applicantsError, setApplicantsError] = useState(null);
-  // const [userId, setUserId] = useState('')
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     // Step 1: Fetch session data to get userId
-  //     const sessionResponse = await apiClient.get(
-  //       '/api/get-session',
-  //       { withCredentials: true }
-  //     );
-  //     if (!sessionResponse.data.userId) {
-  //       throw new Error('No user ID found in session data.');
-  //     }
-
-  //     setUserId(userId)
-  //   };
-
-  //   fetchUserData();
-  // }, []);
 
   useEffect(async () => {
     // Step 1: Fetch session data to get userId
@@ -154,13 +137,24 @@ export default function CompanyJobs() {
       });
   };
 
-  const handleViewCV = (applicantId) => {
-    // Set the PDF URL to view
-    setSelectedPdf(`/api/cv/${applicantId}`);
-    setPdfLoading(true);
-    setPdfError(null);
-  };
+  const handleViewCV = async (applicantId) => {
+    try {
+      setPdfLoading(true);
+      setPdfError(null);
 
+      const response = await apiClient.get(`/api/get-cv/${applicantId}`);
+      if (response.data?.cvUrl) {
+        setSelectedPdf(response.data.cvUrl); // Set the actual URL string
+      } else {
+        setPdfError('CV not found for this applicant');
+      }
+    } catch (err) {
+      console.error('Error fetching CV:', err);
+      setPdfError(err.response?.data?.message || 'Failed to load CV');
+    } finally {
+      setPdfLoading(false);
+    }
+  };
   const handleApprove = (jobId, applicantId) => {
     apiClient.post(`/api/job/${jobId}/applicant/${applicantId}/status`, { status: 'accepted' })
       .then(res => {
