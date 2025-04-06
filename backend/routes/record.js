@@ -7,7 +7,6 @@ import db from "../db/connection.js"
 import { ObjectId } from "mongodb";
 import crypto from 'crypto'; // For generating session IDs
 import validateSession from "../middleware/validateSession.js"
-import multer from "multer";
 import fs from 'fs'
 import path from "path";
 import { put } from '@vercel/blob';
