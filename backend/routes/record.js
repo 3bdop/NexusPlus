@@ -504,9 +504,11 @@ router.get("/api/job/:jobId/applicants", async (req, res) => {
                     // Filter out recommended candidates from the main applicants list
                     const originalCount = applicantDetails.length;
                     console.log(`Recommended IDs to filter out: ${Array.from(recommendedIds).join(', ')}`);
-                    console.log(`Applicant IDs before filtering: ${applicantDetails.map(a => a.id).join(', ')}`);
+                    // console.log(`Applicant IDs before filtering: ${applicantDetails.map(a => a.id).join(', ')}`);
 
-                    applicantDetails = applicantDetails.filter(applicant => !recommendedIds.has(applicant.id));
+                    const filteredApplicants = applicantDetails.filter(applicant => !recommendedIds.has(applicant.id));
+                    applicantDetails.length = 0; // Clear the array
+                    applicantDetails.push(...filteredApplicants);
 
                     console.log(`Applicant IDs after filtering: ${applicantDetails.map(a => a.id).join(', ')}`);
                     console.log(`Filtered out ${originalCount - applicantDetails.length} applicants that are in recommendations`);
