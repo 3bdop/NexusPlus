@@ -143,8 +143,8 @@ export default function CompanyJobs() {
       setPdfError(null);
 
       const response = await apiClient.get(`/api/get-cv/${applicantId}`);
-      if (response.data?.cvUrl) {
-        setSelectedPdf(response.data.cvUrl); // Set the actual URL string
+      if (response.data?.cvPath) {
+        setSelectedPdf(response.data.cvPath); // Set the actual URL string
       } else {
         setPdfError('CV not found for this applicant');
       }
@@ -1240,31 +1240,41 @@ export default function CompanyJobs() {
                 <Typography variant="h6">Loading PDF...</Typography>
               </Box>
             )}
+
             {pdfError && (
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                 <Alert severity="error" sx={{ width: '100%', maxWidth: 400 }}>
                   <Typography variant="subtitle1">Failed to load PDF</Typography>
-                  <Typography variant="body2">{pdfError.message}</Typography>
+                  <Typography variant="body2">{pdfError}</Typography>
                 </Alert>
               </Box>
             )}
 
-            <Document
-              file={selectedPdf}
-              onLoadSuccess={onDocumentLoadSuccess}
-              onLoadError={onDocumentLoadError}
-              loading={<CircularProgress />}
-              noData={<Typography variant="h6">No PDF file specified</Typography>}
-              error={<Typography variant="h6" color="error">Error loading PDF!</Typography>}
-            >
-              <Page
-                pageNumber={pageNumber}
-                width={650 * scale}
-                renderTextLayer={true}
-                renderAnnotationLayer={true}
-                canvasBackground="white"
-              />
-            </Document>
+            {selectedPdf && !pdfLoading && !pdfError && (
+              <Document
+                file={{
+                  url: selectedPdf,
+                  httpHeaders: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Cache-Control': 'no-cache'
+                  }
+                }}
+                onLoadSuccess={onDocumentLoadSuccess}
+                onLoadError={onDocumentLoadError}
+                loading={<CircularProgress />}
+                options={{
+                  cMapUrl: 'cmaps/',
+                  cMapPacked: true,
+                }}
+              >
+                <Page
+                  pageNumber={pageNumber}
+                  width={Math.min(650 * scale, window.innerWidth - 100)}
+                  renderAnnotationLayer={false}
+                  renderTextLayer={false}
+                />
+              </Document>
+            )}
           </Box>
         </DialogContent>
       </Dialog>
