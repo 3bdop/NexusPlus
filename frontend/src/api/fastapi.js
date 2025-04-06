@@ -5,7 +5,7 @@ const fastapi = import.meta.env.VITE_FASTAPI_BACKEND_URL_CANDIDATE
 // Create an axios instance with default config
 export const api = axios.create({
     baseURL: fastapi,
-    withCredentials: true,
+    // withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
     },
