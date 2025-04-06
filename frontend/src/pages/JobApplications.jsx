@@ -87,54 +87,132 @@ export default function CompanyJobs() {
   const [topRecommendedCandidate, setTopRecommendedCandidate] = useState(null);
   const [recommendedCandidates, setRecommendedCandidates] = useState([]);
 
-  const fetchApplicants = (jobId) => {
-    setApplicantsLoading(true);
-    setApplicantsError(null);
-    setTopRecommendedCandidate(null);
-    setRecommendedCandidates([]);
+  // const fetchApplicants = (jobId) => {
+  //   setApplicantsLoading(true);
+  //   setApplicantsError(null);
+  //   setTopRecommendedCandidate(null);
+  //   // setRecommendedCandidates([]);
 
-    // Fetch applicants for the selected job
+  //   // Fetch applicants for the selected job
 
-    apiClient.get(`/api/job/${jobId}/applicants`)
-      .then(res => {
-        const applicants = res.data.applicants || [];
-        const recommended = res.data.recommended_candidates || [];
+  //   apiClient.get(`/api/getAllApplicantsByJob/${jobId}`)
+  //     .then(res => {
+  //       const applicants = res.data.applicants || [];
+  //       const recommended = res.data.recommended_candidates || [];
 
-        // Double-check to make sure no applicant appears in both lists
-        const recommendedIds = new Set(recommended.map(candidate => candidate.id));
-        const filteredApplicants = applicants.filter(applicant => !recommendedIds.has(applicant.id));
+  //       // Double-check to make sure no applicant appears in both lists
+  //       const recommendedIds = new Set(recommended.map(candidate => candidate.id));
+  //       const filteredApplicants = applicants.filter(applicant => !recommendedIds.has(applicant.id));
 
-        console.log(`Frontend filtering: ${applicants.length} total applicants, ${filteredApplicants.length} after filtering out recommended`);
+  //       console.log(`Frontend filtering: ${applicants.length} total applicants, ${filteredApplicants.length} after filtering out recommended`);
 
-        setApplicants(filteredApplicants);
-        setRecommendedCandidates(recommended);
+  //       setApplicants(filteredApplicants);
+  //       // setRecommendedCandidates(recommended);
 
-        // Set the selected job with the correct applicant count
-        setSelectedJob({
-          id: res.data.job_id,
-          title: res.data.job_title
-        });
+  //       // Set the selected job with the correct applicant count
+  //       setSelectedJob({
+  //         id: res.data.job_id,
+  //         title: res.data.job_title
+  //       });
 
-        // Set the top recommended candidate if available
-        console.log('API response data:', res.data);
-        console.log('Recommended candidates from API:', recommended.length);
-        console.log('Top recommended candidate from API:', res.data.top_recommended_candidate);
+  //       // Set the top recommended candidate if available
+  //       console.log('API response data:', res.data);
+  //       console.log('Recommended candidates from API:', recommended.length);
+  //       console.log('Top recommended candidate from API:', res.data.top_recommended_candidate);
 
-        if (res.data.top_recommended_candidate) {
-          console.log('Setting top recommended candidate');
-          setTopRecommendedCandidate(res.data.top_recommended_candidate);
-        } else {
-          console.log('No top recommended candidate found in response');
-        }
+  //       if (res.data.top_recommended_candidate) {
+  //         console.log('Setting top recommended candidate');
+  //         setTopRecommendedCandidate(res.data.top_recommended_candidate);
+  //       } else {
+  //         console.log('No top recommended candidate found in response');
+  //       }
 
-        setApplicantsLoading(false);
-      })
-      .catch(err => {
-        console.error('Error fetching applicants:', err);
-        setApplicantsError(err.response?.data?.message || 'Failed to fetch applicants');
-        setApplicantsLoading(false);
+  //       setApplicantsLoading(false);
+  //     })
+  //     .catch(err => {
+  //       console.error('Error fetching applicants:', err);
+  //       setApplicantsError(err.response?.data?.message || 'Failed to fetch applicants');
+  //       setApplicantsLoading(false);
+  //     });
+  // };
+
+  const fetchApplicantsAndRecommendations = async (jobId) => {
+    try {
+      // First fetch applicants from your API
+      const applicantsResponse = await apiClient.get(`/api/getAllApplicantsByJob/${jobId}`);
+
+      if (!applicantsResponse.data?.applicants) {
+        throw new Error('No applicants data received');
+      }
+
+      // Set basic applicant data
+      setApplicants(applicantsResponse.data.applicants);
+      setSelectedJob({
+        id: jobId,
+        title: applicantsResponse.data.jobTitle
       });
+
+      // Then fetch recommendations from external API
+      const recommendationResponse = await axios.get(
+        `https://career-fair-metaverse-p6nc.onrender.com/api/recommendations/${jobId}?top_k=1`
+      );
+
+      const recommendationData = recommendationResponse.data;
+
+      if (recommendationData?.candidates?.length > 0) {
+        // Find matching applicant in our existing list
+        const topCandidate = recommendationData.candidates[0];
+        const matchedApplicant = applicantsResponse.data.applicants.find(
+          applicant =>
+            applicant.userId === topCandidate.candidate_id ||
+            applicant.email === topCandidate.email ||
+            applicant.name === topCandidate.name
+        );
+
+        // Create enhanced candidate object
+        const recommendedCandidate = matchedApplicant ? {
+          ...matchedApplicant,
+          matchScore: topCandidate.final_score,
+          matchingSkills: topCandidate.matching_skills,
+          scoreBreakdown: {
+            content: topCandidate.content_similarity,
+            experience: topCandidate.experience_match,
+            skills: topCandidate.skills_match
+          }
+        } : {
+          ...topCandidate,
+          userId: topCandidate.candidate_id,
+          status: 'recommended',
+          cvUrl: null
+        };
+
+        setTopRecommendedCandidate(recommendedCandidate);
+
+        // Move recommended candidate to separate list
+        setRecommendedCandidates([recommendedCandidate]);
+        setApplicants(prev => prev.filter(a => a.userId !== recommendedCandidate.userId));
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+      setError({
+        message: error.response?.data?.error || error.message,
+        type: error.response?.status === 404 ? 'warning' : 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      await fetchApplicantsAndRecommendations(selectedJob.id);
+    };
+
+    if (selectedJob.id) {
+      loadData();
+    }
+  }, [selectedJob.id]);
 
   const handleViewCV = async (applicantId) => {
     try {
