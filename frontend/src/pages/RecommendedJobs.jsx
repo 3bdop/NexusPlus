@@ -19,6 +19,7 @@ import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 import SendIcon from '@mui/icons-material/Send';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import { apiClient } from '../api/client';
+import { api } from '../api/fastapi'
 
 const EXPERIENCE_LEVELS = {
     "Entry Level": "0-1",
