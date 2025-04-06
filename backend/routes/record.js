@@ -331,22 +331,22 @@ router.post("/api/upload-cv", upload.single('cv_file'), async (req, res) => {
 });
 
 
-router.get("/api/get-cv/:userId", async (req, res) => {
-    try {
-        const user = await db.collection("users").findOne({
-            _id: new ObjectId(req.params.userId)
-        });
+// router.get("/api/get-cv/:userId", async (req, res) => {
+//     try {
+//         const user = await db.collection("users").findOne({
+//             _id: new ObjectId(req.params.userId)
+//         });
 
-        if (!user?.cvPath) {
-            return res.status(404).json({ message: "CV not found" });
-        }
+//         if (!user?.cvPath) {
+//             return res.status(404).json({ message: "CV not found" });
+//         }
 
-        res.status(200).json({ cvUrl: user.cvPath });
-    } catch (error) {
-        console.error("Error fetching CV:", error);
-        res.status(500).json({ message: "Server error" });
-    }
-});
+//         res.status(200).json({ cvUrl: user.cvPath });
+//     } catch (error) {
+//         console.error("Error fetching CV:", error);
+//         res.status(500).json({ message: "Server error" });
+//     }
+// });
 
 router.post('/api/addNewPlayer', async (req, res) => {
     try {
@@ -381,30 +381,20 @@ router.get('/api/getCurrentPlayers', async (req, res) => {
 })
 //////////////////////////////////////////////////////////////////////? AI PART ////////////////////////////////////////////////////////////////////////////
 // Serve CV files
-router.get("/api/cv/:userId", async (req, res) => {
+router.get("/api/get-cv/:userId", async (req, res) => {
     try {
-        const userId = req.params.userId;
-        if (!userId) {
-            return res.status(400).send("User ID is required.");
+        const user = await db.collection("users").findOne({
+            _id: new ObjectId(req.params.userId)
+        });
+
+        if (!user?.cvPath) {
+            return res.status(404).json({ message: "CV not found" });
         }
 
-        // Get the user to check if they have a CV
-        const usersCollection = db.collection("users");
-        const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
-
-        if (!user) {
-            return res.status(404).send("User not found.");
-        }
-
-        if (!user.cvPath) {
-            return res.status(404).send("CV not found for this user.");
-        }
-
-        // Send the CV file
-        res.sendFile(path.resolve(user.cvPath));
-    } catch (err) {
-        console.error("Error serving CV file:", err);
-        res.status(500).send("An error occurred while serving the CV file.");
+        res.status(200).json({ cvUrl: user.cvPath });
+    } catch (error) {
+        console.error("Error fetching CV:", error);
+        res.status(500).json({ message: "Server error" });
     }
 });
 
