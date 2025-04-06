@@ -13,7 +13,7 @@ app = FastAPI(title="Candidate Recommendation API")
 # Configure CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change this in production
+    allow_origins=["https://nexusplus.vercel.app"],  # Change this in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
