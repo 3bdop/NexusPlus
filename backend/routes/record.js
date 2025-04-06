@@ -274,7 +274,7 @@ router.post("/api/upload-cv", upload.single('cv_file'), async (req, res) => {
 
         res.status(200).json({
             message: "CV uploaded successfully",
-            cvUrl: blob.url
+            cvPath: blob.url
         });
     } catch (error) {
         console.error("Error uploading CV:", error);
@@ -326,7 +326,7 @@ router.get("/api/get-cv/:userId", async (req, res) => {
             return res.status(404).json({ message: "CV not found" });
         }
 
-        res.status(200).json({ cvUrl: user.cvPath });
+        res.status(200).json({ cvPath: user.cvPath });
     } catch (error) {
         console.error("Error fetching CV:", error);
         res.status(500).json({ message: "Server error" });
