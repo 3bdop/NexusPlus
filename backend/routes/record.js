@@ -330,32 +330,20 @@ router.post("/api/upload-cv", upload.single('cv_file'), async (req, res) => {
 });
 
 
-router.get("/api/get-cv", validateSession, async (req, res) => {
+router.get("/api/get-cv/:userId", async (req, res) => {
     try {
-        // Get user ID from validated session
-        const userId = req.user.id;
-
-        // Find user in database
         const user = await db.collection("users").findOne({
-            _id: new ObjectId(userId)
+            _id: new ObjectId(req.params.userId)
         });
 
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
+        if (!user?.cvPath) {
+            return res.status(404).json({ message: "CV not found" });
         }
 
-        if (!user.cvPath) {
-            return res.status(404).json({ message: "CV not found for this user" });
-        }
-
-        // Return the CV URL from Vercel Blob
-        res.status(200).json({
-            cvUrl: user.cvPath
-        });
-
+        res.status(200).json({ cvUrl: user.cvPath });
     } catch (error) {
         console.error("Error fetching CV:", error);
-        res.status(500).json({ message: "Error retrieving CV" });
+        res.status(500).json({ message: "Server error" });
     }
 });
 
