@@ -10,6 +10,8 @@ import validateSession from "../middleware/validateSession.js"
 import multer from "multer";
 import fs from 'fs'
 import path from "path";
+import { put } from '@vercel/blob';
+import multer from 'multer';
 
 // Configure multer for CV storage
 const storage = multer.diskStorage({
@@ -46,20 +48,30 @@ const storage = multer.diskStorage({
     }
 });
 
+// const upload = multer({
+//     storage: storage,
+//     fileFilter: (req, file, cb) => {
+//         if (file.mimetype === 'application/pdf') {
+//             cb(null, true);                                      //! OLD
+//         } else {
+//             cb(new Error('Only PDF files are allowed'), false);
+//         }
+//     },
+//     limits: {
+//         fileSize: 3 * 1024 * 1024 // 3MB limit
+//     }
+// });
 const upload = multer({
-    storage: storage,
+    storage: multer.memoryStorage(), // Store file in memory
     fileFilter: (req, file, cb) => {
-        if (file.mimetype === 'application/pdf') {
+        if (file.mimetype === 'application/pdf') {                              //! NEW
             cb(null, true);
         } else {
             cb(new Error('Only PDF files are allowed'), false);
         }
     },
-    limits: {
-        fileSize: 3 * 1024 * 1024 // 3MB limit
-    }
+    limits: { fileSize: 3 * 1024 * 1024 } // 3MB
 });
-
 // The router will be added as a middleware and will take control of requests starting with path /record.
 const router = express.Router();
 
@@ -290,24 +302,61 @@ router.post("/api/upload-cv", upload.single('cv_file'), async (req, res) => {
             return res.status(400).send("No file uploaded.");
         }
 
+        // Get session and user ID
         const sessionId = req.cookies.sessionId;
         const session = await db.collection("session").findOne({ sessionId });
+        if (!session) throw new Error('Invalid session');
 
-        // Update user document with CV metadata
+        // Upload to Vercel Blob
+        const filename = `${session.userId}.pdf`;
+        const blob = await put(filename, req.file.buffer, {
+            access: 'public',
+            contentType: 'application/pdf'
+        });
+
+        // Update user with Blob URL
         await db.collection("users").updateOne(
             { _id: new ObjectId(session.userId) },
-            {
-                $set: { cvPath: req.file.path, }
-            }
+            { $set: { cvPath: blob.url } }
         );
 
         res.status(200).json({
             message: "CV uploaded successfully",
-            cvPath: `/cv/${req.file.filename}` // Return web-accessible path
+            cvUrl: blob.url
         });
     } catch (error) {
         console.error("Error uploading CV:", error);
-        res.status(500).send(error.message || "Error uploading CV.");
+        res.status(500).send(error.message || "Upload failed");
+    }
+});
+
+
+router.get("/api/get-cv", validateSession, async (req, res) => {
+    try {
+        // Get user ID from validated session
+        const userId = req.user.id;
+
+        // Find user in database
+        const user = await db.collection("users").findOne({
+            _id: new ObjectId(userId)
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (!user.cvPath) {
+            return res.status(404).json({ message: "CV not found for this user" });
+        }
+
+        // Return the CV URL from Vercel Blob
+        res.status(200).json({
+            cvUrl: user.cvPath
+        });
+
+    } catch (error) {
+        console.error("Error fetching CV:", error);
+        res.status(500).json({ message: "Error retrieving CV" });
     }
 });
 
