@@ -55,7 +55,7 @@ export default function CompanyJobs() {
 
   useEffect(() => {
     // Fetch employer-specific jobs
-    api.get(`/api/company/jobs/applications?user_id=${userId}`)
+    apiClient.get(`/api/company/jobs/applications?user_id=${userId}`)
       .then(res => {
         if (res.data.status === 'success') {
           setJobs(res.data.jobs);
@@ -101,7 +101,7 @@ export default function CompanyJobs() {
 
     // Fetch applicants for the selected job
 
-    api.get(`/api/job/${jobId}/applicants`)
+    apiClient.get(`/api/job/${jobId}/applicants`)
       .then(res => {
         const applicants = res.data.applicants || [];
         const recommended = res.data.recommended_candidates || [];
@@ -150,7 +150,7 @@ export default function CompanyJobs() {
   };
 
   const handleApprove = (jobId, applicantId) => {
-    api.post(`/api/job/${jobId}/applicant/${applicantId}/status`, { status: 'accepted' })
+    apiClient.post(`/api/job/${jobId}/applicant/${applicantId}/status`, { status: 'accepted' })
       .then(res => {
         // Update the applicants list to show the new status
         setApplicants(prevApplicants =>
@@ -168,7 +168,7 @@ export default function CompanyJobs() {
   };
 
   const handleReject = (jobId, applicantId) => {
-    api.post(`/api/job/${jobId}/applicant/${applicantId}/status`, { status: 'rejected' })
+    apiClient.post(`/api/job/${jobId}/applicant/${applicantId}/status`, { status: 'rejected' })
       .then(res => {
         // Update the applicants list to show the new status
         setApplicants(prevApplicants =>
