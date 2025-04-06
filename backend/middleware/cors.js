@@ -4,6 +4,7 @@ const allowedOrigins = [
     "https://nexusplus.vercel.app",
     /https:\/\/nexusplus-.*-3bdop\.vercel\.app/,
     /https:\/\/.*\.readyplayer\.me$/,
+    "https://career-fair-metaverse-p6nc.onrender.com",
     "http://localhost:5173",
     "http://localhost:5050"
 ];

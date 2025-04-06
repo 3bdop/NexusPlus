@@ -486,7 +486,7 @@ router.get("/api/job/:jobId/applicants", async (req, res) => {
                 // Request only the top 1 candidate
                 const axios = (await import('axios')).default;
                 const recommendationResponse = await axios.get(
-                    `http://localhost:8001/api/recommendations/${jobId}?top_k=1`
+                    `https://career-fair-metaverse-p6nc.onrender.com/api/recommendations/${jobId}?top_k=1`
                 );
 
                 // Log the recommendation response for debugging
