@@ -553,111 +553,73 @@ router.get("/api/get-cv/:userId", async (req, res) => {
 //     }
 // });
 
-// Helper methods
-function createCandidateProfile(candidate, applicants) {
-    const match = applicants.find(a =>
-        a.id === candidate.candidate_id ||
-        a.email === candidate.email ||
-        a.name === candidate.name
-    );
-
-    return match ? {
-        ...match,
-        content_similarity: candidate.content_similarity,
-        experience_match: candidate.experience_match,
-        skills_match: candidate.skills_match,
-        final_score: candidate.final_score,
-        matching_skills: candidate.matching_skills || [],
-        all_skills: candidate.all_skills || []
-    } : {
-        id: candidate.candidate_id,
-        name: candidate.name,
-        email: candidate.email,
-        experience: candidate.experience,
-        skills: candidate.all_skills || [],
-        status: 'recommended',
-        has_cv: false,
-        content_similarity: candidate.content_similarity,
-        experience_match: candidate.experience_match,
-        skills_match: candidate.skills_match,
-        final_score: candidate.final_score,
-        matching_skills: candidate.matching_skills || [],
-        all_skills: candidate.all_skills || []
-    };
-}
-
-router.get("/api/job/:jobId/applicants", async (req, res) => {
+router.get("/api/getAllApplicantsByJob/:jobId", async (req, res) => {
     try {
-        const jobId = req.params.jobId;
-        const jobsCollection = db.collection("job");
-        const usersCollection = db.collection("users");
+        const { jobId } = req.params;
 
-        // Parallel fetch job and recommendations
-        const [job, recommendationResponse] = await Promise.allSettled([
-            jobsCollection.findOne({ _id: new ObjectId(jobId) }),
-            axios.get(`https://career-fair-metaverse-p6nc.onrender.com/api/recommendations/${jobId}?top_k=1`)
-        ]);
-
-        if (!job.value) {
-            return res.status(404).json({ message: "Job not found" });
+        // Validate ObjectId format
+        if (!ObjectId.isValid(jobId)) {
+            return res.status(400).json({ error: "Invalid job ID format" });
         }
 
-        const applicants = job.value.applicants || [];
-        const applicationStatus = job.value.application_status || {};
+        // Find the job document
+        const job = await db.collection("jobs").findOne(
+            { _id: new ObjectId(jobId) },
+            { projection: { applicants: 1, application_status: 1, title: 1 } }
+        );
 
-        // Bulk fetch applicants
-        const applicantDetails = applicants.length > 0
-            ? await usersCollection.find(
-                { _id: { $in: applicants } },
-                { projection: { username: 1, email: 1, experience: 1, skills: 1, cvPath: 1 } }
-            ).toArray()
-            : [];
+        if (!job) {
+            return res.status(404).json({ error: "Job not found" });
+        }
 
-        // Process core applicant data
-        const processedApplicants = applicantDetails.map(user => ({
-            id: user._id.toString(),
-            name: user.username || "Unknown",
-            email: user.email || "No email",
+        // If no applicants, return early
+        if (!job.applicants?.length) {
+            return res.status(200).json({
+                jobId,
+                jobTitle: job.title || "Untitled Position",
+                totalApplicants: 0,
+                applicants: []
+            });
+        }
+
+        // Get applicant details in single query
+        const applicants = await db.collection("users").find(
+            { _id: { $in: job.applicants } },
+            {
+                projection: {
+                    _id: 1,
+                    username: 1,
+                    email: 1,
+                    experience: 1,
+                    skills: 1,
+                    cvPath: 1
+                }
+            }
+        ).toArray();
+
+        // Map to final structure with application status
+        const formattedApplicants = applicants.map(user => ({
+            userId: user._id.toString(),
+            name: user.username || "Anonymous Applicant",
+            email: user.email,
             experience: user.experience || "Not specified",
             skills: user.skills || [],
-            status: applicationStatus[user._id.toString()] || 'pending',
-            has_cv: !!user.cvPath,
-            cvPath: user.cvPath || null
+            status: job.application_status?.[user._id.toString()] || "pending",
+            cvUrl: user.cvPath || null
         }));
 
-        // Process recommendations
-        let recommendedCandidates = [];
-        let topRecommendedCandidate = null;
-
-        if (recommendationResponse.status === 'fulfilled' &&
-            recommendationResponse.value?.data?.candidates?.length > 0) {
-
-            recommendedCandidates = recommendationResponse.value.data.candidates
-                .map(candidate => this.createCandidateProfile(candidate, processedApplicants))
-                .filter(Boolean);
-
-            // Filter out recommended from main list
-            const recommendedIds = new Set(recommendedCandidates.map(c => c.id));
-            const filteredApplicants = processedApplicants.filter(a => !recommendedIds.has(a.id));
-
-            processedApplicants.length = 0;
-            processedApplicants.push(...filteredApplicants);
-
-            topRecommendedCandidate = recommendedCandidates[0];
-        }
-
-        return res.status(200).json({
-            job_id: jobId,
-            job_title: job.value.title || "Unknown Job",
-            applicant_count: processedApplicants.length + recommendedCandidates.length,
-            applicants: processedApplicants,
-            recommended_candidates: recommendedCandidates,
-            top_recommended_candidate: topRecommendedCandidate
+        res.status(200).json({
+            jobId,
+            jobTitle: job.title || "Untitled Position",
+            totalApplicants: formattedApplicants.length,
+            applicants: formattedApplicants
         });
 
     } catch (error) {
-        console.error("Error fetching job applicants:", error);
-        res.status(500).json({ message: "Internal server error" });
+        console.error("Error fetching applicants:", error);
+        res.status(500).json({
+            error: "Internal server error"
+        });
     }
 });
 
