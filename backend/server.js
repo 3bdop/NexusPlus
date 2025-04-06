@@ -10,7 +10,7 @@
 // const allowedOrigins = [
 //     "https://nexusplus.vercel.app"
 // ];
-
+ 
 // app.use(
 //     cors({
 //         origin: function (origin, callback) {
