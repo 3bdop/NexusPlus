@@ -43,13 +43,17 @@
 #         print("APIs have been shut down.")
 
 
+import os
 import uvicorn
+from fastapi import FastAPI
+
+app = FastAPI()  # This import should come from your main application file
 
 if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8001))  # Render provides PORT environment variable
     uvicorn.run(
-        "main:app",
+        "src.main:app",
         host="0.0.0.0",
-        port=8001,
-        reload=True,
-        workers=2
-    )
+        port=port,
+        reload=os.environ.get("DEBUG", "false").lower() == "true",
+        workers=int(os.environ.get("WORKERS", "2"))
