@@ -499,7 +499,7 @@ export default function CompanyJobs() {
                       boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)'
                     }
                   }}
-                  onClick={() => fetchApplicants(job.job_id)}
+                  onClick={() => fetchApplicantsAndRecommendations(job.job_id)}
                   startIcon={<People />}
                 >
                   View Applications ({job.applicants_count})
