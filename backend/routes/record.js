@@ -563,7 +563,7 @@ router.get("/api/getAllApplicantsByJob/:jobId", async (req, res) => {
         }
 
         // Find the job document
-        const job = await db.collection("jobs").findOne(
+        const job = await db.collection("job").findOne(
             { _id: new ObjectId(jobId) },
             { projection: { applicants: 1, application_status: 1, title: 1 } }
         );
