@@ -219,7 +219,7 @@ export default function CompanyJobs() {
     };
 
     loadData();
-  }, [selectedJob]);
+  }, []);
 
   const handleViewCV = async (applicantId) => {
     try {
