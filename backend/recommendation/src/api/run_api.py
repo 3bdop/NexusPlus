@@ -42,17 +42,34 @@
 #         candidate_api_process.join()
 #         print("APIs have been shut down.")
 
-
-import os
 import uvicorn
-from main import app  # Import from the same directory
+import os
+import time
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8001))
+def run_merged_api():
+    """Run the merged API using Render's preferred configuration"""
+    port = int(os.environ.get("PORT", 8001))  # Default to 8001 if not set
     uvicorn.run(
         "src.api.main:app",
         host="0.0.0.0",
         port=port,
         reload=os.environ.get("DEBUG", "false").lower() == "true",
-        workers=int(os.environ.get("WORKERS", "2"))
-    )
+        workers=int(os.environ.get("WORKERS", "1"))
+        
+if __name__ == "__main__":
+    # Start the unified API
+    print("Starting Nexus+ Recommendation API...")
+    
+    try:
+        run_merged_api()
+        print(f"\n===== API Running =====")
+        print(f"API Documentation: http://localhost:{os.environ.get('PORT', 8001)/docs")
+        
+        # Keep the process running
+        while True:
+            time.sleep(1)
+            
+    except KeyboardInterrupt:
+        print("\nShutting down API...")
+        # Uvicorn handles graceful shutdown automatically
+        print("API has been shut down.")
