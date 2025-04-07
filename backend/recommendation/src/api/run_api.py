@@ -45,14 +45,12 @@
 
 import os
 import uvicorn
-from fastapi import FastAPI
-
-app = FastAPI()  # This import should come from your main application file
+from main import app  # Import from the same directory
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8001))  # Render provides PORT environment variable
+    port = int(os.environ.get("PORT", 8001))
     uvicorn.run(
-        "src.main:app",
+        "src.api.main:app",
         host="0.0.0.0",
         port=port,
         reload=os.environ.get("DEBUG", "false").lower() == "true",
