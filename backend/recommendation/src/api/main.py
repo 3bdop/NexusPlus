@@ -21,7 +21,7 @@ app = FastAPI(title="Job Recommendation API")
 # Configure CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://nexusplus.vercel.app"],  # Replace * with your frontend URL
+    allow_origins=["https://nexusplus.vercel.app", "http://localhost:5173"],  # Replace * with your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
