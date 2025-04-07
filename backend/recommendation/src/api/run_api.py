@@ -55,6 +55,7 @@ def run_merged_api():
         port=port,
         reload=os.environ.get("DEBUG", "false").lower() == "true",
         workers=int(os.environ.get("WORKERS", "1"))
+    )
         
 if __name__ == "__main__":
     # Start the unified API
@@ -63,7 +64,7 @@ if __name__ == "__main__":
     try:
         run_merged_api()
         print(f"\n===== API Running =====")
-        print(f"API Documentation: http://localhost:{os.environ.get('PORT', 8001)/docs")
+        print(f"API Documentation: http://localhost:{os.environ.get('PORT', 8001)}/docs")
         
         # Keep the process running
         while True:
