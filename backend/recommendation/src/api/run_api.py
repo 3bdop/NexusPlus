@@ -55,3 +55,4 @@ if __name__ == "__main__":
         port=port,
         reload=os.environ.get("DEBUG", "false").lower() == "true",
         workers=int(os.environ.get("WORKERS", "2"))
+    )
