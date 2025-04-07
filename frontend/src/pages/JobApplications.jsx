@@ -50,7 +50,7 @@ export default function CompanyJobs() {
       // Fetch employer-specific jobs
       // Step 2: Fetch company jobs using the retrieved user ID
       const jobsResponse = await apiClient.get(`/api/company/jobs/applications`, {
-        params: { user_id: userId } // Proper way to send query params with axios
+        params: { user_id: userId }
       })
         .then(res => {
           if (res.data.status === 'success') {
@@ -354,7 +354,7 @@ export default function CompanyJobs() {
             bgcolor: 'rgba(211, 47, 47, 0.15)',
             color: '#f8d7da',
             border: '1px solid rgba(211, 47, 47, 0.3)',
-            '& .MuiAlert-icon': { color: '#f8d7da' }
+            // '& .MuiAlert-icon': { color: '#f8d7da' }
           }}
         >
           {error.message}
