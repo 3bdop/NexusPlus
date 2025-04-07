@@ -23,7 +23,7 @@ import { apiClient } from '../api/client';
 export default function CompanyJobs() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState({ message: null, type: 'error' });
   const [selectedPdf, setSelectedPdf] = useState(null);
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -35,34 +35,40 @@ export default function CompanyJobs() {
   const [applicantsLoading, setApplicantsLoading] = useState(false);
   const [applicantsError, setApplicantsError] = useState(null);
 
-  useEffect(async () => {
-    // Step 1: Fetch session data to get userId
-    const sessionResponse = await apiClient.get(
-      '/api/get-session',
-      { withCredentials: true }
-    );
-    if (!sessionResponse.data.userId) {
-      throw new Error('No user ID found in session data.');
-    }
-    const userId = sessionResponse.data.userId
-    // Fetch employer-specific jobs
-    // Step 2: Fetch company jobs using the retrieved user ID
-    const jobsResponse = await apiClient.get(`/api/company/jobs/applications`, {
-      params: { user_id: userId } // Proper way to send query params with axios
-    })
-      .then(res => {
-        if (res.data.status === 'success') {
-          setJobs(res.data.jobs);
-        } else {
-          setError('Error fetching company jobs');
-        }
-        setLoading(false);
+  useEffect(() => {
+    const fetchUserData = async () => {
+
+      // Step 1: Fetch session data to get userId
+      const sessionResponse = await apiClient.get(
+        '/api/get-session',
+        { withCredentials: true }
+      );
+      if (!sessionResponse.data.userId) {
+        throw new Error('No user ID found in session data.');
+      }
+      const userId = sessionResponse.data.userId
+      // Fetch employer-specific jobs
+      // Step 2: Fetch company jobs using the retrieved user ID
+      const jobsResponse = await apiClient.get(`/api/company/jobs/applications`, {
+        params: { user_id: userId } // Proper way to send query params with axios
       })
-      .catch(err => {
-        console.error('Error fetching company jobs:', err);
-        setError(err.response?.data?.detail || 'Failed to fetch company jobs');
-        setLoading(false);
-      });
+        .then(res => {
+          if (res.data.status === 'success') {
+            setJobs(res.data.jobs);
+          } else {
+            setError('Error fetching company jobs');
+          }
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error('Error fetching company jobs:', err);
+          setError({
+            message: err.response?.data?.detail || 'Failed to fetch company jobs',
+            type: 'error'
+          }); setLoading(false);
+        });
+    }
+    fetchUserData()
   }, []);
 
   function onDocumentLoadSuccess({ numPages }) {
@@ -337,7 +343,7 @@ export default function CompanyJobs() {
           <CircularProgress size={60} thickness={4} sx={{ color: '#323238' }} />
           <Typography variant="h6" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>Loading company jobs...</Typography>
         </Box>
-      ) : error ? (
+      ) : error.message ? (
         <Alert
           severity="error"
           sx={{
@@ -351,7 +357,7 @@ export default function CompanyJobs() {
             '& .MuiAlert-icon': { color: '#f8d7da' }
           }}
         >
-          {error}
+          {error.message}
         </Alert>
       ) : jobs.length === 0 ? (
         <Paper
@@ -402,9 +408,9 @@ export default function CompanyJobs() {
         </Paper>
       ) : (
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 4 }}>
-          {jobs.map((job, index) => (
+          {jobs.map((job) => (
             <Card
-              key={index}
+              key={job.job_id}
               sx={{
                 height: '100%',
                 display: 'flex',
@@ -852,7 +858,7 @@ export default function CompanyJobs() {
 
                           return (
                             <TableRow
-                              key={candidate.id}
+                              key={candidate.userId || candidate.candidate_id}
                               sx={{
                                 '&:nth-of-type(odd)': { backgroundColor: 'rgba(50, 50, 56, 0.1)' },
                                 '&:hover': { backgroundColor: 'action.selected' },
@@ -1030,13 +1036,13 @@ export default function CompanyJobs() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {applicants.map((applicant, index) => {
+                        {applicants.map((applicant) => {
                           // Make sure applicant has all required properties
                           const hasCv = applicant.has_cv || false;
 
                           return (
                             <TableRow
-                              key={applicant.id}
+                              key={applicant.userId}
                               sx={{
                                 '&:nth-of-type(odd)': { backgroundColor: 'rgba(50, 50, 56, 0.3)' },
                                 '&:hover': { backgroundColor: 'rgba(50, 50, 56, 0.5)' },
