@@ -138,6 +138,9 @@ export default function CompanyJobs() {
 
   const fetchApplicantsAndRecommendations = async (jobId) => {
     try {
+      if (!jobId) {
+        throw new Error('No job ID provided');
+      }
       // First fetch applicants from your API
       const applicantsResponse = await apiClient.get(`/api/getAllApplicantsByJob/${jobId}`);
 
@@ -205,14 +208,18 @@ export default function CompanyJobs() {
 
   useEffect(() => {
     const loadData = async () => {
-      setLoading(true);
-      await fetchApplicantsAndRecommendations(selectedJob.id);
+      if (!selectedJob?.id) return; // Add null check
+
+      try {
+        setApplicantsLoading(true);
+        await fetchApplicantsAndRecommendations(selectedJob.id);
+      } finally {
+        setApplicantsLoading(false);
+      }
     };
 
-    if (selectedJob.id) {
-      loadData();
-    }
-  }, [selectedJob.id]);
+    loadData();
+  }, [selectedJob]);
 
   const handleViewCV = async (applicantId) => {
     try {
