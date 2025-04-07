@@ -36,9 +36,10 @@ jobs:
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
-      - name: Zip artifact for deployment
-        working-directory: backend/recommendation
-        run: zip -r ../../release.zip .
+      - name: Zip only backend project for deployment
+        run: |
+          cd backend/recommendation
+          zip -r ../../release.zip . -x "venv/*"
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
