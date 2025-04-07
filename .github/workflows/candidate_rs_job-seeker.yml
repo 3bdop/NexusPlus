@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read  # This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -25,18 +25,23 @@ jobs:
           python-version: '3.10'
 
       - name: Create and start virtual environment
+        working-directory: backend/recommendation
         run: |
           python -m venv venv
           source venv/bin/activate
       
       - name: Install dependencies
+        working-directory: backend/recommendation
         run: pip install -r requirements.txt
         
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+      # Optional: Add a step here to run tests (e.g., pytest) if needed
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
-
+        working-directory: backend/recommendation
+        run: |
+          # Zip contents of the FastAPI project, excluding the virtual environment and other unnecessary directories.
+          zip -r ../../release.zip . -x "venv/*" "*__pycache__*"
+        
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
@@ -52,8 +57,8 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write    # Required for requesting the JWT
+      contents: read     # Required for actions/checkout
 
     steps:
       - name: Download artifact from build job
@@ -64,7 +69,6 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -72,10 +76,9 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_00C0ADD565D94DA5B4A1C89B526B0493 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5E9EC12A932341CBA542CDCABD717994 }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'job-seeker'
           slot-name: 'Production'
-          
