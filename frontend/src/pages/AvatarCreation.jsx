@@ -28,10 +28,6 @@ export default function AvatarCreation() {
                 { withCredentials: true } // Include cookies for session authentication
             );
 
-            if (sessionResponse.data.avatarUrl) {
-                setExistingAvatarUrl(sessionResponse.data.avatarUrl);
-            }
-
             const userId = sessionResponse.data.userId;
             if (!userId) {
                 throw new Error('User ID not found in session data.');
