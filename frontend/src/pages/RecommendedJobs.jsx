@@ -281,7 +281,7 @@ export default function RecommendedJobs() {
                                 style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: 2 }}
                             >
                                 <img
-                                    src='https://upload.wikimedia.org/wikipedia/commons/b/b6/Ooredoo.svg'
+                                    src={job.logo}
                                     alt='wikimedia.org'
                                     style={{ width: 40 }}
                                 />
