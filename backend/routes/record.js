@@ -590,8 +590,8 @@ router.get("/api/getAllApplicantsByJob/:jobId", async (req, res) => {
                     _id: 1,
                     username: 1,
                     email: 1,
-                    experience: 1,
-                    skills: 1,
+                    experience_level: 1,
+                    cv_skills: 1,
                     cvPath: 1
                 }
             }
@@ -602,8 +602,8 @@ router.get("/api/getAllApplicantsByJob/:jobId", async (req, res) => {
             userId: user._id.toString(),
             name: user.username || "Anonymous Applicant",
             email: user.email,
-            experience: user.experience || "Not specified",
-            skills: user.skills || [],
+            experience: user.experience_level || "Not specified",
+            skills: user.cv_skills || [],
             status: job.application_status?.[user._id.toString()] || "pending",
             cvUrl: user.cvPath || null
         }));
