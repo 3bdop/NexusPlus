@@ -123,29 +123,12 @@ def get_job_details_by_ids(
                     )
                 )
                 print(f"Total companies in collection: {len(all_companies)}")
-                for company in all_companies:
-                    print(
-                        f"Company in DB: {company['_id']} -> {
-                            (
-                                company.get('company_name', 'N/A'),
-                                company.get('logo', 'N/A'),
-                            )
-                        }"
-                    )
 
                 for company in companies_list:
                     company_info[str(company["_id"])] = {
                         "name": company.get("company_name", "N/A"),
                         "logo": company.get("logo", None),
                     }
-                    print(
-                        f"Found company: {company['_id']} -> {
-                            (
-                                company.get('company_name', 'N/A'),
-                                company.get('logo', 'N/A'),
-                            )
-                        }"
-                    )
 
                 print(f"Loaded {len(company_info)} company names")
             except Exception as e:
