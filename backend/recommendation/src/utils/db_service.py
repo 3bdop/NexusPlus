@@ -60,7 +60,7 @@ def get_job_details_by_ids(
     )
 
     # Create a dictionary to store company names by company_id
-    company_names = {}
+    company_info = {}
     if db is not None:
         # Get all unique company_ids from the jobs
         company_ids = set()
@@ -97,7 +97,8 @@ def get_job_details_by_ids(
 
                 # First try with ObjectId
                 company_cursor = company_collection.find(
-                    {"_id": {"$in": object_company_ids}}, {"_id": 1, "company_name": 1}
+                    {"_id": {"$in": object_company_ids}},
+                    {"_id": 1, "company_name": 1, "logo": 1},
                 )
 
                 companies_list = list(company_cursor)
@@ -108,7 +109,7 @@ def get_job_details_by_ids(
                     print("Trying string ID lookup as fallback")
                     company_cursor = company_collection.find(
                         {"_id": {"$in": company_ids_list}},
-                        {"_id": 1, "company_name": 1},
+                        {"_id": 1, "company_name": 1, "logo": 1},
                     )
                     companies_list = list(company_cursor)
                     print(
@@ -117,23 +118,36 @@ def get_job_details_by_ids(
 
                 # Print all companies in the collection for debugging
                 all_companies = list(
-                    company_collection.find({}, {"_id": 1, "company_name": 1})
+                    company_collection.find(
+                        {}, {"_id": 1, "company_name": 1, "logo": 1}
+                    )
                 )
                 print(f"Total companies in collection: {len(all_companies)}")
                 for company in all_companies:
                     print(
-                        f"Company in DB: {company['_id']} -> {company.get('company_name', 'N/A')}"
+                        f"Company in DB: {company['_id']} -> {
+                            (
+                                company.get('company_name', 'N/A'),
+                                company.get('logo', 'N/A'),
+                            )
+                        }"
                     )
 
                 for company in companies_list:
-                    company_names[str(company["_id"])] = company.get(
-                        "company_name", "N/A"
-                    )
+                    company_info[str(company["_id"])] = {
+                        "name": company.get("company_name", "N/A"),
+                        "logo": company.get("logo", None),
+                    }
                     print(
-                        f"Found company: {company['_id']} -> {company.get('company_name', 'N/A')}"
+                        f"Found company: {company['_id']} -> {
+                            (
+                                company.get('company_name', 'N/A'),
+                                company.get('logo', 'N/A'),
+                            )
+                        }"
                     )
 
-                print(f"Loaded {len(company_names)} company names")
+                print(f"Loaded {len(company_info)} company names")
             except Exception as e:
                 logging.error(f"Error fetching company names: {e}")
                 print(f"Error fetching company names: {e}")
@@ -153,16 +167,19 @@ def get_job_details_by_ids(
                 applied = False
 
         # Get company name from company_names dictionary if available
-        company_name = "N/A"
+        company_data = {
+            "id": str(doc.get("company_id", "")),
+            "name": "N/A",
+            "logo": None,
+        }
         if "company_id" in doc and doc["company_id"]:
             company_id_str = str(doc["company_id"])
             company_id_obj = doc["company_id"]
             print(f"Job {job_id} has company_id: {company_id_str}")
 
             # Try to get from pre-loaded company names
-            if company_id_str in company_names:
-                company_name = company_names[company_id_str]
-                print(f"Found company name: {company_name} for job {job_id}")
+            if company_id_str in company_info:
+                company_data.update(company_info[company_id_str])
             else:
                 print(
                     f"Company ID {company_id_str} not found in company_names dictionary"
@@ -206,7 +223,7 @@ def get_job_details_by_ids(
             "title": doc.get("title", "N/A"),
             "description": doc.get("description", "N/A"),
             "experience": doc.get("experience", "N/A"),
-            "company": company_name,
+            "company": company_data,
             "applied": applied,
         }
         print(f"Added job details: {job_details[job_id]}")
