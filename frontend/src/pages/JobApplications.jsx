@@ -4,22 +4,21 @@ import {
   Dialog, DialogTitle, DialogContent, IconButton,
   TextField, Select, MenuItem, InputAdornment, Button,
   CircularProgress, Alert, Card, CardContent, CardActions, Chip,
-  Paper, Divider, Tooltip
+  Paper, Tooltip
 } from '@mui/material';
 import {
   Close, ZoomIn, ZoomOut,
   ChevronLeft, ChevronRight, CheckCircle,
   Cancel, Work, People, PictureAsPdf, Email,
-  Info, Share, LocationOn, Business, CalendarToday,
-  Visibility, Add, Storage, Description, DataUsage, Assignment
+  Info, Storage, Description, DataUsage, Assignment
 } from '@mui/icons-material';
-import WorkTwoToneIcon from '@mui/icons-material/WorkTwoTone';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Document, Page } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import { apiClient } from '../api/client';
 import { api } from '../api/fastapi'
+import emailjs from '@emailjs/browser';
 
 export default function CompanyJobs() {
   const [jobs, setJobs] = useState([]);
@@ -35,7 +34,24 @@ export default function CompanyJobs() {
   const [applicants, setApplicants] = useState([]);
   const [applicantsLoading, setApplicantsLoading] = useState(false);
   const [applicantsError, setApplicantsError] = useState(null);
+  const form = useRef();
 
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    emailjs
+      .sendForm('service_j1m59ga', 'template_idmbvse', form.current, {
+        publicKey: 'w11c7pmbsVjXYmzYd',
+      })
+      .then(
+        () => {
+          console.log('SUCCESS!');
+        },
+        (error) => {
+          console.log('FAILED...', error.text);
+        },
+      );
+  };
   useEffect(() => {
     const fetchUserData = async () => {
 
@@ -127,8 +143,7 @@ export default function CompanyJobs() {
           applicant =>
             applicant.userId === topCandidate.userId ||
             applicant.name === topCandidate.username ||
-            applicant.email === topCandidate.email
-        );
+            applicant.email === topCandidate.email);
 
         // Create enhanced candidate object
         const recommendedCandidate = matchedApplicant ? {
@@ -139,12 +154,15 @@ export default function CompanyJobs() {
             content: topCandidate.content_similarity,
             experience: topCandidate.experience_match,
             skills: topCandidate.skills_match
-          }
+          },
+          jobTitle: applicantsResponse.data.jobTitle
         } : {
           ...topCandidate,
           userId: topCandidate.candidate_id,
           status: 'recommended',
-          cvUrl: null
+          cvUrl: null,
+          jobTitle: applicantsResponse.data.jobTitle
+
         };
 
         setTopRecommendedCandidate(recommendedCandidate);
@@ -870,25 +888,32 @@ export default function CompanyJobs() {
                               </TableCell>
                               <TableCell sx={{ py: 2 }} align='center'>
                                 <Box sx={{ display: 'flex', gap: 2 }}>
-                                  <Button
-                                    variant="contained"
-                                    color="success"
-                                    size="medium"
-                                    startIcon={<CheckCircle />}
-                                    onClick={() => handleApprove(selectedJob.id, candidate.userId)}
-                                    disabled={candidate.status === 'accepted'}
-                                    sx={{
-                                      borderRadius: '8px',
-                                      minWidth: '100px',
-                                      textTransform: 'none',
-                                      boxShadow: 'none',
-                                      bgcolor: candidate.status === 'accepted' ? 'rgba(76, 175, 80, 0.7)' : undefined,
-                                      '&:hover': { bgcolor: candidate.status === 'accepted' ? 'rgba(76, 175, 80, 0.8)' : undefined },
-                                      '&.Mui-disabled': { bgcolor: 'rgba(76, 175, 80, 0.7)', color: 'rgba(255, 255, 255, 0.8)' }
-                                    }}
-                                  >
-                                    {candidate.status === 'accepted' ? 'Accepted' : 'Accept'}
-                                  </Button>
+                                  <form ref={form} onSubmit={sendEmail}>
+                                    <input hidden type="text" name="to_name" value={candidate.name} />
+                                    <input hidden type="text" name="position" value={candidate.jobTitle} />
+                                    <input hidden type="email" name="to_email" value={candidate.email} />
+                                    <input hidden type='submit' value={"go"} />
+                                    <Button
+                                      type='submit'
+                                      variant="contained"
+                                      color="success"
+                                      size="medium"
+                                      startIcon={<CheckCircle />}
+                                      onClick={() => handleApprove(selectedJob.id, candidate.userId)}
+                                      disabled={candidate.status === 'accepted'}
+                                      sx={{
+                                        borderRadius: '8px',
+                                        minWidth: '100px',
+                                        textTransform: 'none',
+                                        boxShadow: 'none',
+                                        bgcolor: candidate.status === 'accepted' ? 'rgba(76, 175, 80, 0.7)' : undefined,
+                                        '&:hover': { bgcolor: candidate.status === 'accepted' ? 'rgba(76, 175, 80, 0.8)' : undefined },
+                                        '&.Mui-disabled': { bgcolor: 'rgba(76, 175, 80, 0.7)', color: 'rgba(255, 255, 255, 0.8)' }
+                                      }}
+                                    >
+                                      {candidate.status === 'accepted' ? 'Accepted' : 'Accept'}
+                                    </Button>
+                                  </form>
                                   <Button
                                     variant="contained"
                                     color="error"
