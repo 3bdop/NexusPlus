@@ -273,7 +273,7 @@ export default function RecommendedJobs() {
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <Typography variant="h6" align="center">Recommended Jobs</Typography>
                     {recommendations.map((job, index) => (
-                        <Accordion key={index}>
+                        <Accordion key={index} style={{ background: '#453970A1' }}>
                             <AccordionSummary
                                 expandIcon={<ArrowDownwardIcon />}
                                 aria-controls={`panel${index}-content`}
@@ -281,12 +281,15 @@ export default function RecommendedJobs() {
                                 style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: 2 }}
                             >
                                 <img
-                                    src={job.logo}
+                                    src={job.company.logo}
                                     alt='wikimedia.org'
                                     style={{ width: 40 }}
                                 />
+                                &nbsp;
+                                &nbsp;
+                                &nbsp;
                                 <Typography component="span">
-                                    {job.title} - {job.company}
+                                    {job.title} - {job.company.name}
                                 </Typography>
                             </AccordionSummary>
                             <AccordionDetails>
