@@ -13,12 +13,13 @@ import {
   Info, Share, LocationOn, Business, CalendarToday,
   Visibility, Add, Storage, Description, DataUsage, Assignment
 } from '@mui/icons-material';
+import WorkTwoToneIcon from '@mui/icons-material/WorkTwoTone';
 import { useState, useEffect } from 'react';
 import { Document, Page } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
-import axios from 'axios'
 import { apiClient } from '../api/client';
+import { api } from '../api/fastapi'
 
 export default function CompanyJobs() {
   const [jobs, setJobs] = useState([]);
@@ -93,55 +94,6 @@ export default function CompanyJobs() {
   const [topRecommendedCandidate, setTopRecommendedCandidate] = useState(null);
   const [recommendedCandidates, setRecommendedCandidates] = useState([]);
 
-  // const fetchApplicants = (jobId) => {
-  //   setApplicantsLoading(true);
-  //   setApplicantsError(null);
-  //   setTopRecommendedCandidate(null);
-  //   // setRecommendedCandidates([]);
-
-  //   // Fetch applicants for the selected job
-
-  //   apiClient.get(`/api/getAllApplicantsByJob/${jobId}`)
-  //     .then(res => {
-  //       const applicants = res.data.applicants || [];
-  //       const recommended = res.data.recommended_candidates || [];
-
-  //       // Double-check to make sure no applicant appears in both lists
-  //       const recommendedIds = new Set(recommended.map(candidate => candidate.id));
-  //       const filteredApplicants = applicants.filter(applicant => !recommendedIds.has(applicant.id));
-
-  //       console.log(`Frontend filtering: ${applicants.length} total applicants, ${filteredApplicants.length} after filtering out recommended`);
-
-  //       setApplicants(filteredApplicants);
-  //       // setRecommendedCandidates(recommended);
-
-  //       // Set the selected job with the correct applicant count
-  //       setSelectedJob({
-  //         id: res.data.job_id,
-  //         title: res.data.job_title
-  //       });
-
-  //       // Set the top recommended candidate if available
-  //       console.log('API response data:', res.data);
-  //       console.log('Recommended candidates from API:', recommended.length);
-  //       console.log('Top recommended candidate from API:', res.data.top_recommended_candidate);
-
-  //       if (res.data.top_recommended_candidate) {
-  //         console.log('Setting top recommended candidate');
-  //         setTopRecommendedCandidate(res.data.top_recommended_candidate);
-  //       } else {
-  //         console.log('No top recommended candidate found in response');
-  //       }
-
-  //       setApplicantsLoading(false);
-  //     })
-  //     .catch(err => {
-  //       console.error('Error fetching applicants:', err);
-  //       setApplicantsError(err.response?.data?.message || 'Failed to fetch applicants');
-  //       setApplicantsLoading(false);
-  //     });
-  // };
-
   const fetchApplicantsAndRecommendations = async (jobId) => {
     try {
       if (!jobId) {
@@ -162,8 +114,8 @@ export default function CompanyJobs() {
       });
 
       // Then fetch recommendations from external API
-      const recommendationResponse = await axios.get(
-        `https://career-fair-metaverse-p6nc.onrender.com/api/recommendations/${jobId}?top_k=1`
+      const recommendationResponse = await api.get(
+        `/api/employer/recommendations/${jobId}?top_k=1`
       );
 
       const recommendationData = recommendationResponse.data;
@@ -173,9 +125,9 @@ export default function CompanyJobs() {
         const topCandidate = recommendationData.candidates[0];
         const matchedApplicant = applicantsResponse.data.applicants.find(
           applicant =>
-            applicant.userId === topCandidate.candidate_id ||
-            applicant.email === topCandidate.email ||
-            applicant.name === topCandidate.name
+            applicant.userId === topCandidate.userId ||
+            applicant.name === topCandidate.username ||
+            applicant.email === topCandidate.email
         );
 
         // Create enhanced candidate object
@@ -251,7 +203,7 @@ export default function CompanyJobs() {
         // Update the applicants list to show the new status
         setApplicants(prevApplicants =>
           prevApplicants.map(applicant =>
-            applicant.id === applicantId
+            applicant.userId === applicantId
               ? { ...applicant, status: 'accepted' }
               : applicant
           )
@@ -284,6 +236,8 @@ export default function CompanyJobs() {
   const closeApplicantsDialog = () => {
     setSelectedJob(null);
     setApplicants([]);
+    setTopRecommendedCandidate(null)
+    setRecommendedCandidates([])
   };
 
   return (
@@ -292,7 +246,7 @@ export default function CompanyJobs() {
       maxWidth: 1400,
       mx: 'auto',
       bgcolor: '#0E0E10', // Dark background from theme
-      minHeight: '100vh',
+      minHeight: '10vh',
       color: '#FFFFFF'
     }}>
       <Box sx={{
@@ -304,7 +258,7 @@ export default function CompanyJobs() {
         borderColor: 'rgba(255, 255, 255, 0.1)'
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-          <Work sx={{ fontSize: 36, mr: 2, color: '#323238' }} />
+          {/* <WorkTwoToneIcon sx={{ fontSize: 70, mr: 2, color: '#FCFCFCFF' }} /> */}
           <Typography
             variant="h3"
             fontWeight="bold"
@@ -392,7 +346,7 @@ export default function CompanyJobs() {
           <Typography variant="body1" sx={{ color: 'rgba(255, 255, 255, 0.7)', maxWidth: 450, mx: 'auto', mb: 4, lineHeight: 1.6 }}>
             When your company posts jobs, they will appear here for you to manage applications and find the best candidates.
           </Typography>
-          <Button
+          {/* <Button
             variant="contained"
             startIcon={<Add />}
             sx={{
@@ -404,7 +358,7 @@ export default function CompanyJobs() {
             }}
           >
             Post a New Job
-          </Button>
+          </Button> */}
         </Paper>
       ) : (
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 4 }}>
@@ -497,11 +451,11 @@ export default function CompanyJobs() {
                     py: 1.2,
                     fontWeight: 'medium',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                    bgcolor: '#1976d2',
+                    bgcolor: '#79B8F7FF',
                     textTransform: 'none',
                     fontSize: '0.95rem',
                     '&:hover': {
-                      bgcolor: '#1565c0',
+                      bgcolor: '#3C8BE6FF',
                       boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)'
                     }
                   }}
@@ -658,20 +612,6 @@ export default function CompanyJobs() {
                 <Typography variant="body1" sx={{ color: 'rgba(255, 255, 255, 0.7)', maxWidth: 400, mx: 'auto', mb: 4, lineHeight: 1.6 }}>
                   When candidates apply for this job, their applications will appear here. You'll be able to review their profiles and CVs.
                 </Typography>
-                <Button
-                  variant="outlined"
-                  startIcon={<Share />}
-                  sx={{
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                    color: 'rgba(255, 255, 255, 0.9)',
-                    '&:hover': { borderColor: 'rgba(255, 255, 255, 0.5)', bgcolor: 'rgba(255, 255, 255, 0.05)' },
-                    px: 3,
-                    py: 1,
-                    borderRadius: 2
-                  }}
-                >
-                  Share Job Posting
-                </Button>
               </Paper>
             </Box>
           ) : (
@@ -844,18 +784,17 @@ export default function CompanyJobs() {
                     <Table sx={{ minWidth: 650 }}>
                       <TableHead sx={{ backgroundColor: 'rgba(76, 175, 80, 0.15)' }}>
                         <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Name</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Email</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Experience</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>CV</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Actions</TableCell>
+                          <TableCell align='center' sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Name</TableCell>
+                          <TableCell align='center' sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Email</TableCell>
+                          <TableCell align='center' sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Experience</TableCell>
+                          <TableCell align='center' sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>CV</TableCell>
+                          <TableCell align='center' sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Actions</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
                         {recommendedCandidates.map((candidate, index) => {
                           // Make sure candidate has all required properties
-                          const hasCv = candidate.has_cv || false;
-
+                          const hasCv = candidate.cvUrl || false;
                           return (
                             <TableRow
                               key={candidate.userId || candidate.candidate_id}
@@ -869,10 +808,10 @@ export default function CompanyJobs() {
                                 } : {})
                               }}
                             >
-                              <TableCell sx={{ fontSize: '0.95rem', py: 2 }}>
+                              <TableCell sx={{ fontSize: '0.95rem', py: 2 }} align='center'>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                   <Chip
-                                    label="#1 Recommended"
+                                    label="#1"
                                     size="small"
                                     sx={{
                                       mr: 2,
@@ -888,7 +827,7 @@ export default function CompanyJobs() {
                                   </Typography>
                                 </Box>
                               </TableCell>
-                              <TableCell sx={{ fontSize: '0.95rem', py: 2 }}>
+                              <TableCell sx={{ fontSize: '0.95rem', py: 2 }} align='center'>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                   <Box sx={{
                                     minWidth: 32,
@@ -905,19 +844,19 @@ export default function CompanyJobs() {
                                   <Typography sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>{candidate.email}</Typography>
                                 </Box>
                               </TableCell>
-                              <TableCell sx={{ fontSize: '0.95rem', py: 2, color: 'rgba(255, 255, 255, 0.9)' }}>{candidate.experience}</TableCell>
-                              <TableCell sx={{ py: 2 }}>
+                              <TableCell align='center' sx={{ fontSize: '0.95rem', py: 2, color: 'rgba(255, 255, 255, 0.9)' }}>{candidate.experience}</TableCell>
+                              <TableCell sx={{ py: 2 }} align='center'>
                                 {hasCv ? (
                                   <Tooltip title="View CV">
                                     <Button
                                       variant="contained"
                                       size="small"
                                       startIcon={<PictureAsPdf />}
-                                      onClick={() => handleViewCV(candidate.id)}
+                                      onClick={() => handleViewCV(candidate.userId)}
                                       sx={{
                                         borderRadius: '8px',
-                                        bgcolor: '#1976d2',
-                                        '&:hover': { bgcolor: '#1565c0' },
+                                        bgcolor: '#79B8F7FF',
+                                        '&:hover': { bgcolor: '#3C8BE6FF' },
                                         textTransform: 'none',
                                         boxShadow: 'none'
                                       }}
@@ -929,14 +868,14 @@ export default function CompanyJobs() {
                                   <Chip label="No CV" variant="outlined" size="small" color="default" />
                                 )}
                               </TableCell>
-                              <TableCell sx={{ py: 2 }}>
+                              <TableCell sx={{ py: 2 }} align='center'>
                                 <Box sx={{ display: 'flex', gap: 2 }}>
                                   <Button
                                     variant="contained"
                                     color="success"
                                     size="medium"
                                     startIcon={<CheckCircle />}
-                                    onClick={() => handleApprove(selectedJob.id, candidate.id)}
+                                    onClick={() => handleApprove(selectedJob.id, candidate.userId)}
                                     disabled={candidate.status === 'accepted'}
                                     sx={{
                                       borderRadius: '8px',
@@ -955,7 +894,7 @@ export default function CompanyJobs() {
                                     color="error"
                                     size="medium"
                                     startIcon={<Cancel />}
-                                    onClick={() => handleReject(selectedJob.id, candidate.id)}
+                                    onClick={() => handleReject(selectedJob.id, candidate.userId)}
                                     disabled={candidate.status === 'rejected'}
                                     sx={{
                                       borderRadius: '8px',
@@ -1028,17 +967,17 @@ export default function CompanyJobs() {
                     <Table sx={{ minWidth: 650 }}>
                       <TableHead sx={{ backgroundColor: '#323238' }}>
                         <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Name</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Email</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Experience</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>CV</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Actions</TableCell>
+                          <TableCell align='center' sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Name</TableCell>
+                          <TableCell align='center' sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Email</TableCell>
+                          <TableCell align='center' sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Experience</TableCell>
+                          <TableCell align='center' sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>CV</TableCell>
+                          <TableCell align='center' sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Actions</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
                         {applicants.map((applicant) => {
                           // Make sure applicant has all required properties
-                          const hasCv = applicant.has_cv || false;
+                          const hasCv = applicant.cvUrl || false;
 
                           return (
                             <TableRow
@@ -1049,10 +988,10 @@ export default function CompanyJobs() {
                                 borderBottom: '1px solid rgba(255, 255, 255, 0.05)'
                               }}
                             >
-                              <TableCell sx={{ fontSize: '0.95rem', py: 2.5, borderBottom: 'none' }}>
+                              <TableCell sx={{ fontSize: '0.95rem', py: 2.5, borderBottom: 'none' }} align='center'>
                                 <Typography variant="subtitle1" sx={{ fontWeight: 'medium', color: 'rgba(255, 255, 255, 0.9)' }}>{applicant.name}</Typography>
                               </TableCell>
-                              <TableCell sx={{ fontSize: '0.95rem', py: 2.5, borderBottom: 'none' }}>
+                              <TableCell sx={{ fontSize: '0.95rem', py: 2.5, borderBottom: 'none' }} align='center'>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                   <Box sx={{
                                     minWidth: 32,
@@ -1069,21 +1008,21 @@ export default function CompanyJobs() {
                                   <Typography sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>{applicant.email}</Typography>
                                 </Box>
                               </TableCell>
-                              <TableCell sx={{ fontSize: '0.95rem', py: 2.5, color: 'rgba(255, 255, 255, 0.8)', borderBottom: 'none' }}>{applicant.experience}</TableCell>
-                              <TableCell sx={{ py: 2.5, borderBottom: 'none' }}>
+                              <TableCell align='center' sx={{ fontSize: '0.95rem', py: 2.5, color: 'rgba(255, 255, 255, 0.8)', borderBottom: 'none' }}>{applicant.experience}</TableCell>
+                              <TableCell sx={{ py: 2.5, borderBottom: 'none' }} align='center'>
                                 {hasCv ? (
                                   <Tooltip title="View CV">
                                     <Button
                                       variant="contained"
                                       size="small"
                                       startIcon={<PictureAsPdf />}
-                                      onClick={() => handleViewCV(applicant.id)}
+                                      onClick={() => handleViewCV(applicant.userId)}
                                       sx={{
                                         borderRadius: '8px',
                                         textTransform: 'none',
                                         boxShadow: 'none',
-                                        bgcolor: '#1976d2',
-                                        '&:hover': { bgcolor: '#1565c0' }
+                                        bgcolor: '#79B8F7FF',
+                                        '&:hover': { bgcolor: '#3C8BE6FF' }
                                       }}
                                     >
                                       View CV
@@ -1101,14 +1040,14 @@ export default function CompanyJobs() {
                                   />
                                 )}
                               </TableCell>
-                              <TableCell sx={{ py: 2.5, borderBottom: 'none' }}>
+                              <TableCell sx={{ py: 2.5, borderBottom: 'none' }} align='center'>
                                 <Box sx={{ display: 'flex', gap: 2 }}>
                                   <Button
                                     variant="contained"
                                     color="success"
                                     size="medium"
                                     startIcon={<CheckCircle />}
-                                    onClick={() => handleApprove(selectedJob.id, applicant.id)}
+                                    onClick={() => handleApprove(selectedJob.id, applicant.userId)}
                                     disabled={applicant.status === 'accepted'}
                                     sx={{
                                       borderRadius: '8px',
@@ -1127,7 +1066,7 @@ export default function CompanyJobs() {
                                     color="error"
                                     size="medium"
                                     startIcon={<Cancel />}
-                                    onClick={() => handleReject(selectedJob.id, applicant.id)}
+                                    onClick={() => handleReject(selectedJob.id, applicant.userId)}
                                     disabled={applicant.status === 'rejected'}
                                     sx={{
                                       borderRadius: '8px',
@@ -1351,10 +1290,6 @@ export default function CompanyJobs() {
                   setPdfLoading(false);
                 }}
                 loading={<CircularProgress />}
-              // options={{
-              //   cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
-              //   cMapPacked: true,
-              // }}
               >
                 <Page
                   pageNumber={pageNumber}
