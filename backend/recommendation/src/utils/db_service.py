@@ -1,7 +1,9 @@
 import logging
+
+import numpy as np  # Needed to check for numpy arrays
 from bson import ObjectId
 from pymongo import MongoClient
-import numpy as np  # Needed to check for numpy arrays
+
 
 def connect_to_mongo(uri: str, db_name: str):
     """
@@ -16,6 +18,7 @@ def connect_to_mongo(uri: str, db_name: str):
         logging.error("Error connecting to MongoDB: %s", e)
         raise
 
+
 def get_all_job_embeddings(jobs_collection):
     """
     Retrieve all job embeddings along with their ID and required experience.
@@ -26,12 +29,15 @@ def get_all_job_embeddings(jobs_collection):
         job = {
             "id": str(doc.get("_id")),  # Convert ObjectId to string
             "embedding": doc.get("embedding"),
-            "experience": doc.get("experience")
+            "experience": doc.get("experience"),
         }
         job_list.append(job)
     return job_list
 
-def get_job_details_by_ids(jobs_collection, job_ids: list, current_user_id: str = None, db=None) -> dict:
+
+def get_job_details_by_ids(
+    jobs_collection, job_ids: list, current_user_id: str = None, db=None
+) -> dict:
     """
     Retrieve detailed job information for specific job IDs.
     Returns a dict keyed by job id (as a string).
@@ -49,8 +55,8 @@ def get_job_details_by_ids(jobs_collection, job_ids: list, current_user_id: str 
             "experience": 1,
             "company": 1,
             "company_id": 1,
-            "applicants": 1  # Include applicants for checking applied status
-        }
+            "applicants": 1,  # Include applicants for checking applied status
+        },
     )
 
     # Create a dictionary to store company names by company_id
@@ -80,7 +86,9 @@ def get_job_details_by_ids(jobs_collection, job_ids: list, current_user_id: str 
                         try:
                             object_company_ids.append(ObjectId(company_id))
                         except Exception as e:
-                            print(f"Error converting company_id {company_id} to ObjectId: {e}")
+                            print(
+                                f"Error converting company_id {company_id} to ObjectId: {e}"
+                            )
                             object_company_ids.append(company_id)
                     else:
                         object_company_ids.append(company_id)
@@ -89,8 +97,7 @@ def get_job_details_by_ids(jobs_collection, job_ids: list, current_user_id: str 
 
                 # First try with ObjectId
                 company_cursor = company_collection.find(
-                    {"_id": {"$in": object_company_ids}},
-                    {"_id": 1, "company_name": 1}
+                    {"_id": {"$in": object_company_ids}}, {"_id": 1, "company_name": 1}
                 )
 
                 companies_list = list(company_cursor)
@@ -101,20 +108,30 @@ def get_job_details_by_ids(jobs_collection, job_ids: list, current_user_id: str 
                     print("Trying string ID lookup as fallback")
                     company_cursor = company_collection.find(
                         {"_id": {"$in": company_ids_list}},
-                        {"_id": 1, "company_name": 1}
+                        {"_id": 1, "company_name": 1},
                     )
                     companies_list = list(company_cursor)
-                    print(f"Found {len(companies_list)} companies with string ID lookup")
+                    print(
+                        f"Found {len(companies_list)} companies with string ID lookup"
+                    )
 
                 # Print all companies in the collection for debugging
-                all_companies = list(company_collection.find({}, {"_id": 1, "company_name": 1}))
+                all_companies = list(
+                    company_collection.find({}, {"_id": 1, "company_name": 1})
+                )
                 print(f"Total companies in collection: {len(all_companies)}")
                 for company in all_companies:
-                    print(f"Company in DB: {company['_id']} -> {company.get('company_name', 'N/A')}")
+                    print(
+                        f"Company in DB: {company['_id']} -> {company.get('company_name', 'N/A')}"
+                    )
 
                 for company in companies_list:
-                    company_names[str(company["_id"])] = company.get("company_name", "N/A")
-                    print(f"Found company: {company['_id']} -> {company.get('company_name', 'N/A')}")
+                    company_names[str(company["_id"])] = company.get(
+                        "company_name", "N/A"
+                    )
+                    print(
+                        f"Found company: {company['_id']} -> {company.get('company_name', 'N/A')}"
+                    )
 
                 print(f"Loaded {len(company_names)} company names")
             except Exception as e:
@@ -132,7 +149,7 @@ def get_job_details_by_ids(jobs_collection, job_ids: list, current_user_id: str 
         if current_user_id:
             try:
                 applied = ObjectId(current_user_id) in doc.get("applicants", [])
-            except Exception as e:
+            except Exception:
                 applied = False
 
         # Get company name from company_names dictionary if available
@@ -147,7 +164,9 @@ def get_job_details_by_ids(jobs_collection, job_ids: list, current_user_id: str 
                 company_name = company_names[company_id_str]
                 print(f"Found company name: {company_name} for job {job_id}")
             else:
-                print(f"Company ID {company_id_str} not found in company_names dictionary")
+                print(
+                    f"Company ID {company_id_str} not found in company_names dictionary"
+                )
 
                 # Try direct lookup if db is available
                 if db is not None:
@@ -162,12 +181,18 @@ def get_job_details_by_ids(jobs_collection, job_ids: list, current_user_id: str 
                             print(f"Direct lookup found company name: {company_name}")
                         else:
                             # Try with string ID
-                            company = company_collection.find_one({"_id": company_id_str})
+                            company = company_collection.find_one(
+                                {"_id": company_id_str}
+                            )
                             if company and "company_name" in company:
                                 company_name = company["company_name"]
-                                print(f"Direct string lookup found company name: {company_name}")
+                                print(
+                                    f"Direct string lookup found company name: {company_name}"
+                                )
                             else:
-                                print(f"Direct lookup failed for company ID: {company_id_str}")
+                                print(
+                                    f"Direct lookup failed for company ID: {company_id_str}"
+                                )
                     except Exception as e:
                         print(f"Error in direct company lookup: {e}")
         elif "company" in doc and doc["company"]:
@@ -182,20 +207,18 @@ def get_job_details_by_ids(jobs_collection, job_ids: list, current_user_id: str 
             "description": doc.get("description", "N/A"),
             "experience": doc.get("experience", "N/A"),
             "company": company_name,
-            "applied": applied
+            "applied": applied,
         }
         print(f"Added job details: {job_details[job_id]}")
     return job_details
+
 
 def get_job_skills_by_ids(jobs_collection, job_ids: list) -> dict:
     """
     Retrieve skills required for specific job IDs.
     """
     object_ids = [ObjectId(id_) for id_ in job_ids]
-    cursor = jobs_collection.find(
-        {"_id": {"$in": object_ids}},
-        {"_id": 1, "skills": 1}
-    )
+    cursor = jobs_collection.find({"_id": {"$in": object_ids}}, {"_id": 1, "skills": 1})
 
     job_skills = {}
     for doc in cursor:
@@ -203,7 +226,10 @@ def get_job_skills_by_ids(jobs_collection, job_ids: list) -> dict:
         job_skills[job_id] = doc.get("skills", [])
     return job_skills
 
-def save_user_recommendations(db, user_id: str, job_ids: list):
+
+def save_user_recommendations(
+    db, user_id: str, job_ids: list, experience_level, cv_skills
+):
     """
     Save recommended job IDs to user's document.
     """
@@ -211,12 +237,19 @@ def save_user_recommendations(db, user_id: str, job_ids: list):
     try:
         result = users_collection.update_one(
             {"_id": ObjectId(user_id)},
-            {"$set": {"recommended_jobs": job_ids}}
+            {
+                "$set": {
+                    "recommended_jobs": job_ids,
+                    "experience_level": experience_level,
+                    "cv_skills": cv_skills,
+                }
+            },
         )
         return result.modified_count > 0
     except Exception as e:
         logging.error(f"Error saving recommendations: {e}")
         return False
+
 
 def store_user_cv_embedding(db, user_id: str, cv_embedding):
     """
@@ -229,13 +262,13 @@ def store_user_cv_embedding(db, user_id: str, cv_embedding):
         if isinstance(cv_embedding, np.ndarray):
             cv_embedding = cv_embedding.tolist()
         result = users_collection.update_one(
-            {"_id": ObjectId(user_id)},
-            {"$set": {"cv_embedding": cv_embedding}}
+            {"_id": ObjectId(user_id)}, {"$set": {"cv_embedding": cv_embedding}}
         )
         return result.modified_count > 0
     except Exception as e:
         logging.error(f"Error storing CV embedding: {e}")
         return False
+
 
 def apply_to_job(db, job_id: str, user_id: str) -> bool:
     """
@@ -244,8 +277,7 @@ def apply_to_job(db, job_id: str, user_id: str) -> bool:
     jobs_collection = db["job"]
     try:
         result = jobs_collection.update_one(
-            {"_id": ObjectId(job_id)},
-            {"$addToSet": {"applicants": ObjectId(user_id)}}
+            {"_id": ObjectId(job_id)}, {"$addToSet": {"applicants": ObjectId(user_id)}}
         )
         return result.modified_count > 0
     except Exception as e:

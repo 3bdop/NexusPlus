@@ -48,13 +48,10 @@ import time
 
 def run_merged_api():
     """Run the merged API using Render's preferred configuration"""
-    port = int(os.environ.get("PORT", 8001))  # Default to 8001 if not set
     uvicorn.run(
         "src.api.main:app",
         host="0.0.0.0",
-        port=port,
-        reload=os.environ.get("DEBUG", "false").lower() == "true",
-        workers=int(os.environ.get("WORKERS", "1"))
+        port=8000,
     )
         
 if __name__ == "__main__":
@@ -64,7 +61,6 @@ if __name__ == "__main__":
     try:
         run_merged_api()
         print(f"\n===== API Running =====")
-        print(f"API Documentation: http://localhost:{os.environ.get('PORT', 8001)}/docs")
         
         # Keep the process running
         while True:
