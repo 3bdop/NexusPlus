@@ -26,7 +26,7 @@ const EXPERIENCE_LEVELS = {
     "Junior": "1-3",
     "Mid-Level": "3-6",
     "Senior": "6-10",
-    "Expert": Infinity,
+    "Expert": "10+",
 };
 
 const steps = [

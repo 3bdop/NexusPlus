@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const fastapi = import.meta.env.VITE_FASTAPI_BACKEND_URL_CANDIDATE
+const fastapi = import.meta.env.VITE_FASTAPI_JOB_SEEKER
 
 // Create an axios instance with default config
 export const api = axios.create({
