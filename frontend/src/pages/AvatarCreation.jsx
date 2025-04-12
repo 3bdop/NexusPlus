@@ -44,7 +44,7 @@ export default function AvatarCreation() {
                     },
                 }
             );
-            if (updateResponse.status === 200) {
+            if (updateResponse.status === 200 || updateResponse.status === 204 ) {
                 console.log('Avatar updated successfully:', updateResponse.data);
                 navigate('/dashboard'); // Redirect to the home page
             }
