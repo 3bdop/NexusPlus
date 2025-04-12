@@ -118,7 +118,7 @@ router.post("/api/login", async (req, res) => {
         // If login is successful
         // Send response
         res.status(200).json({
-            message: "Login successful!",
+            msg: "Login successful!",
             user: { username: user.username }
         });
     } catch (err) {
