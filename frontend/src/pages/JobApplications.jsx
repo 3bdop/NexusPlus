@@ -480,7 +480,7 @@ export default function CompanyJobs() {
                   onClick={() => fetchApplicantsAndRecommendations(job.job_id)}
                   startIcon={<People />}
                 >
-                  View Applications ({job.applicants_count})
+                  View Applications ({job.applicants_count > 1 ? job.applicants_count - 1 : job.applicants_count})
                 </Button>
               </CardActions>
             </Card>
