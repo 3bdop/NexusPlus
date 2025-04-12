@@ -45,3 +45,16 @@ Ooredoo it is a leading telecommunications company headquartered in Doha, Qatar.
 Qatar TV is the state-owned national television network based in Doha, Qatar. Established in 1970, it broadcasts news, entertainment, and cultural programs across Qatar and the Arab world. Qatar TV operates in multiple languages, including Arabic and English. The network offers several channels, such as Qatar TV, Qatar Sports, and Qatar Documentary. It also maintains a strong digital presence through live streaming and social media content. More details are available at www.qtv.qa.
 Rafeeq is a Qatar-based online marketplace and delivery service founded in 2018. Headquartered in Doha, the company specializes in food delivery, grocery shopping, and courier services. Rafeeq partners with local restaurants, supermarkets, and retail brands to offer a seamless shopping and delivery experience. Its services are accessible through a mobile app available on both iOS and Android. To learn more, visit www.gorafeeq.com.
 Al Jazeera is a globally recognized news organization headquartered in Doha, Qatar. Since its founding in 1996, it has become a leader in in-depth journalism, investigative reporting, and documentaries, with a strong focus on the Middle East and international affairs. Al Jazeera broadcasts in multiple languages, including Arabic, English, Turkish, and Bosnian, and operates channels such as Al Jazeera Arabic, Al Jazeera English, and Al Jazeera Documentary. With a global presence spanning over 70 bureaus worldwide, the network delivers comprehensive news coverage across various platforms. More details are available at www.aljazeera.com.
+NexusPlus is a virtual career fair platform that lets job seekers and employers connect in an immersive online 3D environment.
+Users can create and personalize a digital avatar that represents them during the virtual career fair.
+Job seekers can explore virtual company booths by navigating through a 3D exhibition hall using their avatar.
+Real-time communication is supported, allowing users to speak with company representatives through voice chat or text messaging.
+Virtual seminars and live presentations are hosted during the event, and users can attend these sessions from within the platform.
+The platform analyzes uploaded CVs and user profiles to recommend job opportunities that best match the user’s skills and experience.
+Users can apply for jobs directly inside the platform without needing to visit external websites.
+Employers can view user profiles and receive candidate suggestions based on how well their qualifications fit open positions.
+All users go through an identity verification step before joining the event, helping ensure that interactions are with real people.
+After verification, each user receives a digital certificate stored securely on the blockchain to prove their identity during the fair.
+A built-in chatbot named Daleel is available at all times to answer user questions about the event, platform features, and job search help.
+NexusPlus is accessible from anywhere with an internet connection, allowing users to attend the fair remotely without travel.
+Using NexusPlus helps job seekers save time, discover better-fitting job options, and engage in a more interactive job-hunting experience.
