@@ -12,6 +12,8 @@ import path from "path";
 import { put } from '@vercel/blob';
 import multer from 'multer';
 import axios from 'axios'
+import { sendOtpEmail } from "../utils/sendEmail.js";
+import bcrypt from 'bcrypt';
 
 const upload = multer({
     storage: multer.memoryStorage(), // Store file in memory
@@ -125,41 +127,156 @@ router.post("/api/login", async (req, res) => {
     }
 })
 
-router.post('/api/register', async (req, res) => {
+router.post("/api/register", async (req, res) => {
+    const { wallet, username, email, gender } = req.body;
+  
+    if (!wallet || !email || !username) {
+      return res.status(400).json({ message: "Wallet, username, and email are required." });
+    }
+  
     try {
-        const { wallet, username, email, gender } = req.body
+  
+      // 2️⃣ Generate OTP & expiration time
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  
+      const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+      const salt = await bcrypt.genSalt(10);
+      const hashedOtp = await bcrypt.hash(otp, salt);
+      
+    
+     // default avatar
 
-        if (!wallet || !email || !username || !gender) {
-            return res.status(400).json({ message: "Missing required fields." });
-        }
-        const usersCollection = db.collection('users');
+     let gAvatarurl = 'https://models.readyplayer.me/67f3af37d4370bf8b07443f8.glb';
+     if (gender == 'girl') {
+         gAvatarurl = "https://models.readyplayer.me/67f3aea0fa421e45fd2df18d.glb";
+     }
 
-        const existingUser = await usersCollection.findOne({ wallet });
-        if (existingUser) {
-            return res.status(400).json({ message: "Wallet is already registered." });
-        }
-        let avatarUrl = 'https://models.readyplayer.me/67f3af37d4370bf8b07443f8.glb'
-        if (gender.toLowerCase() == 'female') {
-            avatarUrl = "https://models.readyplayer.me/67f3aea0fa421e45fd2df18d.glb"
-        }
+     
+    // 3️⃣ Store or update user in DB
+    await db.collection("users").updateOne(
+      { wallet },
+      {
+        $set: {
+          username,
+          email,
+          avatarUrl: gAvatarurl,
+          role: "attendee",
+          gender,
+          hashedOtp,
+          otpExpiresAt,
+          isVerified: false,
+        },
+      },
+      { upsert: true }
+    );
 
-        await usersCollection.insertOne(
-            {
-                wallet,
-                username: username,
-                email: email,
-                avatarUrl,
-                role: 'attendee',
-                gender: gender.toLowerCase()
-            });
+    // 4️⃣ Send the OTP via email
+    await sendOtpEmail(email, otp);
 
-        res.status(201).json({ message: "Registration successful!" });
+    res.status(200).json({ message: "OTP sent to your email. Please verify to complete registration." });
+  } catch (err) {
+    console.error("Registration error:", err);
+    res.status(500).json({ message: "Registration failed. Please try again." });
+  }
+});
+
+router.post("/api/verify-otp", async (req, res) => {
+    const { wallet, otp } = req.body;
+  
+    if (!wallet || !otp) {
+      return res.status(400).json({ message: "Wallet and OTP are required." });
     }
-    catch (error) {
-        console.error("Registration error:", error);
-        res.status(500).json({ message: "Server error during registration." });
+  
+    try {
+      const user = await db.collection("users").findOne({ wallet });
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found." });
+      }
+  
+      if (user.isVerified) {
+        return res.status(409).json({ message: "User already verified." });
+      }
+
+      if (!user.hashedOtp || !user.otpExpiresAt) {
+        return res.status(400).json({ message: "No OTP found for this user." });
+      }
+  
+      const now = new Date();
+      if (now > new Date(user.otpExpiresAt)) {
+        return res.status(410).json({ message: "OTP expired. Please request a new one." });
+      }
+  
+      const isMatch = await bcrypt.compare(otp.toString(), user.hashedOtp);
+
+      if (!isMatch) {
+        return res.status(401).json({ message: "Invalid OTP. Please try again." });
+      }
+  
+      // ✅ Generate a Decentralized Identifier (DID) using wallet address
+      const did = `${wallet}`;
+  
+      // ✅ Update MongoDB to reflect verification + cert status
+      await db.collection("users").updateOne(
+        { wallet },
+        {
+          $set: {
+            isVerified: true,
+            certificate: {
+              did,
+              issuedBy: "UDST",
+              issuedAt: Date.now(),
+              expiresAt: Date.now() + 365 * 24 * 60 * 60 * 1000, // 1 year
+              isValid: true
+            }
+          },
+          $unset: { otp: "", otpExpiresAt: "" }
+        }
+      );
+  
+      res.status(200).json({ message: "OTP verified. Certificate issued successfully." });
+  
+    } catch (err) {
+      console.error("OTP verification error:", err);
+      res.status(500).json({ message: "Verification failed. Please try again." });
     }
-})
+  });
+
+// router.post('/api/register', async (req, res) => {
+//     try {
+//         const { wallet, username, email, gender } = req.body
+
+//         if (!wallet || !email || !username || !gender) {
+//             return res.status(400).json({ message: "Missing required fields." });
+//         }
+//         const usersCollection = db.collection('users');
+
+//         const existingUser = await usersCollection.findOne({ wallet });
+//         if (existingUser) {
+//             return res.status(400).json({ message: "Wallet is already registered." });
+//         }
+//         let avatarUrl = 'https://models.readyplayer.me/67f3af37d4370bf8b07443f8.glb'
+//         if (gender.toLowerCase() == 'female') {
+//             avatarUrl = "https://models.readyplayer.me/67f3aea0fa421e45fd2df18d.glb"
+//         }
+
+//         await usersCollection.insertOne(
+//             {
+//                 wallet,
+//                 username: username,
+//                 email: email,
+//                 avatarUrl,
+//                 role: 'attendee',
+//                 gender: gender.toLowerCase()
+//             });
+
+//         res.status(201).json({ message: "Registration successful!" });
+//     }
+//     catch (error) {
+//         console.error("Registration error:", error);
+//         res.status(500).json({ message: "Server error during registration." });
+//     }
+// })
 router.get('/api/getUserByWallet/:id', async (req, res) => {
     try {
         const wallet = req.params.id;
