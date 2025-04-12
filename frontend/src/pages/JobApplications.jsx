@@ -659,7 +659,7 @@ export default function CompanyJobs() {
                         mr: 2,
                         mt: 0.5
                       }}>
-                        <Info sx={{ fontSize: 24, color: 'rgba(255, 255, 255, 0.9)' }} />
+                        <Info sx={{ fontSize: 24, color: '#F3B838FF' }} />
                       </Box>
                       <Box>
                         <Typography
@@ -674,82 +674,11 @@ export default function CompanyJobs() {
                           Recommendation System Information
                         </Typography>
                         <Typography variant="body1" sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 2, lineHeight: 1.6 }}>
-                          No recommended candidates are available for this job at this time. This could be because:
+                          No recommended candidates are available for this job at this time.
                         </Typography>
                       </Box>
                     </Box>
 
-                    <Box sx={{ pl: 7 }}>
-                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                          <Box sx={{
-                            minWidth: 28,
-                            height: 28,
-                            borderRadius: '50%',
-                            bgcolor: 'rgba(50, 50, 56, 0.5)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}>
-                            <Storage sx={{ fontSize: 16, color: 'rgba(255, 255, 255, 0.9)' }} />
-                          </Box>
-                          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)', mt: 0.3 }}>
-                            <strong>Missing embeddings:</strong> The job or applicants don't have the required embeddings in the database
-                          </Typography>
-                        </Box>
-
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                          <Box sx={{
-                            minWidth: 28,
-                            height: 28,
-                            borderRadius: '50%',
-                            bgcolor: 'rgba(50, 50, 56, 0.5)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}>
-                            <Description sx={{ fontSize: 16, color: 'rgba(255, 255, 255, 0.9)' }} />
-                          </Box>
-                          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)', mt: 0.3 }}>
-                            <strong>No CV uploads:</strong> Applicants haven't uploaded their CVs
-                          </Typography>
-                        </Box>
-
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                          <Box sx={{
-                            minWidth: 28,
-                            height: 28,
-                            borderRadius: '50%',
-                            bgcolor: 'rgba(50, 50, 56, 0.5)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}>
-                            <DataUsage sx={{ fontSize: 16, color: 'rgba(255, 255, 255, 0.9)' }} />
-                          </Box>
-                          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)', mt: 0.3 }}>
-                            <strong>Insufficient data:</strong> The recommendation system needs more data to make accurate matches
-                          </Typography>
-                        </Box>
-
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                          <Box sx={{
-                            minWidth: 28,
-                            height: 28,
-                            borderRadius: '50%',
-                            bgcolor: 'rgba(50, 50, 56, 0.5)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}>
-                            <Assignment sx={{ fontSize: 16, color: 'rgba(255, 255, 255, 0.9)' }} />
-                          </Box>
-                          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)', mt: 0.3 }}>
-                            <strong>Vague requirements:</strong> The job description might need more specific skills or requirements
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </Box>
                   </Paper>
                 </Box>
               )}
@@ -992,7 +921,7 @@ export default function CompanyJobs() {
                     <Table sx={{ minWidth: 650 }}>
                       <TableHead sx={{ backgroundColor: '#323238' }}>
                         <TableRow>
-                          <TableCell align='center' sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Name</TableCell>
+                          <TableCell align='center' sx={{ alignSelf: 'center', fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Name</TableCell>
                           <TableCell align='center' sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Email</TableCell>
                           <TableCell align='center' sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Experience</TableCell>
                           <TableCell align='center' sx={{ fontWeight: 'bold', color: 'white', fontSize: '0.95rem', py: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>CV</TableCell>
