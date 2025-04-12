@@ -173,7 +173,7 @@ router.post("/api/register", async (req, res) => {
     // 4️⃣ Send the OTP via email
     await sendOtpEmail(email, otp);
 
-    res.status(200).json({ message: "OTP sent to your email. Please verify to complete registration." });
+    res.status(200).json({ message: "OTP sent to your email. Please check your spam/junk." });
   } catch (err) {
     console.error("Registration error:", err);
     res.status(500).json({ message: "Registration failed. Please try again." });
@@ -234,7 +234,7 @@ router.post("/api/verify-otp", async (req, res) => {
         }
       );
   
-      res.status(200).json({ message: "OTP verified. Certificate issued successfully." });
+      res.status(200).json({ msg: "OTP verified. Certificate issued successfully." });
   
     } catch (err) {
       console.error("OTP verification error:", err);
