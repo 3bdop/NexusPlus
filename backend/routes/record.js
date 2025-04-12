@@ -322,10 +322,6 @@ router.patch("/api/add-avatarId", validateSession, async (req, res) => {
             { $set: { avatarUrl: avatarUrl } }
         );
 
-        if (result.modifiedCount === 0) {
-            return res.status(404).json({ message: "User not found or avatar not updated." });
-        }
-
         res.status(200).json({
             message: "Avatar updated successfully",
             avatarUrl: avatarUrl,
