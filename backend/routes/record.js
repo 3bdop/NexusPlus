@@ -148,7 +148,7 @@ router.post("/api/register", async (req, res) => {
 
      let gAvatarurl = 'https://models.readyplayer.me/67f3af37d4370bf8b07443f8.glb';
      if (gender == 'girl') {
-         gAvatarurl = "https://models.readyplayer.me/67fa9f666026f5144d4a48fa.glb";
+         gAvatarurl = "https://models.readyplayer.me/67faa4de8c79badc38f89a13.glb";
      }
 
      
