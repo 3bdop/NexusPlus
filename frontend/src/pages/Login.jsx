@@ -267,8 +267,6 @@ export default function Login() {
             if (!data.exists) {
                 setShowRegistrationForm(true);
                 setMessage('New user detected. Please complete registration.');
-            } else {
-                await loginUser();
             }
 
         } catch (err) {
@@ -318,7 +316,7 @@ export default function Login() {
                 { withCredentials: true }
             );
 
-            setMessage(response.data.message);
+            // setMessage(response.data.message);
             await loginUser();
         } catch (err) {
             console.error('Verification error:', err.response?.data || err);
@@ -334,7 +332,7 @@ export default function Login() {
                 { withCredentials: true }
             );
 
-            setMessage(response.data.message);
+            // setMessage(response.data.message);
             navigate('/dashboard');
         } catch (err) {
             const errorMessage = err.response?.data?.message || 'Login failed.';
@@ -439,6 +437,8 @@ export default function Login() {
                             <h2 style={{ fontFamily: 'system-ui' }}>Wallet ID is collected🦊</h2>
                             <ShinyText text={wallet} disabled={false} speed={3} className='custom-class' />
                             <div align='center'>
+                                <br />
+                                <br />
                                 <Button
                                     onClick={loginUser}
                                     val={'Continue to Dashboard'}
