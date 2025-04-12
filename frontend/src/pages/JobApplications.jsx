@@ -435,7 +435,7 @@ export default function CompanyJobs() {
                   />
                   <Chip
                     icon={<People sx={{ color: 'rgba(255, 255, 255, 0.9)' }} />}
-                    label={`${job.applicants_count} ${job.applicants_count === 1 ? 'Applicant' : 'Applicants'}`}
+                    label={`${job.applicants_count > 1 ? job.applicants_count - 1 : job.applicants_count} ${job.applicants_count === 1 ? 'Applicant' : 'Applicants'}`}
                     variant="outlined"
                     sx={{
                       borderColor: job.applicants_count > 0 ? 'rgba(76, 175, 80, 0.5)' : 'rgba(255, 255, 255, 0.15)',
@@ -492,7 +492,7 @@ export default function CompanyJobs() {
       <Dialog
         open={Boolean(selectedJob)}
         onClose={closeApplicantsDialog}
-        maxWidth="lg"
+        maxWidth="xl"
         fullWidth
         sx={{
           '& .MuiDialog-paper': {
@@ -889,9 +889,9 @@ export default function CompanyJobs() {
                               <TableCell sx={{ py: 2 }} align='center'>
                                 <Box sx={{ display: 'flex', gap: 2 }}>
                                   <form ref={form} onSubmit={sendEmail}>
-                                    <input hidden type="text" name="to_name" value={candidate.name} />
-                                    <input hidden type="text" name="position" value={candidate.jobTitle} />
-                                    <input hidden type="email" name="to_email" value={candidate.email} />
+                                    <input hidden type="text" name="to_name" value={candidate.name} readOnly />
+                                    <input hidden type="text" name="position" value={candidate.jobTitle} readOnly />
+                                    <input hidden type="email" name="to_email" value={candidate.email} readOnly />
                                     <input hidden type='submit' value={"go"} />
                                     <Button
                                       type='submit'
@@ -914,7 +914,7 @@ export default function CompanyJobs() {
                                       {candidate.status === 'accepted' ? 'Accepted' : 'Accept'}
                                     </Button>
                                   </form>
-                                  <Button
+                                  {/* <Button
                                     variant="contained"
                                     color="error"
                                     size="medium"
@@ -932,7 +932,7 @@ export default function CompanyJobs() {
                                     }}
                                   >
                                     {candidate.status === 'rejected' ? 'Rejected' : 'Reject'}
-                                  </Button>
+                                  </Button> */}
                                 </Box>
                               </TableCell>
                             </TableRow>
@@ -1067,7 +1067,33 @@ export default function CompanyJobs() {
                               </TableCell>
                               <TableCell sx={{ py: 2.5, borderBottom: 'none' }} align='center'>
                                 <Box sx={{ display: 'flex', gap: 2 }}>
-                                  <Button
+                                  <form ref={form} onSubmit={sendEmail}>
+                                    <input hidden type="text" name="to_name" value={applicant.name} readOnly />
+                                    <input hidden type="text" name="position" value={applicant.jobTitle} readOnly />
+                                    <input hidden type="email" name="to_email" value={applicant.email} readOnly />
+                                    <input hidden type='submit' value={"go"} />
+                                    <Button
+                                      type='submit'
+                                      variant="contained"
+                                      color="success"
+                                      size="medium"
+                                      startIcon={<CheckCircle />}
+                                      onClick={() => handleApprove(selectedJob.id, candidate.userId)}
+                                      disabled={applicant.status === 'accepted'}
+                                      sx={{
+                                        borderRadius: '8px',
+                                        minWidth: '100px',
+                                        textTransform: 'none',
+                                        boxShadow: 'none',
+                                        bgcolor: applicant.status === 'accepted' ? 'rgba(76, 175, 80, 0.7)' : undefined,
+                                        '&:hover': { bgcolor: applicant.status === 'accepted' ? 'rgba(76, 175, 80, 0.8)' : undefined },
+                                        '&.Mui-disabled': { bgcolor: 'rgba(76, 175, 80, 0.7)', color: 'rgba(255, 255, 255, 0.8)' }
+                                      }}
+                                    >
+                                      {applicant.status === 'accepted' ? 'Accepted' : 'Accept'}
+                                    </Button>
+                                  </form>
+                                  {/* <Button
                                     variant="contained"
                                     color="success"
                                     size="medium"
@@ -1085,8 +1111,8 @@ export default function CompanyJobs() {
                                     }}
                                   >
                                     {applicant.status === 'accepted' ? 'Accepted' : 'Accept'}
-                                  </Button>
-                                  <Button
+                                  </Button> */}
+                                  {/* <Button
                                     variant="contained"
                                     color="error"
                                     size="medium"
@@ -1104,7 +1130,7 @@ export default function CompanyJobs() {
                                     }}
                                   >
                                     {applicant.status === 'rejected' ? 'Rejected' : 'Reject'}
-                                  </Button>
+                                  </Button> */}
                                 </Box>
                               </TableCell>
                             </TableRow>
@@ -1147,11 +1173,10 @@ export default function CompanyJobs() {
         open={Boolean(selectedPdf)}
         onClose={() => setSelectedPdf(null)}
         maxWidth="xl"
-        fullWidth
         sx={{
           '& .MuiDialog-paper': {
             height: '90vh',
-            maxWidth: '90vw',
+            maxWidth: '100vw',
             margin: '20px',
             borderRadius: '12px',
             boxShadow: 24
@@ -1165,10 +1190,10 @@ export default function CompanyJobs() {
             alignItems: 'center',
             backgroundColor: '#323238', // Dark theme color from tailwind config
             color: 'white',
-            py: 1.5
+            py: 1.5, gap: 10
           }}
         >
-          <Typography variant="h6" fontWeight="bold">Applicant CV</Typography>
+          <Typography variant="body1" fontWeight="bold">Applicant CV</Typography>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Box sx={{
@@ -1176,8 +1201,8 @@ export default function CompanyJobs() {
               alignItems: 'center',
               bgcolor: 'rgba(255,255,255,0.15)',
               borderRadius: '20px',
-              px: 1,
-              py: 0.5
+              px: 0.1,
+              py: 0.1
             }}>
               <IconButton
                 onClick={() => changePage(-1)}
@@ -1211,8 +1236,8 @@ export default function CompanyJobs() {
               alignItems: 'center',
               bgcolor: 'rgba(255,255,255,0.15)',
               borderRadius: '20px',
-              px: 1,
-              py: 0.5
+              px: 0.1,
+              py: 0.1
             }}>
               <IconButton
                 onClick={() => changeScale(scale - 0.1)}
