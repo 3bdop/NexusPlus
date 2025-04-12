@@ -34,12 +34,20 @@ export default function Events() {
             path: playerCount >= 20 ? '' : '/career-fair'
         },
         {
-            title: "Qatar Museum",
+            title: "Festival of Cultures",
+            status: "(coming soon)",
+            button: "Join Event",
+            src: "/images/events/fest-udst.jpg",
+        },
+        {
+            title: "Qatar Museum ",
             button: "Experience",
+            status: "(coming soon)",
             src: "/images/events/q-museum.jpg",
         },
         {
             title: "Web Summit",
+            status: "(coming soon)",
             button: "Join Event",
             src: "/images/events/web-summit.jpg",
         },

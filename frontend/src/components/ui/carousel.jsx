@@ -55,7 +55,7 @@ const Slide = ({
         event.currentTarget.style.opacity = "1";
     };
 
-    const { src, button, title } = slide;
+    const { src, button, title, status } = slide;
 
     return (
         <div className="[perspective:tw-1200px] [transform-style:tw-preserve-3d]">
@@ -101,7 +101,11 @@ const Slide = ({
                         }`}>
                     <h2 className="tw-text-lg md:tw-text-2xl lg:tw-text-4xl tw-font-semibold  tw-relative">
                         {title}
+                        <br />
+                        {status}
                     </h2>
+                    {/* <h4 className="tw-text-lg md:tw-text-2xl lg:tw-text-4xl tw-font-semibold  tw-relative">
+                    </h4> */}
                     <div className="tw-flex tw-justify-center">
                         <button
                             className="tw-mt-6  tw-px-4 tw-py-2 tw-w-fit tw-mx-auto sm:tw-text-sm tw-text-black tw-bg-white tw-h-12 tw-border tw-border-transparent tw-text-xs tw-flex tw-justify-center tw-items-center tw-rounded-2xl hover:tw-shadow-lg tw-transition tw-duration-200 tw-shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]"
