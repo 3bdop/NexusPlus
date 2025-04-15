@@ -41,8 +41,8 @@ export default function Dashboarddd() {
                 // setAvatarUrl(avatarResponse.data.avatarUrl);
                 setLoading(false)
             } catch (error) {
-                console.error('Error fetching user data:', err);
-                setError(err.message);
+                console.error('Error fetching user data:', error);
+                setError(error.message);
 
                 // Redirect to login if unauthorized
                 if (error.response?.status === 401) {

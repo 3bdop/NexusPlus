@@ -16,6 +16,7 @@ import config from '../bot/config'
 import ActionProvider from '../bot/ActionProvider';
 import MessageParser from '../bot/MessageParser';
 import '../bot/ChatbotStyle.css'
+import TipsAndUpdatesTwoToneIcon from '@mui/icons-material/TipsAndUpdatesTwoTone';
 
 import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
 import WavyBackground from '../components/ui/wavy-background';
@@ -157,6 +158,29 @@ export default function Home({ role }) {
             icon: <DashboardIcon />,
         },
         {
+            segment: 'dashboard/avatar-creation',
+            title: 'Avatar Customization',
+            icon: <AutoAwesomeTwoToneIcon />,
+        },
+        ...(role === 'employer' || role === 'attendee' ? [{
+            segment: 'dashboard/AI',
+            title: 'AI Features',
+            icon: <TipsAndUpdatesTwoToneIcon />,
+            children: [
+                role === 'employer'
+                    ? {
+                        segment: '../AI/job-applications',
+                        title: 'Job Applicants',
+                        icon: <WorkTwoToneIcon />,
+                    }
+                    : {
+                        segment: '../AI/recommended-jobs',
+                        title: 'Job Recommendation',
+                        icon: <WorkTwoToneIcon />,
+                    }
+            ]
+        }] : []),
+        {
             segment: 'dashboard/events',
             title: 'Events',
             icon: <StadiumTwoToneIcon />,
@@ -164,33 +188,39 @@ export default function Home({ role }) {
                 {
                     segment: playerCount >= 20 ? '..' : '../../career-fair', //? condition if room is full then not allowed to join
                     title: `Career Fair ${playerCount}/20`,
-                }
+                },
+                {
+                    segment: '.',
+                    title: 'FOC (coming soon)'
+                },
+                {
+                    segment: '.',
+                    title: 'Qatar Museum (coming soon)'
+                },
+                {
+                    segment: '.',
+                    title: 'Web Summit (coming soon)'
+                },
 
             ]
         },
 
-        {
-            segment: 'dashboard/avatar-creation',
-            title: 'Avatar Customization',
-            icon: <AutoAwesomeTwoToneIcon />,
-        },
-        role === 'admin'
-            ? {
-                segment: 'dashboard/insights',
-                title: 'Admin Insights',
-                icon: <AnalyticsTwoToneIcon />, // Make sure to import this icon
-            }
-            : role === 'employer'
-                ? {
-                    segment: 'dashboard/job-applications',
-                    title: 'Job Applications',
-                    icon: <WorkTwoToneIcon />,
-                }
-                : {
-                    segment: 'dashboard/recommended-jobs',
-                    title: 'Recommended Jobs',
-                    icon: <WorkTwoToneIcon />,
-                }
+        ...(role === 'admin' ? [{
+            segment: 'dashboard/insights',
+            title: 'Admin Insights',
+            icon: <AnalyticsTwoToneIcon />,
+        }] : [])
+        // : role === 'employer'
+        //     ? {
+        //         segment: 'dashboard/job-applications',
+        //         title: 'Job Applications',
+        //         icon: <WorkTwoToneIcon />,
+        //     }
+        //     : {
+        //         segment: 'dashboard/recommended-jobs',
+        //         title: 'Recommended Jobs',
+        //         icon: <WorkTwoToneIcon />,
+        //     }
     ];
 
     const ChatButton = styled.button`

@@ -19,13 +19,14 @@ import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 import SendIcon from '@mui/icons-material/Send';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import { apiClient } from '../api/client';
+import { api } from '../api/fastapi'
 
 const EXPERIENCE_LEVELS = {
     "Entry Level": "0-1",
     "Junior": "1-3",
     "Mid-Level": "3-6",
     "Senior": "6-10",
-    "Expert": Infinity,
+    "Expert": "10+",
 };
 
 const steps = [
@@ -48,21 +49,16 @@ export default function RecommendedJobs() {
     useEffect(() => {
         const fetchExistingRecommendations = async () => {
             try {
-                const sessionResponse = await fetch('http://localhost:5050/api/get-session', {
-                    credentials: 'include'
+                const sessionResponse = await apiClient.get('/api/get-session');
+                if (!sessionResponse.data.userId) {
+                    throw new Error('No user ID found in session data.');
+                }
+                const userId = sessionResponse.data.userId;
+                const response = await api.get('/api/recommendations', {
+                    params: { user_id: userId }
                 });
-                if (!sessionResponse.ok) {
-                    throw new Error('Failed to get user session');
-                }
-                const sessionData = await sessionResponse.json();
-                const userId = sessionData.userId;
-                const response = await fetch(`http://localhost:8000/api/recommendations?user_id=${userId}`);
-                if (!response.ok) {
-                    return;
-                }
-                const data = await response.json();
-                if (data.status === "success" && data.recommendations.length > 0) {
-                    setRecommendations(data.recommendations);
+                if (response.data.status === "success" && response.data.recommendations.length > 0) {
+                    setRecommendations(response.data.recommendations);
                     setActiveStep(3);
                 }
             } catch (error) {
@@ -86,14 +82,11 @@ export default function RecommendedJobs() {
             try {
                 const formData = new FormData();
                 formData.append('cv_file', file);
-                const uploadResponse = await fetch('http://localhost:5050/api/upload-cv', {
-                    method: 'POST',
-                    credentials: 'include',
-                    body: formData,
+                const uploadResponse = await apiClient.post('/api/upload-cv', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
                 });
-                if (!uploadResponse.ok) {
-                    throw new Error('Failed to upload CV');
-                }
                 setCvUploaded(true);
                 setCvFile(file);
                 setErrorMessage('');
@@ -114,29 +107,21 @@ export default function RecommendedJobs() {
         setSubmitting(true);
         setErrorMessage('');
         try {
-            const sessionResponse = await fetch('http://localhost:5050/api/get-session', {
-                credentials: 'include'
-            });
-            if (!sessionResponse.ok) {
-                throw new Error('Failed to get user session');
-            }
-            const sessionData = await sessionResponse.json();
-            const userId = sessionData.userId;
+            const sessionResponse = await apiClient.get('/api/get-session');
+            const userId = sessionResponse.data.userId;
             const formData = new FormData();
             formData.append('cv_file', cvFile);
             formData.append('experience_level', experienceLevel);
             formData.append('user_id', userId);
-            const response = await fetch('http://localhost:8000/api/recommendations', {
-                method: 'POST',
-                body: formData,
+
+            const response = await api.post('/api/recommendations', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             });
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(errorText || 'Error fetching recommendations');
-            }
-            const data = await response.json();
-            if (data.status === "success") {
-                setRecommendations(data.recommendations);
+
+            if (response.data.status === "success") {
+                setRecommendations(response.data.recommendations);
                 setActiveStep(3);
             } else {
                 throw new Error("Unexpected response from API");
@@ -150,27 +135,24 @@ export default function RecommendedJobs() {
 
     // Function to handle applying to a job.
     // After a successful apply call, we update the recommendations state accordingly.
+    // Function to handle applying to a job.
     const handleApply = async (jobId) => {
         try {
-            const sessionResponse = await fetch('http://localhost:5050/api/get-session', {
-                credentials: 'include'
+            const sessionResponse = await apiClient.get('/api/get-session');
+            const userId = sessionResponse.data.userId;
+
+            await api.post(`/api/jobs/${jobId}/apply`, null, {
+                params: { user_id: userId }
             });
-            if (!sessionResponse.ok) {
-                throw new Error('Failed to get user session');
-            }
-            const sessionData = await sessionResponse.json();
-            const userId = sessionData.userId;
-            await fetch(`http://localhost:8000/api/jobs/${jobId}/apply?user_id=${userId}`, {
-                method: 'POST',
-            });
-            // Update local recommendations to mark this job as applied.
+
+            // Update local recommendations
             setRecommendations(prev =>
                 prev.map(job =>
                     job._id === jobId ? { ...job, applied: true } : job
                 )
             );
         } catch (error) {
-            // Even if there's an error, mark the job as applied.
+            // Fallback update
             setRecommendations(prev =>
                 prev.map(job =>
                     job._id === jobId ? { ...job, applied: true } : job
@@ -291,7 +273,7 @@ export default function RecommendedJobs() {
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <Typography variant="h6" align="center">Recommended Jobs</Typography>
                     {recommendations.map((job, index) => (
-                        <Accordion key={index}>
+                        <Accordion key={index} style={{ background: '#453970A1' }}>
                             <AccordionSummary
                                 expandIcon={<ArrowDownwardIcon />}
                                 aria-controls={`panel${index}-content`}
@@ -299,12 +281,15 @@ export default function RecommendedJobs() {
                                 style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: 2 }}
                             >
                                 <img
-                                    src='https://upload.wikimedia.org/wikipedia/commons/b/b6/Ooredoo.svg'
+                                    src={job.company.logo}
                                     alt='wikimedia.org'
                                     style={{ width: 40 }}
                                 />
+                                &nbsp;
+                                &nbsp;
+                                &nbsp;
                                 <Typography component="span">
-                                    {job.title} - {job.company}
+                                    {job.title} - {job.company.name}
                                 </Typography>
                             </AccordionSummary>
                             <AccordionDetails>

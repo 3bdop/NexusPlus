@@ -19,7 +19,7 @@ import './styles/input.css'
 
 import { pdfjs } from 'react-pdf';
 import AdminDashboard from "./pages/AdminDashboard.jsx";
-
+import AIFeaturesLanding from "./pages/AIFeaturesLanding.jsx";
 
 const preloadWebGLAssets = () => {
   if (typeof window !== 'undefined') {
@@ -28,9 +28,9 @@ const preloadWebGLAssets = () => {
       try {
         await Promise.all([
           fetch('/build/webGL.loader.js'),
-          fetch('/build/webGL.framework.js'),
-          fetch('/build/webGL.data'),
-          fetch('/build/webGL.wasm')
+          fetch('/build/webGL.framework.js.unityweb'),
+          fetch('/build/webGL.data.unityweb'),
+          fetch('/build/webGL.wasm.unityweb')
         ]);
         console.log('WebGL assets preloaded');
       } catch (error) {
@@ -91,20 +91,30 @@ const router = createBrowserRouter([
             )
           },
           {
-            path: 'recommended-jobs',
-            element: (
-              <ProtectedRoute requiredRole="attendee">
-                <RecommendedJobs />
-              </ProtectedRoute>
-            )
-          },
-          {
-            path: 'job-applications',
-            element: (
-              <ProtectedRoute requiredRole="employer">
-                <JobApplications />
-              </ProtectedRoute>
-            )
+            path: 'AI',
+            // element: <ProtectedRoute requiredRole={'attendee' || 'employer'} />, // Parent route protection
+            children: [
+              {
+                index: true,
+                element: <AIFeaturesLanding /> // Add a landing component for /dashboard/AI
+              },
+              {
+                path: 'recommended-jobs',
+                element: (
+                  <ProtectedRoute requiredRole="attendee">
+                    <RecommendedJobs />
+                  </ProtectedRoute>
+                )
+              },
+              {
+                path: 'job-applications',
+                element: (
+                  <ProtectedRoute requiredRole="employer">
+                    <JobApplications />
+                  </ProtectedRoute>
+                )
+              }
+            ]
           },
           {
             path: 'insights',
