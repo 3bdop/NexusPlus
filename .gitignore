@@ -24,7 +24,7 @@ dist-ssr
 *.sw?
 
 #Ignore env variables
-# .env
+.env
 
 #Ignore WebGL build
 # frontend/public/build/*
