@@ -7,7 +7,7 @@
   <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6f8/512.webp" type="image/webp">
   <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6f8/512.gif" alt="🛸" width="75" height="75"align="center">
 </picture>
-  Career Fair in Metaverse 
+  NexusPlus
 <picture>
   <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6f8/512.webp" type="image/webp">
   <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f6f8/512.gif" alt="🛸" width="75" height="75"align="center">
@@ -15,7 +15,7 @@
 </h1>
 
 ---
-
+ 
 <h1 align="center">
 <picture>
   <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.webp" type="image/webp" align="center">
