@@ -41,7 +41,7 @@
 </h3>
 
 - **3D Virtual Environment:** Users can explore a fully interactive multiplayer career fair environment, ask companies employers, and networking spaces.
-- **Digital Twin Avatars:** Attendees can create personalized digital twins, representing themselves within the virtual space.
+- **Digital Twin Avatars:** Users can create personalized digital twins, representing themselves within the virtual space.
 - **AI-Powered Systems:**
   <p>
     <picture>
