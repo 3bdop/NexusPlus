@@ -1,60 +1,60 @@
-import 'dotenv/config.js'
-import express from 'express'
-import bodyParser from 'body-parser';
-import { fileURLToPath } from 'url';
-import path from 'path';
-import { RAGHandler } from '../bot/ragHandler.js'
-import fs from 'fs'
+// import 'dotenv/config.js'
+// import express from 'express'
+// import bodyParser from 'body-parser';
+// import { fileURLToPath } from 'url';
+// import path from 'path';
+// import { RAGHandler } from '../bot/ragHandler.js'
+// import fs from 'fs'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const query = express();
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+// const query = express();
 
-query.use(bodyParser.json());
+// query.use(bodyParser.json());
 
-// Verify Gemini API key
-if (!process.env.GEMINI_API_KEY) {
-    console.error('ERROR: Missing GEMINI_API_KEY in .env file');
-    // process.exit(1);
-}
+// // Verify Gemini API key
+// if (!process.env.GEMINI_API_KEY) {
+//     console.error('ERROR: Missing GEMINI_API_KEY in .env file');
+//     // process.exit(1);
+// }
 
-const knowledgeBasePath = path.join(__dirname, '../bot/KnowledgeBase');
+// const knowledgeBasePath = path.join(__dirname, '../bot/KnowledgeBase');
 
-// Verify paths exist
-if (!fs.existsSync(knowledgeBasePath)) {
-    throw new Error(`KnowledgeBase directory not found at: ${knowledgeBasePath}`);
-}
-
-
-// Initialize RAG system
-const ragHandler = new RAGHandler(
-    process.env.GEMINI_API_KEY,
-    knowledgeBasePath // Use absolute path
-);
-
-// Add async initialization
-const initializeRAG = async () => {
-    try {
-        await ragHandler.initialize();
-        console.log('RAG system initialized successfully');
-    } catch (error) {
-        console.error('Failed to initialize RAG:', error);
-        process.exit(1);
-    }
-};
-
-initializeRAG();
+// // Verify paths exist
+// if (!fs.existsSync(knowledgeBasePath)) {
+//     throw new Error(`KnowledgeBase directory not found at: ${knowledgeBasePath}`);
+// }
 
 
-// Routing endpoint
-query.post('/', async (req, res) => {
-    try {
-        const response = await ragHandler.handleQuery(req.body.query);
-        res.json({ response });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
+// // Initialize RAG system
+// const ragHandler = new RAGHandler(
+//     process.env.GEMINI_API_KEY,
+//     knowledgeBasePath // Use absolute path
+// );
 
-export default query
+// // Add async initialization
+// const initializeRAG = async () => {
+//     try {
+//         await ragHandler.initialize();
+//         console.log('RAG system initialized successfully');
+//     } catch (error) {
+//         console.error('Failed to initialize RAG:', error);
+//         process.exit(1);
+//     }
+// };
+
+// initializeRAG();
+
+
+// // Routing endpoint
+// query.post('/', async (req, res) => {
+//     try {
+//         const response = await ragHandler.handleQuery(req.body.query);
+//         res.json({ response });
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+// });
+
+// export default query
 
