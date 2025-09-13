@@ -15,7 +15,7 @@ query.use(bodyParser.json());
 // Verify Gemini API key
 if (!process.env.GEMINI_API_KEY) {
     console.error('ERROR: Missing GEMINI_API_KEY in .env file');
-    process.exit(1);
+    // process.exit(1);
 }
 
 const knowledgeBasePath = path.join(__dirname, '../bot/KnowledgeBase');
