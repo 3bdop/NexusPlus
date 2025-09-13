@@ -46,7 +46,7 @@ import express from "express";
 import corsMiddleware from "./middleware/cors.js";
 import records from "./routes/record.js";
 import cookieParser from "cookie-parser";
-import botRoute from "./routes/botRoute.js";
+// import botRoute from "./routes/botRoute.js";
 import adminStat from "./routes/adminStats.js";
 
 const app = express();
@@ -60,7 +60,7 @@ app.use(express.json());
 
 // Routes
 app.use("/", records);
-app.use("/query", botRoute);
+// app.use("/query", botRoute);
 app.use("/api", adminStat);
 
 // Health check endpoint
