@@ -32,7 +32,7 @@ app.use(
 app.use(express.json());
 
 app.use("/", records);
-app.use("/query", botRoute);
+// app.use("/query", botRoute);
 app.use("/api", adminStat);
 
 // For local development, start the server if not on Vercel
